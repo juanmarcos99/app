@@ -1,5 +1,4 @@
 import 'package:app/features/auth/data/models/user_model.dart';
-import 'package:app/core/database/app_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class UserLocalDataSource {
@@ -8,6 +7,8 @@ abstract class UserLocalDataSource {
   Future<UserModel?> getUserByUsername(String username);
   Future<void> updatePassword(String username, String newPasswordHash);
 }
+
+
 
 // implementar la clase me permite cambiar de DB sin q se rompa el codigo
 class UserLocalDataSourceImpl implements UserLocalDataSource {
@@ -43,7 +44,7 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   }
 
   @override
-  Future<void> updatePassword(String username, String newPasswordHash) async{
+  Future<void> updatePassword(String username, String newPasswordHash) async {
     await db.update(
       'users',
       {'passwordHash': newPasswordHash},

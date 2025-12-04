@@ -7,5 +7,4 @@ class RegisterUser {
   Future <void> call (User user)async{
     await repository.registerUser(user);
   }
-
 }
