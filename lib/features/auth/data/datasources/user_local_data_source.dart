@@ -11,20 +11,25 @@ abstract class UserLocalDataSource {
 
 // implementar la clase me permite cambiar de DB sin q se rompa el codigo
 class UserLocalDataSourceImpl implements UserLocalDataSource {
-  Database? _db;
+  final Database db;
 
-  Future<Database> get database async {
-    _db ??= await AppDatabase.getDatabase();
-    return _db!;
+  UserLocalDataSourceImpl(this.db);
+
+  @override
+  Future<UserModel?> getUserById(int id) async {
+    final result = await db.query('users', where: 'id = ?', whereArgs: [id]);
+    if (result.isNotEmpty) {
+      return UserModel.fromMap(result.first);
+    }
+    return null;
   }
 
   @override
-  Future<UserModel?> getUserById(int id) async{
-    final db = await database;
+  Future<UserModel?> getUserByUsername(String username) async {
     final result = await db.query(
       'users',
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'userName = ?',
+      whereArgs: [username],
     );
     if (result.isNotEmpty) {
       return UserModel.fromMap(result.first);
@@ -33,20 +38,17 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   }
 
   @override
-  Future<UserModel?> getUserByUsername(String username) {
-    // TODO: implement getUserByUsername
-    throw UnimplementedError();
-  }
-
-  @override
   Future<int> insertUser(UserModel user) async {
-    final db = await database;
     return await db.insert('users', user.toMap());
   }
 
   @override
-  Future<void> updatePassword(String username, String newPasswordHash) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+  Future<void> updatePassword(String username, String newPasswordHash) async{
+    await db.update(
+      'users',
+      {'passwordHash': newPasswordHash},
+      where: 'userName = ?',
+      whereArgs: [username],
+    );
   }
 }
