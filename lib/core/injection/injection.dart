@@ -7,6 +7,7 @@ import '../database/app_database.dart';
 // Barriles de auth
 import '../../features/auth/data/auth_data.dart';
 import '../../features/auth/domain/auth_domain.dart';
+import '../../features/auth/ui/auth_ui.dart';
 
 final sl = GetIt.instance; // service locator
 
@@ -31,5 +32,7 @@ Future<void> init() async {
   );
 
   // Bloc
-  
+  sl.registerFactory<AuthBloc>(
+  () => AuthBloc(sl<RegisterUser>()),
+);
 }
