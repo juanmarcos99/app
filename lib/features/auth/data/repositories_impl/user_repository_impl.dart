@@ -1,7 +1,5 @@
-import 'package:app/features/auth/data/datasources/user_local_data_source.dart';
-import 'package:app/features/auth/data/models/user_model.dart';
-import 'package:app/features/auth/domain/entities/user.dart';
-import 'package:app/features/auth/domain/repositories/user_repository.dart';
+import 'package:app/features/auth/data/auth_data.dart';
+import 'package:app/features/auth/domain/auth_domain.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserLocalDataSource localDataSource;

@@ -1,4 +1,4 @@
-import 'package:app/features/auth/data/models/user_model.dart';
+import 'package:app/features/auth/data/auth_data.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class UserLocalDataSource {
@@ -10,7 +10,7 @@ abstract class UserLocalDataSource {
 
 
 
-// implementar la clase me permite cambiar de DB sin q se rompa el codigo
+// permite cambiar de DB sin q se afecte la app
 class UserLocalDataSourceImpl implements UserLocalDataSource {
   final Database db;
 
