@@ -4,6 +4,9 @@ abstract class AuthEvent {}
 
 class RegisterUserEvent extends AuthEvent {
   final User user;
-
   RegisterUserEvent(this.user);
+}
+class RegisterPatientEvent extends AuthEvent {
+  final Patient patient;
+  RegisterPatientEvent(this.patient);
 }

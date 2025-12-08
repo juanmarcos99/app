@@ -12,7 +12,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         await registerUser(event.user); //usa el caso de uso
-        emit(AuthSuccess());
+        emit(UserRegistrated(event.user));
       } catch (e) {
         emit(AuthFailure('Error al registrar usuario: $e'));
       }
