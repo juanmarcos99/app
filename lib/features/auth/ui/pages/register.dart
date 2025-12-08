@@ -31,26 +31,60 @@ class _AuthPageState extends State<AuthPage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is UserFullyRegistrated) {
-           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("holaaa")),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("holaaa")));
           }
+          if (state is UserRegistrated) {
+            // 👇 aquí validas que el rol es paciente
+            if (state.user.role == 'patient') {
+              final patient = Patient(
+                userId: state.user.id!, // ya viene con id
+                caregiverNumber: caregiverPhoneController.text,
+                caregiverEmail: caregiverEmailController.text,
+              );
+              context.read<AuthBloc>().add(RegisterPatientEvent(patient));
+            }
+          }
+
+         
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              TextField(controller: nameController, decoration: const InputDecoration(labelText: "Nombre")),
-              TextField(controller: lastNameController, decoration: const InputDecoration(labelText: "Apellidos")),
-              TextField(controller: emailController, decoration: const InputDecoration(labelText: "Correo")),
-              TextField(controller: phoneController, decoration: const InputDecoration(labelText: "Teléfono")),
-              TextField(controller: usernameController, decoration: const InputDecoration(labelText: "Nombre de usuario")),
-              TextField(controller: passwordController, decoration: const InputDecoration(labelText: "Contraseña"), obscureText: true),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Nombre"),
+              ),
+              TextField(
+                controller: lastNameController,
+                decoration: const InputDecoration(labelText: "Apellidos"),
+              ),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: "Correo"),
+              ),
+              TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(labelText: "Teléfono"),
+              ),
+              TextField(
+                controller: usernameController,
+                decoration: const InputDecoration(
+                  labelText: "Nombre de usuario",
+                ),
+              ),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(labelText: "Contraseña"),
+                obscureText: true,
+              ),
 
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
@@ -65,11 +99,26 @@ class _AuthPageState extends State<AuthPage> {
 
               const SizedBox(height: 20),
               if (selectedRole == "patient") ...[
-                TextField(controller: caregiverEmailController, decoration: const InputDecoration(labelText: "Correo del cuidador")),
-                TextField(controller: caregiverPhoneController, decoration: const InputDecoration(labelText: "Teléfono del cuidador")),
+                TextField(
+                  controller: caregiverEmailController,
+                  decoration: const InputDecoration(
+                    labelText: "Correo del cuidador",
+                  ),
+                ),
+                TextField(
+                  controller: caregiverPhoneController,
+                  decoration: const InputDecoration(
+                    labelText: "Teléfono del cuidador",
+                  ),
+                ),
               ],
               if (selectedRole == "doctor") ...[
-                TextField(controller: doctorCodeController, decoration: const InputDecoration(labelText: "Código de doctor")),
+                TextField(
+                  controller: doctorCodeController,
+                  decoration: const InputDecoration(
+                    labelText: "Código de doctor",
+                  ),
+                ),
               ],
 
               const SizedBox(height: 30),
@@ -85,18 +134,7 @@ class _AuthPageState extends State<AuthPage> {
                     passwordHash: passwordController.text,
                     role: selectedRole ?? '',
                   );
-
-                  if (selectedRole == "patient") {
-                    final patient = Patient(
-                      userId: 0, // se completará en el Bloc
-                      caregiverNumber: caregiverPhoneController.text,
-                      caregiverEmail: caregiverEmailController.text,
-                    );
-                    context.read<AuthBloc>().add(RegisterUserEvent(user));
-                    context.read<AuthBloc>().add(RegisterPatientEvent(patient));
-                  } else {
-                    context.read<AuthBloc>().add(RegisterUserEvent(user));
-                  }
+                  context.read<AuthBloc>().add(RegisterUserEvent(user));
                 },
                 child: const Text("Registrar"),
               ),

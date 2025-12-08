@@ -17,9 +17,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         _userId = await registerUser(event.user);
-
         debugPrint("aquiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-        debugPrint(_userId!.toString());
+        debugPrint(_userId.toString());
         user = event.user.copyWith(id: _userId);
 
         if (user!.role == 'patient') {
@@ -36,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterPatientEvent>((event, emit) async {
       // Si por alguna razón llega antes de tener _userId, protegemos.
       debugPrint("aaaaaaaaaaaaaaaaaaaaaa");
-        debugPrint(_userId!.toString());
+        debugPrint(_userId.toString());
       if (_userId == null) {
         emit(AuthFailure('Aún no hay userId para registrar el paciente.'));
         return;

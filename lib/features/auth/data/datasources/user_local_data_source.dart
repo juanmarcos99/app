@@ -1,4 +1,5 @@
 import 'package:app/features/auth/data/auth_data.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class UserLocalDataSource {
@@ -7,8 +8,6 @@ abstract class UserLocalDataSource {
   Future<UserModel?> getUserByUsername(String username);
   Future<void> updatePassword(String username, String newPasswordHash);
 }
-
-
 
 // permite cambiar de DB sin q se afecte la app
 class UserLocalDataSourceImpl implements UserLocalDataSource {
@@ -40,7 +39,12 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
 
   @override
   Future<int> insertUser(UserModel user) async {
-    return await db.insert('users', user.toMap());
+    try {
+      return await db.insert('users', user.toMap());
+    } catch (e) {
+      debugPrint("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr$e");
+    }
+    return -1;
   }
 
   @override
