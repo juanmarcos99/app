@@ -7,10 +7,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
   final RegisterPatient registerPatient;
 
-  int? _userId;    // userId generado por la BD
-  User? user;      // usuario ya con id
+  int? _userId; // userId generado por la BD
+  User? user; // usuario ya con id
 
   AuthBloc(this.registerUser, this.registerPatient) : super(AuthInitial()) {
+    // Se registra el usuario
     on<RegisterUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -18,15 +19,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         user = event.user.copyWith(id: _userId);
 
         if (user!.role == 'patient') {
-          emit(UserRegistrated(user!));         // estado intermedio
+          emit(UserRegistrated(user!)); // estado intermedio
         } else {
-          emit(UserFullyRegistrated(user!));    // flujo completo para no-paciente
+          emit(UserFullyRegistrated(user!)); // flujo completo para no-paciente
         }
       } catch (e) {
         emit(AuthFailure('Error al registrar usuario: $e'));
       }
     });
 
+    //Se registra el paciente
     on<RegisterPatientEvent>((event, emit) async {
       // Si por alguna razón llega antes de tener _userId, protegemos.
       if (_userId == null) {
@@ -38,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final patientWithId = event.patient.copyWith(userId: _userId);
         await registerPatient(patientWithId);
-        emit(UserFullyRegistrated(user!));      // ahora sí, registro completo
+        emit(UserFullyRegistrated(user!)); // ahora sí, registro completo
       } catch (e) {
         emit(AuthFailure('Error al registrar paciente: $e'));
       }
