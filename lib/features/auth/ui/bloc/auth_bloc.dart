@@ -7,14 +7,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
   final RegisterPatient registerPatient;
 
+  int? _userId;    // userId generado por la BD
+  User? user;      // usuario ya con id
+
   AuthBloc(this.registerUser, this.registerPatient) : super(AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        await registerUser(event.user); //usa el caso de uso
-        emit(UserRegistrated(event.user));
+        _userId = await registerUser(event.user);
+        user = event.user.copyWith(id: _userId);
+
+        if (user!.role == 'patient') {
+          emit(UserRegistrated(user!));         // estado intermedio
+        } else {
+          emit(UserFullyRegistrated(user!));    // flujo completo para no-paciente
+        }
       } catch (e) {
         emit(AuthFailure('Error al registrar usuario: $e'));
+      }
+    });
+
+    on<RegisterPatientEvent>((event, emit) async {
+      // Si por alguna razón llega antes de tener _userId, protegemos.
+      if (_userId == null) {
+        emit(AuthFailure('Aún no hay userId para registrar el paciente.'));
+        return;
+      }
+
+      emit(AuthLoading());
+      try {
+        final patientWithId = event.patient.copyWith(userId: _userId);
+        await registerPatient(patientWithId);
+        emit(UserFullyRegistrated(user!));      // ahora sí, registro completo
+      } catch (e) {
+        emit(AuthFailure('Error al registrar paciente: $e'));
       }
     });
   }

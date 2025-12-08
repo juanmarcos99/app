@@ -7,7 +7,7 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this.localDataSource);
 
   @override
-  Future<void> registerUser(User user) async {
+  Future<int> registerUser(User user) async {
     final userModel = UserModel(
       id: user.id,
       name: user.name,
@@ -18,6 +18,6 @@ class UserRepositoryImpl implements UserRepository {
       passwordHash: user.passwordHash,
       role: user.role,
     );
-    await localDataSource.insertUser(userModel);
+    return await localDataSource.insertUser(userModel);
   }
 }

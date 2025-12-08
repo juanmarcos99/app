@@ -20,3 +20,8 @@ class UserRegistrated extends AuthState {
   final User user;
   UserRegistrated(this.user);
 }
+
+class UserFullyRegistrated extends AuthState {
+  final User user;
+  UserFullyRegistrated(this.user);
+}

@@ -18,4 +18,25 @@ class User {
     required this.passwordHash,
     required this.role,
   });
+
+  User copyWith({
+    int? id,
+    String? name,
+    String? lastName,
+    String? email,
+    String? phoneNumber,
+    String? userName,
+    String? passwordHash,
+    String? role,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      userName: userName ?? this.userName,
+      passwordHash: passwordHash ?? this.passwordHash,
+      role: role ?? this.role,
+    );}
 }
