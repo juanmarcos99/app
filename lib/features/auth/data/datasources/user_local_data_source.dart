@@ -41,10 +41,19 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   Future<int> insertUser(UserModel user) async {
     try {
       return await db.insert('users', user.toMap());
+    } on DatabaseException catch (e) {
+      //Verificamos si el error es por UNIQUE constraint
+      if (e.isUniqueConstraintError()) {
+        debugPrint("Username ya existe: $e");
+        return -2; // código especial para username duplicado
+      } else {
+        debugPrint("Error de base de datos: $e");
+        return -1; // otro error
+      }
     } catch (e) {
-      debugPrint("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr$e");
+      debugPrint("Error inesperado: $e");
+      return -1;
     }
-    return -1;
   }
 
   @override

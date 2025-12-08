@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<AuthPage> createState() => _AuthPageState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _RegisterState extends State<Register> {
   // Controladores de texto
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -33,10 +33,16 @@ class _AuthPageState extends State<AuthPage> {
           if (state is UserFullyRegistrated) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text("holaaa")));
+            ).showSnackBar(SnackBar(content: Text(state.user.name)));
           }
+          if (state is UserNameExist) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("el nombre se user ya esta registrado")));
+          }
+          
           if (state is UserRegistrated) {
-            // 👇 aquí validas que el rol es paciente
+            //aquí validas que el rol es paciente
             if (state.user.role == 'patient') {
               final patient = Patient(
                 userId: state.user.id!, // ya viene con id
@@ -46,8 +52,9 @@ class _AuthPageState extends State<AuthPage> {
               context.read<AuthBloc>().add(RegisterPatientEvent(patient));
             }
           }
-
-         
+          if (state is AuthLoading) {
+            
+          }
           if (state is AuthFailure) {
             ScaffoldMessenger.of(
               context,
