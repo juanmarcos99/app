@@ -1,10 +1,11 @@
 import 'package:app/features/auth/domain/auth_domain.dart';
 
 class RegisterPatient {
-  final PatientRepository userRepository;
+  final PatientRepository patientRepository;
 
-  RegisterPatient({required this.userRepository});
+  RegisterPatient(this.patientRepository);
+
   Future<void> call(Patient patient) async {
-    await userRepository.registerPatient(patient);
+    await patientRepository.registerPatient(patient);
   }
 }
