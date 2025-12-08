@@ -1,4 +1,5 @@
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/domain/auth_domain.dart';
 import '../auth_ui.dart';
@@ -16,6 +17,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         _userId = await registerUser(event.user);
+
+        debugPrint("aquiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+        debugPrint(_userId!.toString());
         user = event.user.copyWith(id: _userId);
 
         if (user!.role == 'patient') {
@@ -31,6 +35,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //Se registra el paciente
     on<RegisterPatientEvent>((event, emit) async {
       // Si por alguna razón llega antes de tener _userId, protegemos.
+      debugPrint("aaaaaaaaaaaaaaaaaaaaaa");
+        debugPrint(_userId!.toString());
       if (_userId == null) {
         emit(AuthFailure('Aún no hay userId para registrar el paciente.'));
         return;

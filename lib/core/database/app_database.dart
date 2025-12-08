@@ -18,8 +18,8 @@ class AppDatabase {
             name TEXT NOT NULL,
             lastName TEXT NOT NULL,
             email TEXT NOT NULL,
-            phoneNumber TEXT NOT NULL,
-            userName TEXT NOT NULL UNIQUE,
+            phoneNumber TEXT NOT NULL, 
+            userName TEXT NOT NULL UNIQUE,           
             passwordHash TEXT NOT NULL,
             role TEXT NOT NULL
           )

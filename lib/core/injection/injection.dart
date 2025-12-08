@@ -19,21 +19,20 @@ Future<void> init() async {
   sl.registerLazySingleton<Database>(() => db);
 
   // Datasource
-  sl.registerLazySingleton<UserLocalDataSourceImpl>(
-    () => UserLocalDataSourceImpl(sl<Database>()),
-  );
-  sl.registerLazySingleton<PatientLocalDataSourcesImpl>(
-    () => PatientLocalDataSourcesImpl(sl<Database>()),
-  );
+sl.registerLazySingleton<UserLocalDataSource>(
+  () => UserLocalDataSourceImpl(sl<Database>()),
+);
+sl.registerLazySingleton<PatientLocalDataSources>(
+  () => PatientLocalDataSourcesImpl(sl<Database>()),
+);
 
-  // Repositorio
-  sl.registerLazySingleton<UserRepository>(
-    () => UserRepositoryImpl(sl<UserLocalDataSource>()),
-  );
-  sl.registerLazySingleton<PatientRepository>(
-    () => PatientRepositoryImpl(sl<PatientLocalDataSources>()),
-  );
-  
+// Repositorio
+sl.registerLazySingleton<UserRepository>(
+  () => UserRepositoryImpl(sl<UserLocalDataSource>()),
+);
+sl.registerLazySingleton<PatientRepository>(
+  () => PatientRepositoryImpl(sl<PatientLocalDataSources>()),
+);
   // Caso de uso
   sl.registerLazySingleton<RegisterUser>(
     () => RegisterUser(sl<UserRepository>()),
