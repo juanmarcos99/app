@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'auth_event.dart';
-import 'auth_state.dart';
 import 'package:app/features/auth/domain/auth_domain.dart';
+import '../auth_ui.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;

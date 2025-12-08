@@ -1,5 +1,4 @@
-import 'package:app/features/auth/domain/entities/user.dart';
-import 'package:app/features/auth/domain/repositories/user_repository.dart';
+import 'package:app/features/auth/domain/auth_domain.dart';
 
 class RegisterUser {
   final UserRepository repository;
