@@ -133,8 +133,10 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     children: [
                       Radio<String>(
                         value: "patient",
+                        // ignore: deprecated_member_use
                         groupValue: selectedRole,
                         activeColor: Colors.red.shade900,
+                        // ignore: deprecated_member_use
                         onChanged: (val) => setState(() => selectedRole = val),
                       ),
                       Text(
@@ -148,8 +150,10 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     children: [
                       Radio<String>(
                         value: "doctor",
+                        // ignore: deprecated_member_use
                         groupValue: selectedRole,
                         activeColor: Colors.blue.shade900,
+                        // ignore: deprecated_member_use
                         onChanged: (val) => setState(() => selectedRole = val),
                       ),
                       Text(
@@ -205,6 +209,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                   context.read<AuthBloc>().add(RegisterUserEvent(user));
                 },
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),

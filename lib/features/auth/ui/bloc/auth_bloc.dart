@@ -1,5 +1,4 @@
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/domain/auth_domain.dart';
 import '../auth_ui.dart';
