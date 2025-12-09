@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/ui/auth_ui.dart'; // 👈 CustomTextField y PrimaryButton
-
+import 'package:app/app_routes.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -86,7 +86,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   LetterNavButton(
                     letter: "Registrarse",
-                    onTap: () {},
+                    onTap: () {Navigator.pushNamed(context, AppRoutes.register);},
                     fontSize: 16,
                   ),
                 ],
