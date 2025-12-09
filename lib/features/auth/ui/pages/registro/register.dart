@@ -196,6 +196,42 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
               PrimaryButton(
                 text: 'Registrarse',
                 onPressed: () {
+                  if (nameController.text.isEmpty ||
+                      lastNameController.text.isEmpty ||
+                      emailController.text.isEmpty ||
+                      usernameController.text.isEmpty ||
+                      passwordController.text.isEmpty ||
+                      selectedRole == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Por favor, rellena todos los campos"),
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (phoneController.text == "" &&
+                      caregiverPhoneController.text == "" &&
+                      selectedRole == "patient") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Por favor, ingresa al menos un teléfono",
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (selectedRole == "doctor" &&
+                      doctorCodeController.text != "DOCTOR2025") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Código de doctor inválido"),
+                      ),
+                    );
+                    return;
+                  }
                   final user = User(
                     id: null,
                     name: nameController.text,
