@@ -10,7 +10,7 @@ class LoginPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 👇 Contenido principal centrado
+            // Contenido principal centrado
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
@@ -18,14 +18,16 @@ class LoginPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        "Iniciar Sesión",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 90),
+                        child: const Text(
+                          "Iniciar Sesión",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 40),
 
                       CustomTextField(
                         label: 'Usuario',
@@ -52,9 +54,15 @@ class LoginPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 59),
                       PrimaryButton(text: 'Entrar', onPressed: () {}),
-
+                      const SizedBox(height: 25),
+                      LetterNavButton(
+                        letter: "Cambiar contraseña",
+                        onTap: () {},
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 255, 27, 118),
+                      ),
                       const SizedBox(height: 20),
                     ],
                   ),
