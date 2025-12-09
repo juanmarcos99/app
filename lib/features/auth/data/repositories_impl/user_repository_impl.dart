@@ -20,4 +20,9 @@ class UserRepositoryImpl implements UserRepository {
     );
     return await localDataSource.insertUser(userModel);
   }
+
+  @override
+  Future<int> loginUser(String username, String password) async {
+    return await localDataSource.autentcateUser(username, password);
+  }
 }

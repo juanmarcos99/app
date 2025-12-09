@@ -1,3 +1,4 @@
+import 'package:app/features/auth/domain/use_cases/login_user.dart';
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/domain/auth_domain.dart';
@@ -5,18 +6,18 @@ import '../auth_ui.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
+  final LoginUser loginUser;
   final RegisterPatient registerPatient;
 
   int? _userId; // userId generado por la BD
   User? user; // usuario ya con id
 
-  AuthBloc(this.registerUser, this.registerPatient) : super(AuthInitial()) {
+  AuthBloc(this.registerUser,this.loginUser, this.registerPatient) : super(AuthInitial()) {
     // Se registra el usuario
     on<RegisterUserEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        _userId = await registerUser(event.user);
-        
+        _userId = await registerUser(event.user);        
         if (_userId==-2) {
            emit(UserNameExist());
         }else{

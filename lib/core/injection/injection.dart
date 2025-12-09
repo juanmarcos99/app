@@ -1,4 +1,5 @@
 import 'package:app/features/auth/data/repositories_impl/patient_repository_impl.dart';
+import 'package:app/features/auth/domain/use_cases/login_user.dart';
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
@@ -40,10 +41,13 @@ sl.registerLazySingleton<PatientRepository>(
   sl.registerLazySingleton<RegisterPatient>(
     () => RegisterPatient(sl<PatientRepository>()),
   );
+  sl.registerLazySingleton<LoginUser>(
+    () => LoginUser(sl<UserRepository>()),
+  );
  
 
   // Bloc
   sl.registerFactory<AuthBloc>(
-  () => AuthBloc(sl<RegisterUser>(), sl<RegisterPatient>()),
+  () => AuthBloc(sl<RegisterUser>(),sl<LoginUser>(), sl<RegisterPatient>()),
 );
 }
