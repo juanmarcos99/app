@@ -95,7 +95,7 @@ class _RegisterState extends State<Register> {
 
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
-                value: selectedRole,
+                initialValue: selectedRole,
                 items: const [
                   DropdownMenuItem(value: "patient", child: Text("Paciente")),
                   DropdownMenuItem(value: "doctor", child: Text("Doctor")),

@@ -1,5 +1,4 @@
 import 'package:app/core/injection/injection.dart';
-import 'package:app/features/auth/ui/pages/register.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +17,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>())],
-      child: MaterialApp(home: const Register()),
+      child: MaterialApp(home: const RegisterUserPage()),
     );
   }
 }
