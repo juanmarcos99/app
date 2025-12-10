@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/features/auth/auth.dart'; // 👈 tu bloc y modelos
+import 'package:app/core/theme/style/colors.dart';
+import 'package:app/features/auth/auth.dart'; //bloc y modelos
 
 class RegisterUserPage extends StatefulWidget {
   const RegisterUserPage({super.key});
@@ -17,7 +18,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   final phoneController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-
+  //controles para los campos adicionales
   final caregiverEmailController = TextEditingController();
   final caregiverPhoneController = TextEditingController();
   final doctorCodeController = TextEditingController();
@@ -27,13 +28,18 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
+      //listener q esta a la escucha de los estados y raciona a ellos
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          // si el usuario se registro completamente navega a otra pantalla
           if (state is UserFullyRegistrated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Bienvenido ${state.user.name}")),
             );
           }
+
+          //si el nombre de usuario existe envia un aviso
           if (state is UserNameExist) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -41,6 +47,8 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
               ),
             );
           }
+
+          // si se registro el usuario pero es un paciente se registra el los datos del paciente tambien
           if (state is UserRegistrated) {
             if (state.user.role == 'patient') {
               final patient = Patient(
@@ -51,12 +59,15 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
               context.read<AuthBloc>().add(RegisterPatientEvent(patient));
             }
           }
+
+          //si ocurre un error se envia un aviso
           if (state is AuthFailure) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
+        //------------------------parte visual-----------------------------------------
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 29, vertical: 16),
           child: Column(
@@ -196,6 +207,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
               PrimaryButton(
                 text: 'Registrarse',
                 onPressed: () {
+                  //se validan q los campos esten llenos
                   if (nameController.text.isEmpty ||
                       lastNameController.text.isEmpty ||
                       emailController.text.isEmpty ||
@@ -209,7 +221,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     );
                     return;
                   }
-
+                  //se valida q haya al menos un telefono
                   if (phoneController.text == "" &&
                       caregiverPhoneController.text == "" &&
                       selectedRole == "patient") {
@@ -222,7 +234,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     );
                     return;
                   }
-
+                  //se valida q el codigo del doctor este bien escrito
                   if (selectedRole == "doctor" &&
                       doctorCodeController.text != "DOCTOR2025") {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -232,6 +244,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                     );
                     return;
                   }
+                  //se crea el usuer para enviarselo al bloc
                   final user = User(
                     id: null,
                     name: nameController.text,

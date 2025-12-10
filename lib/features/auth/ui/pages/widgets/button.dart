@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/core/core.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -9,7 +10,7 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = const Color.fromARGB(255, 16, 116, 198), // azul oscuro por defecto
+    this.color = AppColors.primary, // azul oscuro por defecto
   });
 
   @override
@@ -23,8 +24,8 @@ class PrimaryButton extends StatelessWidget {
           BoxShadow(
             // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.25), // 👈 color de la sombra
-            blurRadius: 8, // 👈 qué tan difusa es
-            offset: const Offset(0, 4), // 👈 posición (x,y)
+            blurRadius: 8, // qué tan difusa es
+            offset: const Offset(0, 5), // posición (x,y)
           ),
         ],
       ),
@@ -40,7 +41,7 @@ class PrimaryButton extends StatelessWidget {
         child: Text(
           text.toUpperCase(),
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.white,
             fontWeight: FontWeight.bold,
             fontSize: 16,
             letterSpacing: 1.2,

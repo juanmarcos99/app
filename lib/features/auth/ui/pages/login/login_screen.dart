@@ -1,12 +1,15 @@
+import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/ui/auth_ui.dart'; // 👈 CustomTextField y PrimaryButton
 import 'package:app/app_routes.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -61,7 +64,7 @@ class LoginPage extends StatelessWidget {
                         letter: "Cambiar contraseña",
                         onTap: () {},
                         fontSize: 13,
-                        color: Color.fromARGB(255, 255, 27, 118),
+                        color: Color.fromARGB(255, 255, 55, 135),
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -86,7 +89,9 @@ class LoginPage extends StatelessWidget {
                   ),
                   LetterNavButton(
                     letter: "Registrarse",
-                    onTap: () {Navigator.pushNamed(context, AppRoutes.register);},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.register);
+                    },
                     fontSize: 16,
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -24,19 +25,22 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 73, 112, 144)),
+        labelStyle: const TextStyle(color: AppColors.grey),
         enabledBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(color: Color.fromARGB(255, 212, 212, 212), width: 1),
+          borderSide: BorderSide(
+            color: Color.fromARGB(255, 212, 212, 212),
+            width: 1,
+          ),
         ),
-        
+
         focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 28, 153, 255), width: 2),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
-        
+
         border: const UnderlineInputBorder(),
         filled: true,
-        fillColor: const Color.fromARGB(255, 253, 250, 250),
-        prefixIcon: Icon(icon, color: const Color.fromARGB(255, 28, 153, 255)),
+        fillColor: AppColors.white,
+        prefixIcon: Icon(icon, color: AppColors.primary),
       ),
     );
   }
