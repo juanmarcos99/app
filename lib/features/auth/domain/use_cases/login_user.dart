@@ -4,7 +4,7 @@ class LoginUser {
 
   LoginUser(this.userRepository);
 
-  Future<int> call(String username, String password) async {
+  Future<User?> call(String username, String password) async {
     return await userRepository.loginUser(username, password);
   }
 }

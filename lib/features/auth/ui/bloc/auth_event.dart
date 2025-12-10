@@ -14,3 +14,8 @@ class RegisterPatientEvent extends AuthEvent {
 }
 
 //eventos para el registro
+class LoginUserEvent extends AuthEvent {
+  final String username;
+  final String password;
+  LoginUserEvent(this.username, this.password);
+}

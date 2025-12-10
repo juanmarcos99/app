@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 abstract class UserLocalDataSource {
   Future<int> insertUser(UserModel user);
   Future<UserModel?> getUserById(int id);
-  Future<int> autentcateUser(String username, String password);
+  Future<UserModel?> autentcateUser(String username, String password);
   Future<UserModel?> getUserByUsername(String username);
   Future<void> updatePassword(String username, String newPasswordHash);
 }
@@ -66,13 +66,13 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
       whereArgs: [username],
     );
   }
-  
+
   @override
-  Future<int> autentcateUser(String username, String password) async{
+  Future<UserModel?> autentcateUser(String username, String password) async {
     final user = await getUserByUsername(username);
-      if (user != null && user.passwordHash == password) {
-        return 1; // Login exitoso
-      }
-      return -1; // Credenciales inválidas
+    if (user != null && user.passwordHash == password) {
+      return user; // Login exitoso
+    }
+    return null; // Credenciales inválidas
   }
 }

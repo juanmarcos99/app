@@ -30,3 +30,7 @@ class UserLoggedIn extends AuthState {
   final User user;
   UserLoggedIn(this.user);
 }
+class AuthFailureLogin extends AuthState {
+  final String message;
+  AuthFailureLogin(this.message);
+}

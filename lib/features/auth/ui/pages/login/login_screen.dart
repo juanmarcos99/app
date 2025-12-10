@@ -1,103 +1,148 @@
 import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:app/features/auth/ui/auth_ui.dart'; // 👈 CustomTextField y PrimaryButton
+import 'package:app/features/auth/ui/auth_ui.dart';
 import 'package:app/app_routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    //Controladores para capturar texto
+    final usernameController = TextEditingController();
+    final passwordController = TextEditingController();
+
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Contenido principal centrado
-            Expanded(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 90),
-                        child: const Text(
-                          "Iniciar Sesión",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+        child: BlocListener<AuthBloc, AuthState>(
+          
+          listener: (context, state) {
+            
+            if (state is AuthFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+
+            if (state is UserLoggedIn) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Bienvenido ${state.user.passwordHash}"),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          },
+          child: Column(
+            children: [
+              // Contenido principal centrado
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 90),
+                          child: Text(
+                            "Iniciar Sesión",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
 
-                      CustomTextField(
-                        label: 'Usuario',
-                        hint: '',
-                        icon: Icons.person_outline,
-                      ),
-                      const SizedBox(height: 20),
+                        // Campo usuario
+                        CustomTextField(
+                          label: 'Usuario',
+                          hint: '',
+                          icon: Icons.person_outline,
+                          controller: usernameController, // 👈 capturamos texto
+                        ),
+                        const SizedBox(height: 20),
 
-                      CustomTextField(
-                        label: 'Contraseña',
-                        hint: '',
-                        icon: Icons.lock_outline,
-                        obscure: true,
-                      ),
-                      const SizedBox(height: 10),
+                        // Campo contraseña
+                        CustomTextField(
+                          label: 'Contraseña',
+                          hint: '',
+                          icon: Icons.lock_outline,
+                          obscure: true,
+                          controller: passwordController, // capturamos texto
+                        ),
+                        const SizedBox(height: 10),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          LetterNavButton(
-                            letter: "Olvidaste tu contraseña?",
-                            onTap: () {},
-                            fontSize: 13,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 59),
-                      PrimaryButton(text: 'Entrar', onPressed: () {}),
-                      const SizedBox(height: 25),
-                      LetterNavButton(
-                        letter: "Cambiar contraseña",
-                        onTap: () {},
-                        fontSize: 13,
-                        color: Color.fromARGB(255, 255, 55, 135),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            LetterNavButton(
+                              letter: "Olvidaste tu contraseña?",
+                              onTap: () {},
+                              fontSize: 13,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 59),
+
+                        // Botón login
+                        PrimaryButton(
+                          text: 'Entrar',
+                          onPressed: () {
+                            final username = usernameController.text.trim();
+                            final password = passwordController.text.trim();
+
+                            context.read<AuthBloc>().add(
+                              LoginUserEvent(username, password),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 25),
+                        LetterNavButton(
+                          letter: "Cambiar contraseña",
+                          onTap: () {},
+                          fontSize: 13,
+                          color: const Color.fromARGB(255, 255, 55, 135),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Bloque fijo al final
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Aun no tienes cuenta?",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w400,
+              // Bloque fijo al final
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Aun no tienes cuenta?",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  LetterNavButton(
-                    letter: "Registrarse",
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.register);
-                    },
-                    fontSize: 16,
-                  ),
-                ],
+                    LetterNavButton(
+                      letter: "Registrarse",
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.register);
+                      },
+                      fontSize: 16,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

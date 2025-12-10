@@ -22,7 +22,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<int> loginUser(String username, String password) async {
+  Future<UserModel?> loginUser(String username, String password) async {
     return await localDataSource.autentcateUser(username, password);
   }
 }
