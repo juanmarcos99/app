@@ -24,7 +24,6 @@ class MainApp extends StatelessWidget {
           AppRoutes.login: (context) => const LoginPage(),
           AppRoutes.register: (context) => const RegisterUserPage(),
         },
-        home: const LoginPage(),
       ),
     );
   }

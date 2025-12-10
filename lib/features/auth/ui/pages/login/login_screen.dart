@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  int p = 0; // 👈 persiste entre builds
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,6 @@ class _LoginPageState extends State<LoginPage> {
               current is AuthFailure || current is UserLoggedIn,
           listener: (context, state) {
             if (state is AuthFailure) {
-              p++;
-              print("Intento fallido número: $p");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
