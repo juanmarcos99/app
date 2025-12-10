@@ -6,7 +6,8 @@ import 'package:get_it/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await init(); // inyecto las dependencias
+  await initCoreDependencies();
+  initAuthDependencies();
   runApp(const MainApp());
 }
 
@@ -19,11 +20,12 @@ class MainApp extends StatelessWidget {
       providers: [BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>())],
       child: MaterialApp(
         initialRoute: AppRoutes.login,
-      routes: {
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.register: (context) => const RegisterUserPage(),
-      },
-        home: const LoginPage()),
+        routes: {
+          AppRoutes.login: (context) => const LoginPage(),
+          AppRoutes.register: (context) => const RegisterUserPage(),
+        },
+        home: const LoginPage(),
+      ),
     );
   }
 }

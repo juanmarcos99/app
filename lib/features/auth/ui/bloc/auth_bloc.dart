@@ -1,6 +1,5 @@
 import 'package:app/features/auth/domain/use_cases/login_user.dart';
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/domain/auth_domain.dart';
 import '../auth_ui.dart';
@@ -76,8 +75,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //------------------------------------------------------------------------
     //                        Blocs para el login
     //------------------------------------------------------------------------
-    on<LoginUserEvent>((event, emit) async {
-     
+    on<LoginUserEvent>((event, emit) async {     
       try {
         final loggedUser = await loginUser(event.username, event.password);
         if (loggedUser != null) {

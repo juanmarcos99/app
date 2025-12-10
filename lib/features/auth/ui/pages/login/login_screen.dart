@@ -1,26 +1,32 @@
-import 'package:app/core/theme/style/colors.dart';
+import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:app/features/auth/ui/auth_ui.dart';
-import 'package:app/app_routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/auth/auth.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //Controladores para capturar texto
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
+  State<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends State<LoginPage> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  int p = 0; // 👈 persiste entre builds
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
-        child: BlocListener<AuthBloc, AuthState>(
-          
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listenWhen: (previous, current) =>
+              current is AuthFailure || current is UserLoggedIn,
           listener: (context, state) {
-            
             if (state is AuthFailure) {
+              p++;
+              print("Intento fallido número: $p");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
@@ -32,117 +38,110 @@ class LoginPage extends StatelessWidget {
             if (state is UserLoggedIn) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Bienvenido ${state.user.passwordHash}"),
+                  content: Text("Bienvenido ${state.user.userName}"),
                   backgroundColor: Colors.green,
                 ),
               );
+              // Ejemplo: navegar a home
+              // Navigator.pushReplacementNamed(context, AppRoutes.home);
             }
           },
-          child: Column(
-            children: [
-              // Contenido principal centrado
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 90),
-                          child: Text(
-                            "Iniciar Sesión",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+          builder: (context, state) {
+            return Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 90),
+                            child: Text(
+                              "Iniciar Sesión",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-
-                        // Campo usuario
-                        CustomTextField(
-                          label: 'Usuario',
-                          hint: '',
-                          icon: Icons.person_outline,
-                          controller: usernameController, // 👈 capturamos texto
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Campo contraseña
-                        CustomTextField(
-                          label: 'Contraseña',
-                          hint: '',
-                          icon: Icons.lock_outline,
-                          obscure: true,
-                          controller: passwordController, // capturamos texto
-                        ),
-                        const SizedBox(height: 10),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            LetterNavButton(
-                              letter: "Olvidaste tu contraseña?",
-                              onTap: () {},
-                              fontSize: 13,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 59),
-
-                        // Botón login
-                        PrimaryButton(
-                          text: 'Entrar',
-                          onPressed: () {
-                            final username = usernameController.text.trim();
-                            final password = passwordController.text.trim();
-
-                            context.read<AuthBloc>().add(
-                              LoginUserEvent(username, password),
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 25),
-                        LetterNavButton(
-                          letter: "Cambiar contraseña",
-                          onTap: () {},
-                          fontSize: 13,
-                          color: const Color.fromARGB(255, 255, 55, 135),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
+                          CustomTextField(
+                            label: 'Usuario',
+                            hint: '',
+                            icon: Icons.person_outline,
+                            controller: usernameController,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            label: 'Contraseña',
+                            hint: '',
+                            icon: Icons.lock_outline,
+                            obscure: true,
+                            controller: passwordController,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              LetterNavButton(
+                                letter: "Olvidaste tu contraseña?",
+                                onTap: () {},
+                                fontSize: 13,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 59),
+                          PrimaryButton(
+                            text: 'Entrar',
+                            onPressed: () {
+                              print("presionado");
+                              final username = usernameController.text.trim();
+                              final password = passwordController.text.trim();
+                              context.read<AuthBloc>().add(
+                                LoginUserEvent(username, password),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 25),
+                          LetterNavButton(
+                            letter: "Cambiar contraseña",
+                            onTap: () {},
+                            fontSize: 13,
+                            color: const Color.fromARGB(255, 255, 55, 135),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-
-              // Bloque fijo al final
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Aun no tienes cuenta?",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w400,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Aun no tienes cuenta?",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                    LetterNavButton(
-                      letter: "Registrarse",
-                      onTap: () {
-                        Navigator.pushNamed(context, AppRoutes.register);
-                      },
-                      fontSize: 16,
-                    ),
-                  ],
+                      LetterNavButton(
+                        letter: "Registrarse",
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.register);
+                        },
+                        fontSize: 16,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          },
         ),
       ),
     );
