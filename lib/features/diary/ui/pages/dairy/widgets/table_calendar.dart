@@ -61,7 +61,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
           // 👇 Día actual
           todayDecoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.orange,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.deepOrange, width: 2),
           ),

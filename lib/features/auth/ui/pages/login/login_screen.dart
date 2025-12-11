@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -14,7 +13,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
- 
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                   content: Text("Bienvenido ${state.user.userName}"),
                   backgroundColor: Colors.green,
                 ),
-              );              
+              );
               Navigator.pushNamed(context, AppRoutes.diary);
             }
           },
@@ -54,16 +52,16 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 90),
-                            child: Text(
-                              "Iniciar Sesión",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          const Text(
+                            "Iniciar Sesión",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                          const SizedBox(height: 30),
+
+                          // 👇 Campos de texto
                           CustomTextField(
                             label: 'Usuario',
                             hint: '',
@@ -93,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
                           PrimaryButton(
                             text: 'Entrar',
                             onPressed: () {
-                              print("presionado");
                               final username = usernameController.text.trim();
                               final password = passwordController.text.trim();
                               context.read<AuthBloc>().add(

@@ -10,7 +10,7 @@ class DiaryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text("Diario de crisis", style: TextStyle(color: AppColors.white),),
+        title: const Text("Diario", style: TextStyle(color: AppColors.white)),
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),

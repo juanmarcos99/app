@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>())],
       child: MaterialApp(
-        initialRoute: AppRoutes.diary,
+        initialRoute: AppRoutes.login,
         routes: {
           AppRoutes.login: (context) => const LoginPage(),
           AppRoutes.register: (context) => const RegisterUserPage(),
