@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -39,9 +40,8 @@ class _LoginPageState extends State<LoginPage> {
                   content: Text("Bienvenido ${state.user.userName}"),
                   backgroundColor: Colors.green,
                 ),
-              );
-              // Ejemplo: navegar a home
-              // Navigator.pushReplacementNamed(context, AppRoutes.home);
+              );              
+              Navigator.pushNamed(context, AppRoutes.diary);
             }
           },
           builder: (context, state) {
