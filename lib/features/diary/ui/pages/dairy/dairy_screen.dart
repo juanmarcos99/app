@@ -1,3 +1,4 @@
+import 'package:app/features/diary/ui/pages/dairy/widgets/register_crisis_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/diary/ui/diary_ui.dart';
 import 'package:app/core/theme/style/colors.dart';
@@ -22,52 +23,41 @@ class DiaryPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 👆 Calendario con altura fija
+            // Calendario con altura fija
             const SizedBox(height: 350, child: DiaryCalendar()),
-
-            // 👇 Botones pegados justo debajo del calendario
+            // Botones pegados justo debajo del calendario
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text(
-                      "Añadir crisis",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  CustomActionButton(
+                    text: "Añadir crisis",
+                    icon: Icons.add,
+                    backgroundColor: AppColors.primary,
                     onPressed: () {
-                      // Acción para añadir crisis
+                      showDialog(
+                        context: context,
+                        builder: (context) => const RegisterCrisisDialog(),
+                      );
                     },
                   ),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text(
-                      "Efecto adverso",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  CustomActionButton(
+                    text: "Añadir Efecto",
+                    icon: Icons.add,
+                    backgroundColor: AppColors.secundary,
                     onPressed: () {
-                      // Acción para efecto adverso
+                      showDialog(
+                        context: context,
+                        builder: (context) => const RegistroEfectDialog(),
+                      );
                     },
                   ),
                 ],
               ),
             ),
 
-            // 👇 Espacio para el resto del contenido
+            //  Espacio para el resto del contenido
             const Expanded(
               child: Center(child: Text("Aquí va el contenido inferior")),
             ),
@@ -75,7 +65,7 @@ class DiaryPage extends StatelessWidget {
         ),
       ),
 
-      // 👇 Pie de pantalla con iconos de píldoras y usuario
+      //  Pie de pantalla con iconos de píldoras y usuario
       bottomNavigationBar: Container(
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),

@@ -16,76 +16,95 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.primary, // 👈 fondo azul detrás del calendario
+      color: Colors.white, // fondo blanco del calendario
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: TableCalendar(
         locale: 'es_ES',
         firstDay: DateTime.utc(2020, 1, 1),
-        lastDay: DateTime.utc(2030, 12, 31),
+        lastDay: DateTime.now(), // 👈 límite: hoy
         focusedDay: focusedDay,
         selectedDayPredicate: (day) => isSameDay(selectedDay, day),
         onDaySelected: (day, newFocusedDay) {
+          // 👇 validamos que no sea un día futuro
+          if (day.isAfter(DateTime.now())) return;
+
           setState(() {
             selectedDay = day;
-            // 👇 siempre actualizar el mes enfocado
             focusedDay = day;
           });
         },
         calendarFormat: CalendarFormat.month,
         startingDayOfWeek: StartingDayOfWeek.monday,
+
         headerStyle: const HeaderStyle(
           formatButtonVisible: false,
           titleCentered: true,
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
-          leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-          rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
+          titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
+          leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
+          rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
         ),
+
         calendarStyle: CalendarStyle(
           cellMargin: const EdgeInsets.all(2),
-
-          // 👇 Días del mes actual
-          defaultDecoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          weekendDecoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
-
-          // 👇 Día seleccionado
-          selectedDecoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(4),
-          ),
-
-          // 👇 Día actual
-          todayDecoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.deepOrange, width: 2),
-          ),
-
-          // 👇 Texto de días del mes actual
-          defaultTextStyle: const TextStyle(color: Colors.black),
-          weekendTextStyle: const TextStyle(color: Colors.black),
-          selectedTextStyle: const TextStyle(color: Colors.white),
-          todayTextStyle: const TextStyle(color: Colors.black),
-
-          // 👇 Días de otro mes (fuera del mes actual)
-          outsideDecoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          outsideTextStyle: const TextStyle(color: Colors.grey), // 👈 letra gris
+          outsideTextStyle: const TextStyle(color: Colors.grey),
         ),
+
         daysOfWeekStyle: const DaysOfWeekStyle(
-          weekdayStyle: TextStyle(
-            color: Colors.white,
-          ), // días LUN-VIE en blanco
-          weekendStyle: TextStyle(
-            color: Colors.white,
-          ), // días SÁB-DOM en blanco
+          weekdayStyle: TextStyle(color: Colors.black),
+          weekendStyle: TextStyle(color: Colors.black),
+        ),
+
+        // Personalización de celdas
+        calendarBuilders: CalendarBuilders(
+          defaultBuilder: (context, day, focusedDay) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                '${day.day}',
+                style: const TextStyle(color: Colors.black),
+              ),
+            );
+          },
+          todayBuilder: (context, day, focusedDay) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.secundary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                '${day.day}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+          selectedBuilder: (context, day, focusedDay) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                '${day.day}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

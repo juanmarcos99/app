@@ -29,6 +29,11 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        automaticallyImplyLeading: true, // muestra la flechita
+      ),
       //listener q esta a la escucha de los estados y raciona a ellos
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -67,13 +72,14 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
+
         //------------------------parte visual-----------------------------------------
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 29, vertical: 16),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 55),
+                padding: const EdgeInsets.only(top: 5),
                 child: const Text(
                   "Crear Cuenta",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),

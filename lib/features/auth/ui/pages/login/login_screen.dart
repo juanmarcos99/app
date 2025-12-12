@@ -60,8 +60,14 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 30),
+                          Image.asset(
+                            'assets/images/login.png',
+                            height: 240,
+                            width: 320,
+                          ),
 
-                          // 👇 Campos de texto
+                          const SizedBox(height: 5),
+                          //  Campos de texto
                           CustomTextField(
                             label: 'Usuario',
                             hint: '',
