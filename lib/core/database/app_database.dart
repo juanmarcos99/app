@@ -35,6 +35,29 @@ class AppDatabase {
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         ''');
+
+        // Tabla de crisis (registro principal)
+        await db.execute('''
+          CREATE TABLE crisis (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fechaRegistro TEXT NOT NULL,   -- fecha en que se registró
+            fechaCrisis TEXT NOT NULL,     -- día en que ocurrió la crisis
+            usuarioId INTEGER NOT NULL,    -- usuario que registró la crisis
+            FOREIGN KEY (usuarioId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        ''');
+
+        // Tabla de detalles de crisis (episodios dentro de una crisis)
+        await db.execute('''
+          CREATE TABLE crisis_detalle (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            crisisId INTEGER NOT NULL,     -- relación con crisis
+            horario TEXT NOT NULL,         -- intervalo horario
+            tipo TEXT NOT NULL,            -- tipo de crisis
+            cantidad INTEGER NOT NULL,     -- número de crisis en ese horario
+            FOREIGN KEY (crisisId) REFERENCES crisis(id) ON DELETE CASCADE
+          )
+        ''');
       },
     );
 
