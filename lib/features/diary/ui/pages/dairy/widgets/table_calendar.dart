@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app/core/theme/style/colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/diary/ui/diary_ui.dart';
+
 
 class DiaryCalendar extends StatefulWidget {
   const DiaryCalendar({super.key});
@@ -21,17 +24,19 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
       child: TableCalendar(
         locale: 'es_ES',
         firstDay: DateTime.utc(2020, 1, 1),
-        lastDay: DateTime.now(), // 👈 límite: hoy
+        lastDay: DateTime.now(), // límite: hoy
         focusedDay: focusedDay,
         selectedDayPredicate: (day) => isSameDay(selectedDay, day),
         onDaySelected: (day, newFocusedDay) {
-          // 👇 validamos que no sea un día futuro
+          // validamos que no sea un día futuro
           if (day.isAfter(DateTime.now())) return;
 
           setState(() {
             selectedDay = day;
             focusedDay = day;
           });
+          // avisar al Bloc
+          context.read<DiaryBloc>().add(SelectDayEvent(day));
         },
         calendarFormat: CalendarFormat.month,
         startingDayOfWeek: StartingDayOfWeek.monday,

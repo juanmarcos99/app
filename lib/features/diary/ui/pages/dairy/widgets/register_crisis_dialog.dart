@@ -1,5 +1,6 @@
 import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:app/features/diary/dairy.dart'; // importa tu entidad
 
 class RegisterCrisisDialog extends StatefulWidget {
   const RegisterCrisisDialog({super.key});
@@ -27,15 +28,10 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
   ];
 
   final cantidadController = TextEditingController();
-  final List<Map<String, TextEditingController>> otrosCampos = [];
 
   @override
   void dispose() {
     cantidadController.dispose();
-    for (var campo in otrosCampos) {
-      campo['descripcion']?.dispose();
-      campo['cantidad']?.dispose();
-    }
     super.dispose();
   }
 
@@ -46,17 +42,14 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: const Text("Registro de Crisis"),
       content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9, // más ancho
-        height: MediaQuery.of(context).size.height * 0.6, // más alto
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.6,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Horario
               DropdownButtonFormField<String>(
                 value: horario,
-                items: horarios.map((h) {
-                  return DropdownMenuItem(value: h, child: Text(h));
-                }).toList(),
+                items: horarios.map((h) => DropdownMenuItem(value: h, child: Text(h))).toList(),
                 onChanged: (value) => setState(() => horario = value),
                 decoration: const InputDecoration(
                   labelText: "Horario",
@@ -65,17 +58,10 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               ),
               const SizedBox(height: 20),
 
-              // Tipo de crisis (desplegable)
               DropdownButtonFormField<String>(
                 value: tipoSeleccionado,
-                items: tiposCrisis.map((t) {
-                  return DropdownMenuItem(value: t, child: Text(t));
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    tipoSeleccionado = value;
-                  });
-                },
+                items: tiposCrisis.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                onChanged: (value) => setState(() => tipoSeleccionado = value),
                 decoration: const InputDecoration(
                   labelText: "Tipo de crisis",
                   border: OutlineInputBorder(),
@@ -83,7 +69,6 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               ),
               const SizedBox(height: 20),
 
-              // Campo de cantidad (solo aparece si se eligió un tipo)
               if (tipoSeleccionado != null)
                 TextFormField(
                   controller: cantidadController,
@@ -93,60 +78,6 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
-
-              const SizedBox(height: 20),
-
-              // Campos dinámicos (otros tipos añadidos manualmente)
-              for (var i = 0; i < otrosCampos.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: TextFormField(
-                          controller: otrosCampos[i]['descripcion'],
-                          decoration: const InputDecoration(
-                            labelText: "Descripción",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 1,
-                        child: TextFormField(
-                          controller: otrosCampos[i]['cantidad'],
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: "Cantidad",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          setState(() {
-                            otrosCampos.removeAt(i);
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    otrosCampos.add({
-                      "descripcion": TextEditingController(),
-                      "cantidad": TextEditingController(),
-                    });
-                  });
-                },
-                icon: const Icon(Icons.add),
-                label: const Text("Añadir otro tipo"),
-              ),
             ],
           ),
         ),
@@ -158,22 +89,29 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
         ),
         ElevatedButton.icon(
           onPressed: () {
-            final horarioSel = horario ?? "";
-            final tipoSel = tipoSeleccionado ?? "";
-            final cantidad = cantidadController.text.trim();
+            // Validar campos
+            if (horario == null || tipoSeleccionado == null || cantidadController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Completa todos los campos")),
+              );
+              return;
+            }
 
-            print("Horario: $horarioSel, Tipo: $tipoSel, Cantidad: $cantidad");
+            // Construir CrisisDetalle
+            final detalle = CrisisDetalle(
+              id: null,
+              crisisId: 0, // se asignará al guardar la Crisis
+              horario: horario!,
+              tipo: tipoSeleccionado!,
+              cantidad: int.tryParse(cantidadController.text.trim()) ?? 0,
+            );
 
-            Navigator.pop(context);
+            // Devolverlo al que abrió el diálogo
+            Navigator.pop(context, detalle);
           },
           icon: const Icon(Icons.save, color: AppColors.white),
-          label: const Text(
-            "Guardar",
-            style: TextStyle(color: AppColors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-          ),
+          label: const Text("Guardar", style: TextStyle(color: AppColors.white)),
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
         ),
       ],
     );

@@ -1,7 +1,8 @@
-import 'package:app/features/diary/ui/pages/dairy/widgets/register_crisis_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/diary/ui/diary_ui.dart';
+import 'package:app/features/diary/domain/diary_domain.dart';
 import 'package:app/core/theme/style/colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DiaryPage extends StatelessWidget {
   const DiaryPage({super.key});
@@ -35,11 +36,28 @@ class DiaryPage extends StatelessWidget {
                     text: "Añadir crisis",
                     icon: Icons.add,
                     backgroundColor: AppColors.primary,
-                    onPressed: () {
-                      showDialog(
+
+                    onPressed: () async {
+                      // 1. Abrir el diálogo y esperar el detalle
+                      // 1. Abrir el diálogo y esperar el detalle
+                      final detalle = await showDialog<CrisisDetalle>(
                         context: context,
                         builder: (context) => const RegisterCrisisDialog(),
                       );
+                      // 2. Si el usuario guardó algo en el diálogo
+                      if (detalle != null) {
+                        final bloc = context.read<DiaryBloc>();
+                        final crisis = Crisis(
+                          id: null,
+                          fechaRegistro: DateTime.now(), // cuándo se registra
+                          fechaCrisis: bloc
+                              .selectedDay, // día que el usuario eligió en el calendario
+                          usuarioId: 1, // usuario actual
+                          detalles: [detalle], // lista con el detalle
+                        );
+                        // 4. Disparar el evento al Bloc
+                        bloc.add(AddCrisisEvent(crisis));
+                      }
                     },
                   ),
                   CustomActionButton(
