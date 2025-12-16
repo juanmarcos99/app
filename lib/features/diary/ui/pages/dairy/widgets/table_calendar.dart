@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:app/core/theme/style/colors.dart';
+import '../../../../diary.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/features/diary/ui/diary_ui.dart';
-
 
 class DiaryCalendar extends StatefulWidget {
   const DiaryCalendar({super.key});
@@ -19,25 +18,29 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white, // fondo blanco del calendario
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: TableCalendar(
         locale: 'es_ES',
         firstDay: DateTime.utc(2020, 1, 1),
-        lastDay: DateTime.now(), // límite: hoy
+        lastDay: DateTime.now(),
         focusedDay: focusedDay,
         selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+
         onDaySelected: (day, newFocusedDay) {
-          // validamos que no sea un día futuro
           if (day.isAfter(DateTime.now())) return;
 
+          // 🔥 Normalizamos la fecha para evitar desfases de zona horaria
+          final normalized = DateUtils.dateOnly(day);
+
           setState(() {
-            selectedDay = day;
-            focusedDay = day;
+            selectedDay = normalized;
+            focusedDay = normalized;
           });
-          // avisar al Bloc
-          context.read<DiaryBloc>().add(SelectDayEvent(day));
+
+          context.read<DiaryBloc>().add(DaySelectedEvent(normalized));
         },
+
         calendarFormat: CalendarFormat.month,
         startingDayOfWeek: StartingDayOfWeek.monday,
 
@@ -59,7 +62,6 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
           weekendStyle: TextStyle(color: Colors.black),
         ),
 
-        // Personalización de celdas
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, day, focusedDay) {
             return Container(
@@ -70,10 +72,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
               ),
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.all(4),
-              child: Text(
-                '${day.day}',
-                style: const TextStyle(color: Colors.black),
-              ),
+              child: Text('${day.day}', style: const TextStyle(color: Colors.black)),
             );
           },
           todayBuilder: (context, day, focusedDay) {

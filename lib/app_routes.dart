@@ -1,4 +1,4 @@
-import 'package:app/features/diary/dairy.dart';
+import 'package:app/features/diary/ui/pages/dairy/dairy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/ui/auth_ui.dart';
 

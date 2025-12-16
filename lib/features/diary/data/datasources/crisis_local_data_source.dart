@@ -1,61 +1,67 @@
-// data/datasources/crisis_local_data_source.dart
-import 'package:app/features/diary/data/diary_data.dart';
 import 'package:sqflite/sqflite.dart';
-
+import '../../diary.dart';
 
 abstract class CrisisLocalDataSource {
   Future<int> insertCrisis(CrisisModel crisis);
-  Future<void> updateCrisis(CrisisModel crisis);
-  Future<void> deleteCrisis(int id);
-  Future<CrisisModel?> getCrisisById(int id);
-  Future<List<CrisisModel>> getCrisisByUser(int userId);
-  Future<List<CrisisModel>> getCrisisByUserAndDate(int userId, DateTime date);
+  Future<List<CrisisModel>> getAllCrisisByUser(int userId);
+  Future<List<CrisisModel>> getCrisisByDateAndUser(String date, int userId);
+  Future<int> deleteCrisis(int id);
+  Future<int> updateCrisis(CrisisModel crisis);
 }
 
+// permite cambiar de DB sin que se afecte la app
 class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
   final Database db;
+
   CrisisLocalDataSourceImpl(this.db);
 
   @override
   Future<int> insertCrisis(CrisisModel crisis) async {
-    return await db.insert('crisis', crisis.toMap());
+    try {
+      return await db.insert('crisis', crisis.toMap());
+    } on DatabaseException {
+      // Manejo de errores de base de datos
+      return -1;
+    } catch (e) {
+      return -1;
+    }
   }
 
   @override
-  Future<void> updateCrisis(CrisisModel crisis) async {
-    await db.update(
+  Future<List<CrisisModel>> getAllCrisisByUser(int userId) async {
+    final result = await db.query(
+      'crisis',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+    return result.map((map) => CrisisModel.fromMap(map)).toList();
+  }
+
+  @override
+  Future<List<CrisisModel>> getCrisisByDateAndUser(
+    String date,
+    int userId,
+  ) async {
+    final result = await db.query(
+      'crisis',
+      where: 'crisisDate = ? AND userId = ?',
+      whereArgs: [date, userId],
+    );
+    return result.map((map) => CrisisModel.fromMap(map)).toList();
+  }
+
+  @override
+  Future<int> deleteCrisis(int id) async {
+    return await db.delete('crisis', where: 'id = ?', whereArgs: [id]);
+  }
+
+  @override
+  Future<int> updateCrisis(CrisisModel crisis) async {
+    return await db.update(
       'crisis',
       crisis.toMap(),
       where: 'id = ?',
       whereArgs: [crisis.id],
     );
   }
-
-  @override
-  Future<void> deleteCrisis(int id) async {
-    await db.delete('crisis', where: 'id = ?', whereArgs: [id]);
-  }
-
-  @override
-  Future<CrisisModel?> getCrisisById(int id) async {
-    final result = await db.query('crisis', where: 'id = ?', whereArgs: [id]);
-    return result.isNotEmpty ? CrisisModel.fromMap(result.first) : null;
-  }
-
-  @override
-  Future<List<CrisisModel>> getCrisisByUser(int userId) async {
-    final result = await db.query('crisis', where: 'usuarioId = ?', whereArgs: [userId]);
-    return result.map((m) => CrisisModel.fromMap(m)).toList();
-  }
-
-  @override
-  Future<List<CrisisModel>> getCrisisByUserAndDate(int userId, DateTime date) async {
-    final result = await db.query(
-      'crisis',
-      where: 'usuarioId = ? AND fechaCrisis = ?',
-      whereArgs: [userId, date.toIso8601String()],
-    );
-    return result.map((m) => CrisisModel.fromMap(m)).toList();
-  }
 }
-

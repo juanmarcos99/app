@@ -36,26 +36,17 @@ class AppDatabase {
           )
         ''');
 
-        // Tabla de crisis (registro principal)
+        // Tabla de crisis
         await db.execute('''
           CREATE TABLE crisis (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fechaRegistro TEXT NOT NULL,   -- fecha en que se registró
-            fechaCrisis TEXT NOT NULL,     -- día en que ocurrió la crisis
-            usuarioId INTEGER NOT NULL,    -- usuario que registró la crisis
-            FOREIGN KEY (usuarioId) REFERENCES users(id) ON DELETE CASCADE
-          )
-        ''');
-
-        // Tabla de detalles de crisis (episodios dentro de una crisis)
-        await db.execute('''
-          CREATE TABLE crisis_detalle (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            crisisId INTEGER NOT NULL,     -- relación con crisis
-            horario TEXT NOT NULL,         -- intervalo horario
-            tipo TEXT NOT NULL,            -- tipo de crisis
-            cantidad INTEGER NOT NULL,     -- número de crisis en ese horario
-            FOREIGN KEY (crisisId) REFERENCES crisis(id) ON DELETE CASCADE
+            registeredDate TEXT NOT NULL,   -- ISO 8601 completo
+            crisisDate TEXT NOT NULL,       -- YYYY-MM-DD
+            timeRange TEXT NOT NULL,        -- ej. "6:00 am - 10:00 am"
+            quantity INTEGER NOT NULL,
+            type TEXT NOT NULL,             -- ej. "Focal aware"
+            userId INTEGER NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         ''');
       },

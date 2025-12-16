@@ -1,28 +1,37 @@
-// data/models/crisis_model.dart
-import 'package:app/features/diary/dairy.dart';
+import '../../diary.dart';
 
 class CrisisModel extends Crisis {
   CrisisModel({
     super.id,
-    required super.fechaRegistro,
-    required super.fechaCrisis,
-    required super.usuarioId,
-    super.detalles = const [],
+    required super.registeredDate,
+    required super.crisisDate,
+    required super.timeRange,
+    required super.quantity,
+    required super.type,
+    required super.userId,
   });
 
-  // Convertir a Map para SQLite
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'fechaRegistro': fechaRegistro.toIso8601String(),
-        'fechaCrisis': fechaCrisis.toIso8601String(),
-        'usuarioId': usuarioId,
-      };
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'registeredDate': registeredDate.toIso8601String(),
+      'crisisDate': crisisDate.toIso8601String().split('T').first,
+      'timeRange': timeRange,
+      'quantity': quantity,
+      'type': type,
+      'userId': userId,
+    };
+  }
 
-  // Crear modelo desde Map
-  factory CrisisModel.fromMap(Map<String, dynamic> map) => CrisisModel(
-        id: map['id'] as int?,
-        fechaRegistro: DateTime.parse(map['fechaRegistro'] as String),
-        fechaCrisis: DateTime.parse(map['fechaCrisis'] as String),
-        usuarioId: map['usuarioId'] as int,
-      );
+  factory CrisisModel.fromMap(Map<String, dynamic> map) {
+    return CrisisModel(
+      id: map['id'],
+      registeredDate: DateTime.parse(map['registeredDate']),
+      crisisDate: DateTime.parse(map['crisisDate']),
+      timeRange: map['timeRange'],
+      quantity: map['quantity'],
+      type: map['type'],
+      userId: map['userId'],
+    );
+  }
 }

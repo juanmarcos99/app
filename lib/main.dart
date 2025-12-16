@@ -1,4 +1,5 @@
 import 'package:app/core/injection/injection.dart';
+import 'package:app/features/diary/diary.dart';
 import 'package:app/features/diary/ui/pages/dairy/dairy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
@@ -13,6 +14,7 @@ void main() async {
   await initializeDateFormatting('es_ES', null);
   await initCoreDependencies();
   initAuthDependencies();
+  initDiaryDependencies();
   runApp(const MainApp());
 }
 
@@ -22,7 +24,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>())],
+      providers: [
+        BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<DiaryBloc>()),
+      ],
       child: MaterialApp(
         initialRoute: AppRoutes.login,
         routes: {
