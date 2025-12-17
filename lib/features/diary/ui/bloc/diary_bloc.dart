@@ -1,28 +1,43 @@
+import 'package:app/features/diary/diary.dart';
+import 'package:app/features/auth/auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../diary.dart';
 
 class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
   final AddCrisis addCrisis;
+  final GetCrisesByDay getCrisesByDay;
 
-  // Día seleccionado como atributo del Bloc
-  DateTime? selectedDay;
+  ///Atributo que guarda el día seleccionado
+  DateTime daySelected = DateUtils.dateOnly(DateTime.now());
 
-  DiaryBloc(this.addCrisis) : super( DiaryInitial()) {
-    on<DaySelectedEvent>((event, emit) {
-      selectedDay = event.day;
-      emit(DaySelected(event.day)); 
+  DiaryBloc(this.addCrisis, this.getCrisesByDay) : super(DiaryInitial()) {
+    // Evento para cambiar el día
+    on<DayChangeEvent>((event, emit) {
+      // Normalizamos al inicio del día
+      daySelected = DateUtils.dateOnly(event.newDay);
+      emit(DayChangedState(daySelected));
     });
 
+    // Evento cargar las tarjetas
+    on<LoadTarjetasEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        final crises = await getCrisesByDay(DateUtils.dateOnly(event.date), event.userId);
+        emit(TarjetasLoaded(crises));
+      } catch (e) {
+        emit(TarjetasError(e.toString()));
+      }
+    });
+
+    //para añadir crisis
     on<AddCrisisEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
-        await addCrisis(
-          // puedes ajustar crisisDate en el use case o aquí
-          event.crisis.copyWith(crisisDate: selectedDay ?? DateTime.now()),
-        );
-        emit(CrisisAdded());
+        await addCrisis(event.crisis);
+        emit(CrisisAdded(event.crisis));
+        debugPrint("entro al bloc");
       } catch (e) {
-        emit(DiaryFailure(e.toString()));
+        emit(DiaryError(e.toString()));
       }
     });
   }

@@ -1,31 +1,37 @@
-import 'package:equatable/equatable.dart';
+import 'package:app/features/diary/diary.dart';
 
-abstract class DiaryState extends Equatable {
-  const DiaryState();
-
-  @override
-  List<Object?> get props => [];
-}
+abstract class DiaryState {}
 
 class DiaryInitial extends DiaryState {}
 
 class DiaryLoading extends DiaryState {}
 
-class CrisisAdded extends DiaryState {}
-
-class DiaryFailure extends DiaryState {
+class DiaryError extends DiaryState {
   final String message;
-
-  const DiaryFailure(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  DiaryError(this.message);
 }
 
-class DaySelected extends DiaryState {
+//estado para el cambio de día
+class DayChangedState extends DiaryState {
   final DateTime selectedDay;
-  const DaySelected(this.selectedDay);
+  DayChangedState(this.selectedDay);
+}
 
-  @override
-  List<Object?> get props => [selectedDay];
+//añade la crisis
+class CrisisAdded extends DiaryState {
+  final CrisisModel crisis;
+  CrisisAdded(this.crisis);
+}
+
+//para las tarjetas 
+class TarjetasLoaded extends DiaryState {
+  final List<Crisis> crises;
+
+  TarjetasLoaded(this.crises);
+}
+
+class TarjetasError extends DiaryState {
+  final String message;
+
+  TarjetasError(this.message);
 }

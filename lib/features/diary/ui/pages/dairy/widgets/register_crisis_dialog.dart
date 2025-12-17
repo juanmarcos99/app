@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:app/core/theme/style/colors.dart';
 
-/// Modelo de datos que devuelve el diálogo
 class CrisisFormResult {
+  final DateTime fecha;
   final String horario;
   final String tipo;
   final int cantidad;
 
   const CrisisFormResult({
+    required this.fecha,
     required this.horario,
     required this.tipo,
     required this.cantidad,
@@ -22,6 +23,8 @@ class RegisterCrisisDialog extends StatefulWidget {
 }
 
 class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
+  final DateTime fecha = DateTime.now();
+
   String? horario;
   String? tipoSeleccionado;
 
@@ -37,21 +40,18 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
     'Focales conscientes',
     'Focales inconscientes',
     'Tónico-clónico bilateral',
+    'Añadir otro tipo',
   ];
 
   final cantidadController = TextEditingController();
+  final descripcionController = TextEditingController();
 
   @override
   void dispose() {
     cantidadController.dispose();
+    descripcionController.dispose();
     super.dispose();
   }
-
-  bool get isValid =>
-      horario != null &&
-      tipoSeleccionado != null &&
-      cantidadController.text.isNotEmpty &&
-      int.tryParse(cantidadController.text) != null;
 
   @override
   Widget build(BuildContext context) {
@@ -61,35 +61,33 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
       title: const Text("Registro de Crisis"),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.55,
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Horario
+              const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
                 value: horario,
-                items: horarios
-                    .map((h) => DropdownMenuItem(value: h, child: Text(h)))
-                    .toList(),
+                items: horarios.map((h) => DropdownMenuItem(value: h, child: Text(h))).toList(),
                 onChanged: (value) => setState(() => horario = value),
-                decoration: const InputDecoration(
-                  labelText: "Horario",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
+
+              // Tipo de crisis
+              const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
                 value: tipoSeleccionado,
-                items: tiposCrisis
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
+                items: tiposCrisis.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
                 onChanged: (value) => setState(() => tipoSeleccionado = value),
-                decoration: const InputDecoration(
-                  labelText: "Tipo de crisis",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
-              if (tipoSeleccionado != null)
+
+              // Campos según selección
+              if (tipoSeleccionado != null && tipoSeleccionado != 'Añadir otro tipo')
                 TextFormField(
                   controller: cantidadController,
                   keyboardType: TextInputType.number,
@@ -98,6 +96,25 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
+
+              if (tipoSeleccionado == 'Añadir otro tipo') ...[
+                TextFormField(
+                  controller: descripcionController,
+                  decoration: const InputDecoration(
+                    labelText: "Descripción del tipo",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: cantidadController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Cantidad",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -108,21 +125,22 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: const Text("Cancelar"),
         ),
         ElevatedButton.icon(
-          onPressed: isValid
-              ? () {
-                  final result = CrisisFormResult(
-                    horario: horario!,
-                    tipo: tipoSeleccionado!,
-                    cantidad: int.parse(cantidadController.text),
-                  );
-                  Navigator.pop(context, result); // 🔥 devuelve los datos
-                }
-              : null,
+          // Siempre activo, sin validación previa
+          onPressed: () {
+            final tipoFinal = tipoSeleccionado == 'Añadir otro tipo'
+                ? descripcionController.text.trim()
+                : tipoSeleccionado ?? '';
+
+            final result = CrisisFormResult(
+              fecha: fecha,
+              horario: horario ?? '',
+              tipo: tipoFinal,
+              cantidad: int.tryParse(cantidadController.text.trim()) ?? 0,
+            );
+            Navigator.pop(context, result);
+          },
           icon: const Icon(Icons.save, color: AppColors.white),
-          label: const Text(
-            "Guardar",
-            style: TextStyle(color: AppColors.white),
-          ),
+          label: const Text("Guardar", style: TextStyle(color: AppColors.white)),
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
         ),
       ],

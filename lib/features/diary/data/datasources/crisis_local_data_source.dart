@@ -2,11 +2,12 @@ import 'package:sqflite/sqflite.dart';
 import '../../diary.dart';
 
 abstract class CrisisLocalDataSource {
-  Future<int> insertCrisis(CrisisModel crisis);
+  Future<int> addCrisis(CrisisModel crisis);
   Future<List<CrisisModel>> getAllCrisisByUser(int userId);
-  Future<List<CrisisModel>> getCrisisByDateAndUser(String date, int userId);
+  Future<List<CrisisModel>> getCrisisByDateAndUser(DateTime date, int userId);
   Future<int> deleteCrisis(int id);
   Future<int> updateCrisis(CrisisModel crisis);
+  Future<List<DateTime>> getCrisisDaysByUser(int userId);
 }
 
 // permite cambiar de DB sin que se afecte la app
@@ -16,7 +17,7 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
   CrisisLocalDataSourceImpl(this.db);
 
   @override
-  Future<int> insertCrisis(CrisisModel crisis) async {
+  Future<int> addCrisis(CrisisModel crisis) async {
     try {
       return await db.insert('crisis', crisis.toMap());
     } on DatabaseException {
@@ -36,18 +37,40 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
     );
     return result.map((map) => CrisisModel.fromMap(map)).toList();
   }
-
+//para las tarjetas 
   @override
   Future<List<CrisisModel>> getCrisisByDateAndUser(
-    String date,
+    DateTime date,
     int userId,
   ) async {
+    // Normalizamos la fecha a YYYY-MM-DD
+    final normalizedDay = DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).toIso8601String().split('T').first;
+
     final result = await db.query(
       'crisis',
       where: 'crisisDate = ? AND userId = ?',
-      whereArgs: [date, userId],
+      whereArgs: [normalizedDay, userId],
+      orderBy: 'registeredDate DESC',
     );
     return result.map((map) => CrisisModel.fromMap(map)).toList();
+  }
+
+//para mostrar los dias con crisis en el calendario
+  @override
+  Future<List<DateTime>> getCrisisDaysByUser(int userId) async {
+    final result = await db.rawQuery(
+      'SELECT DISTINCT crisisDate FROM crisis WHERE userId = ? ORDER BY crisisDate DESC',
+      [userId],
+    );
+
+    return result
+        .map((row) => DateTime.parse(row['crisisDate'] as String))
+        .map((d) => DateTime(d.year, d.month, d.day)) // normalizamos
+        .toList();
   }
 
   @override

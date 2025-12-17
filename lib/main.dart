@@ -1,6 +1,5 @@
 import 'package:app/core/injection/injection.dart';
 import 'package:app/features/diary/diary.dart';
-import 'package:app/features/diary/ui/pages/dairy/dairy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

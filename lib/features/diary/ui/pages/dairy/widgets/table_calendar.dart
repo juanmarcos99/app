@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:app/core/theme/style/colors.dart';
 import '../../../../diary.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/auth/auth.dart';
 
 class DiaryCalendar extends StatefulWidget {
   const DiaryCalendar({super.key});
@@ -30,15 +31,22 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
         onDaySelected: (day, newFocusedDay) {
           if (day.isAfter(DateTime.now())) return;
 
-          // 🔥 Normalizamos la fecha para evitar desfases de zona horaria
+          //Normalizamos la fecha para evitar desfases de zona horaria
           final normalized = DateUtils.dateOnly(day);
 
           setState(() {
             selectedDay = normalized;
             focusedDay = normalized;
           });
+          context.read<DiaryBloc>().add(DayChangeEvent(normalized));
 
-          context.read<DiaryBloc>().add(DaySelectedEvent(normalized));
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(userId: authState.user.id!, date: normalized),         
+            );
+            debugPrint("se obtuvo el userId:");
+          }
         },
 
         calendarFormat: CalendarFormat.month,
@@ -72,7 +80,10 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
               ),
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.all(4),
-              child: Text('${day.day}', style: const TextStyle(color: Colors.black)),
+              child: Text(
+                '${day.day}',
+                style: const TextStyle(color: Colors.black),
+              ),
             );
           },
           todayBuilder: (context, day, focusedDay) {

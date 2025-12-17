@@ -1,26 +1,18 @@
-import 'package:equatable/equatable.dart';
-import '../../diary.dart';
-
-abstract class DiaryEvent extends Equatable {
-  const DiaryEvent();
-
-  @override
-  List<Object?> get props => [];
-}
+import 'package:app/features/diary/diary.dart';
+abstract class DiaryEvent {}
 
 class AddCrisisEvent extends DiaryEvent {
-  final Crisis crisis;
-
-  const AddCrisisEvent(this.crisis);
-
-  @override
-  List<Object?> get props => [crisis];
+  final CrisisModel crisis;
+  AddCrisisEvent(this.crisis);
 }
 
-class DaySelectedEvent extends DiaryEvent {
-  final DateTime day;
-  const DaySelectedEvent(this.day);
+class DayChangeEvent extends DiaryEvent {
+  final DateTime newDay;
+  DayChangeEvent(this.newDay);
+}
 
-  @override
-  List<Object?> get props => [day];
+class LoadTarjetasEvent extends DiaryEvent {
+  final int userId;
+  final DateTime date;
+  LoadTarjetasEvent({required this.userId, required this.date});
 }
