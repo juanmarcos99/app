@@ -3,6 +3,7 @@ export 'domain/entities/crisis.dart';
 export 'domain/repositories/crisis_repository.dart';
 export 'domain/use_cases/add_crisis.dart';
 export 'domain/use_cases/get_crises_by_day_use.dart';
+export 'domain/use_cases/get_crises_by_day_and_user.dart';
 
 //data
 export 'data/datasources/crisis_local_data_source.dart';
@@ -15,6 +16,7 @@ export 'ui/pages/dairy/widgets/table_calendar.dart';
 export 'ui/pages/dairy/widgets/custom_action_button.dart';
 export 'ui/pages/dairy/widgets/register_crisis_dialog.dart';
 export 'ui/pages/dairy/widgets/register_efect_dialog.dart';
+export 'ui/pages/dairy/widgets/crisis_cards_by_day.dart';
 export 'ui/bloc/diary_event.dart';
 export 'ui/bloc/diary_state.dart';
 export 'ui/bloc/diary_bloc.dart';

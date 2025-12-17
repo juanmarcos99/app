@@ -22,9 +22,12 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetCrisesByDay>(
     () => GetCrisesByDay(sldiary<CrisisRepository>()),
   );
+  sldiary.registerLazySingleton<GetCrisesDays>(
+    () => GetCrisesDays(sldiary<CrisisRepository>()),
+  );
 
   // Bloc
   sldiary.registerLazySingleton<DiaryBloc>(
-    () => DiaryBloc(sldiary<AddCrisis>(), sldiary<GetCrisesByDay>()),
+    () => DiaryBloc(sldiary<AddCrisis>(), sldiary<GetCrisesByDay>(),sldiary<GetCrisesDays>() ),
   );
 }

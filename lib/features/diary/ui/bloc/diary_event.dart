@@ -16,3 +16,8 @@ class LoadTarjetasEvent extends DiaryEvent {
   final DateTime date;
   LoadTarjetasEvent({required this.userId, required this.date});
 }
+
+class LoadCalendarEvent extends DiaryEvent {
+  final int userId;
+  LoadCalendarEvent(this.userId);
+}

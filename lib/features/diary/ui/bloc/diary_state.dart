@@ -23,7 +23,7 @@ class CrisisAdded extends DiaryState {
   CrisisAdded(this.crisis);
 }
 
-//para las tarjetas 
+//para las tarjetas
 class TarjetasLoaded extends DiaryState {
   final List<Crisis> crises;
 
@@ -34,4 +34,15 @@ class TarjetasError extends DiaryState {
   final String message;
 
   TarjetasError(this.message);
+}
+
+//para el calendario
+class CalendarLoaded extends DiaryState {
+  final List<DateTime> crisisDays;
+  CalendarLoaded(this.crisisDays);
+}
+
+class CalendarError extends DiaryState {
+  final String message;
+  CalendarError(this.message);
 }

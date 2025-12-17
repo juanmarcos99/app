@@ -4,28 +4,55 @@ import 'package:app/core/theme/style/colors.dart';
 import 'package:app/features/auth/auth.dart';
 import '../../../diary.dart';
 
-class DiaryPage extends StatelessWidget {
+class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
+
+  @override
+  State<DiaryPage> createState() => _DiaryPageState();
+}
+
+class _DiaryPageState extends State<DiaryPage> {
+  @override
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is UserLoggedIn) {
+        context.read<DiaryBloc>().add(
+          LoadTarjetasEvent(
+            userId: authState.user.id!,
+            date: context.read<DiaryBloc>().daySelected,
+          ),
+        );
+
+        // También puedes disparar el calendario si quieres marcar los días
+        context.read<DiaryBloc>().add(LoadCalendarEvent(authState.user.id!));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<DiaryBloc, DiaryState>(
       listener: (context, state) {
         if (state is DayChangedState) {
-          // Aquí imprimes el día cambiado
           debugPrint("Día cambiado: ${state.selectedDay}");
         }
         if (state is CrisisAdded) {
-          // Aquí imprimes la crisis añadida
-          debugPrint("Crisis añadida: ${state.crisis.crisisDate.toString()}");
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+            debugPrint("se obtuvo el userId:");
+          }
         }
-        if (state is DiaryError) {
-          // Aquí imprimes el error
-          debugPrint("Error: ${state.message}");
-        }
-
         if (state is TarjetasLoaded) {
-          //  Aquí imprimes todas las crisis cargadas del día
           for (final crisis in state.crises) {
             debugPrint(
               "Crisis del día: tipo=${crisis.type}, horario=${crisis.timeRange}, cantidad=${crisis.quantity}, fecha=${crisis.crisisDate}",
@@ -34,6 +61,9 @@ class DiaryPage extends StatelessWidget {
         }
         if (state is TarjetasError) {
           debugPrint("Error cargando tarjetas: ${state.message}");
+        }
+        if (state is DiaryError) {
+          debugPrint("Error general: ${state.message}");
         }
       },
       child: Scaffold(
@@ -49,10 +79,8 @@ class DiaryPage extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              // Calendario visual
               const SizedBox(height: 350, child: DiaryCalendar()),
 
-              // Botones de acción
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -71,34 +99,25 @@ class DiaryPage extends StatelessWidget {
                           useRootNavigator: false,
                           builder: (_) => const RegisterCrisisDialog(),
                         );
-                        debugPrint("se obtuvo el result del dialog : $result");
                         if (result != null) {
-                          // Obtenemos el día seleccionado del DiaryBloc
                           final daySelected = context
                               .read<DiaryBloc>()
                               .daySelected;
-                          debugPrint("entro al el result");
-                          // Obtenemos el usuario del AuthBloc
                           final authState = context.read<AuthBloc>().state;
                           int? userId;
                           if (authState is UserLoggedIn) {
-                            userId = authState
-                                .user
-                                .id; // aquí usas la propiedad que tengas en tu modelo User          .id; // aquí usas la propiedad que tengas en tu modelo User
-                            debugPrint("se obtuvo el userId: $userId");
+                            userId = authState.user.id;
                           }
 
-                          // Creamos la entidad Crisis con los datos del formulario
                           final crisis = CrisisModel(
                             registeredDate: DateTime.now(),
                             crisisDate: daySelected,
                             timeRange: result.horario,
                             quantity: result.cantidad,
                             type: result.tipo,
-                            userId: userId!, //  viene del AuthBloc
+                            userId: userId!,
                           );
 
-                          // Disparamos el evento al DiaryBloc
                           context.read<DiaryBloc>().add(AddCrisisEvent(crisis));
                         }
                       },
@@ -113,9 +132,38 @@ class DiaryPage extends StatelessWidget {
                 ),
               ),
 
-              // Contenido inferior placeholder
-              const Expanded(
-                child: Center(child: Text("Aquí va el contenido inferior")),
+              Expanded(
+                child: BlocBuilder<DiaryBloc, DiaryState>(
+                  buildWhen: (previous, current) =>
+                      current is TarjetasLoaded || current is TarjetasError,
+                  builder: (context, state) {
+                    if (state is TarjetasLoaded) {
+                      if (state.crises.isEmpty) {
+                        return const Center(
+                          child: Text("No hay crisis registradas en este día"),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: state.crises.length,
+                        itemBuilder: (context, index) {
+                          final crisis = state.crises[index];
+                          return CrisisCard(
+                            tipo: crisis.type,
+                            horario: crisis.timeRange,
+                            cantidad: crisis.quantity,
+                            fecha: crisis.crisisDate,
+                          );
+                        },
+                      );
+                    }
+                    if (state is TarjetasError) {
+                      return Center(child: Text("Error: ${state.message}"));
+                    }
+                    return const Center(
+                      child: Text("Selecciona un día para ver las crisis"),
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -132,9 +180,7 @@ class DiaryPage extends StatelessWidget {
                   size: 32,
                   color: AppColors.primary,
                 ),
-                onPressed: () {
-                  // Acción para medicación
-                },
+                onPressed: () {},
               ),
               IconButton(
                 icon: const Icon(
@@ -142,9 +188,7 @@ class DiaryPage extends StatelessWidget {
                   size: 32,
                   color: AppColors.primary,
                 ),
-                onPressed: () {
-                  // Acción para perfil
-                },
+                onPressed: () {},
               ),
             ],
           ),
