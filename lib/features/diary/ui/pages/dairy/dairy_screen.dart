@@ -13,7 +13,6 @@ class DiaryPage extends StatefulWidget {
 
 class _DiaryPageState extends State<DiaryPage> {
   @override
-  @override
   void initState() {
     super.initState();
 
@@ -168,31 +167,29 @@ class _DiaryPageState extends State<DiaryPage> {
             ],
           ),
         ),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.medication_outlined,
-                  size: 32,
-                  color: AppColors.primary,
-                ),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.person,
-                  size: 32,
-                  color: AppColors.primary,
-                ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
+       bottomNavigationBar: CustomBottomNavBar(
+  currentIndex: 1, // 🔥 el calendario estará seleccionado al abrir
+  onTap: (index) {
+    // Aquí manejas la acción según el ícono tocado
+    switch (index) {
+      case 0:
+        debugPrint("Home seleccionado");
+        break;
+      case 1:
+        debugPrint("Calendario seleccionado");
+        break;
+      case 2:
+        debugPrint("Agregar seleccionado");
+        break;
+      case 3:
+        debugPrint("Notas seleccionadas");
+        break;
+      case 4:
+        debugPrint("Ajustes seleccionados");
+        break;
+    }
+  },
+),
       ),
     );
   }

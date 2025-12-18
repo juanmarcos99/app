@@ -11,7 +11,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
   ///Atributo que guarda el día seleccionado
   DateTime daySelected = DateUtils.dateOnly(DateTime.now());
 
-  DiaryBloc(this.addCrisis, this.getCrisesByDay, this.getCrisesDays) : super(DiaryInitial()) {
+  DiaryBloc(this.addCrisis, this.getCrisesByDay, this.getCrisesDays)
+    : super(DiaryInitial()) {
     // Evento para cambiar el día
     on<DayChangeEvent>((event, emit) {
       // Normalizamos al inicio del día
@@ -23,7 +24,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
       emit(DiaryLoading());
       try {
         //Aquí llamas al repositorio para obtener los días con crisis
-        final crisisDays = await getCrisesDays(event.userId);
+        final crisisDays = (await getCrisesDays(event.userId)).toSet();
         emit(CalendarLoaded(crisisDays));
       } catch (e) {
         emit(CalendarError(e.toString()));

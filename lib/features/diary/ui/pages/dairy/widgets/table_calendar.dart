@@ -25,9 +25,9 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
         buildWhen: (prev, curr) => curr is CalendarLoaded || curr is CalendarError,
         builder: (context, state) {
           // Lista de días con crisis
-          List<DateTime> crisisDays = [];
+          Set <DateTime> crisisDays = {};
           if (state is CalendarLoaded) {
-            crisisDays = state.crisisDays;
+            crisisDays = state.crisisDays.toSet();
           }
 
           return TableCalendar(
