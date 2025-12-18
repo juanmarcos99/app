@@ -95,7 +95,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.white, // Fondo día normal
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Colors.grey.shade300),
                       ),
@@ -109,13 +109,15 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                     if (hasCrisis)
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          width: 20,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 136, 0),
-                            borderRadius: BorderRadius.circular(2),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.7,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary, // 🎨 Barrita crisis
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                         ),
                       ),
@@ -130,7 +132,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.secundary,
+                        color: AppColors.calendarActualDay, // Fondo día actual
                         borderRadius: BorderRadius.circular(4),
                       ),
                       alignment: Alignment.topLeft,
@@ -138,21 +140,23 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                       child: Text(
                         '${day.day}',
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          
                         ),
                       ),
                     ),
                     if (hasCrisis)
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          width: 20,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 136, 0),
-                            borderRadius: BorderRadius.circular(2),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.7,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary, // Barrita crisis
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                         ),
                       ),
@@ -167,7 +171,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: AppColors.primaryLight, // 🎨 Fondo día seleccionado
                         borderRadius: BorderRadius.circular(4),
                       ),
                       alignment: Alignment.topLeft,
@@ -175,21 +179,23 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                       child: Text(
                         '${day.day}',
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          
                         ),
                       ),
                     ),
                     if (hasCrisis)
                       Align(
                         alignment: Alignment.bottomCenter,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          width: 20,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 136, 0),
-                            borderRadius: BorderRadius.circular(2),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.7,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary, // 🎨 Barrita crisis
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                         ),
                       ),
