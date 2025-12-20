@@ -1,5 +1,4 @@
 import 'package:app/features/diary/diary.dart';
-import 'package:app/features/auth/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,7 +51,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
       try {
         await addCrisis(event.crisis);
         emit(CrisisAdded(event.crisis));
-        debugPrint("entro al bloc");
+        
       } catch (e) {
         emit(DiaryError(e.toString()));
       }

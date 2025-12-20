@@ -69,7 +69,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               // Horario
               const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
-                value: horario,
+                initialValue: horario,
                 items: horarios.map((h) => DropdownMenuItem(value: h, child: Text(h))).toList(),
                 onChanged: (value) => setState(() => horario = value),
                 decoration: const InputDecoration(border: OutlineInputBorder()),

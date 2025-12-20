@@ -1,4 +1,4 @@
-import 'package:app/features/diary/ui/pages/dairy/dairy_screen.dart';
+import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/ui/auth_ui.dart';
 
@@ -6,6 +6,11 @@ class AppRoutes {
   static const login = '/login';
   static const register = '/register';
   static const diary = '/diary';
+  static const home = '/home';
+  static const mainNavigationPage = '/MainNavigationPage';
+  static const pdfPage = '/PdfPage';
+  static const settingsPage = '/SettingsPage';
+  static const addPage = '/AddPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -15,6 +20,16 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const RegisterUserPage());
       case diary:
         return MaterialPageRoute(builder: (_) => const DiaryPage());
+      case home:
+        return MaterialPageRoute(builder: (_) => const HomePage());
+      case mainNavigationPage:
+        return MaterialPageRoute(builder: (_) => const MainNavigationPage());
+      case pdfPage:
+        return MaterialPageRoute(builder: (_) => const PdfPage());
+      case settingsPage:
+        return MaterialPageRoute(builder: (_) => const SettingsPage());
+      case addPage:
+        return MaterialPageRoute(builder: (_) => const AddPage());
       default:
         return MaterialPageRoute(
           builder: (_) =>

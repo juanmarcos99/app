@@ -33,6 +33,11 @@ class MainApp extends StatelessWidget {
           AppRoutes.login: (context) => const LoginPage(),
           AppRoutes.register: (context) => const RegisterUserPage(),
           AppRoutes.diary: (context) => const DiaryPage(),
+          AppRoutes.home: (context) => const HomePage(),
+          AppRoutes.mainNavigationPage: (context) => const MainNavigationPage(),
+          AppRoutes.pdfPage: (context) => const PdfPage(),
+          AppRoutes.settingsPage: (context) => const SettingsPage(),
+          AppRoutes.addPage: (context) => const AddPage(),
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

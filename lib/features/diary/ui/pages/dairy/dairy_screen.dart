@@ -26,8 +26,9 @@ class _DiaryPageState extends State<DiaryPage> {
           ),
         );
 
-        // También puedes disparar el calendario si quieres marcar los días
-        context.read<DiaryBloc>().add(LoadCalendarEvent(authState.user.id!));
+        context.read<DiaryBloc>().add(
+          LoadCalendarEvent(authState.user.id!),
+        );
       }
     });
   }
@@ -48,43 +49,19 @@ class _DiaryPageState extends State<DiaryPage> {
                 date: context.read<DiaryBloc>().daySelected,
               ),
             );
-            debugPrint("se obtuvo el userId:");
           }
-        }
-        if (state is TarjetasLoaded) {
-          for (final crisis in state.crises) {
-            debugPrint(
-              "Crisis del día: tipo=${crisis.type}, horario=${crisis.timeRange}, cantidad=${crisis.quantity}, fecha=${crisis.crisisDate}",
-            );
-          }
-        }
-        if (state is TarjetasError) {
-          debugPrint("Error cargando tarjetas: ${state.message}");
-        }
-        if (state is DiaryError) {
-          debugPrint("Error general: ${state.message}");
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.primary,
-          title: const Text("Diario", style: TextStyle(color: AppColors.white)),
-          automaticallyImplyLeading: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
+      
+
         body: SafeArea(
           child: Column(
             children: [
               const SizedBox(height: 350, child: DiaryCalendar()),
 
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -98,10 +75,11 @@ class _DiaryPageState extends State<DiaryPage> {
                           useRootNavigator: false,
                           builder: (_) => const RegisterCrisisDialog(),
                         );
+
                         if (result != null) {
-                          final daySelected = context
-                              .read<DiaryBloc>()
-                              .daySelected;
+                          final daySelected =
+                              context.read<DiaryBloc>().daySelected;
+
                           final authState = context.read<AuthBloc>().state;
                           int? userId;
                           if (authState is UserLoggedIn) {
@@ -118,14 +96,18 @@ class _DiaryPageState extends State<DiaryPage> {
                           );
 
                           context.read<DiaryBloc>().add(AddCrisisEvent(crisis));
+                          context.read<DiaryBloc>().add(
+                            LoadCalendarEvent(userId),
+                          );
                         }
                       },
                     ),
+
                     CustomActionButton(
                       text: "Añadir Efecto",
                       icon: Icons.add,
                       backgroundColor: AppColors.secundary,
-                      onPressed: () async {},
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -142,6 +124,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           child: Text("No hay crisis registradas en este día"),
                         );
                       }
+
                       return ListView.builder(
                         itemCount: state.crises.length,
                         itemBuilder: (context, index) {
@@ -155,9 +138,11 @@ class _DiaryPageState extends State<DiaryPage> {
                         },
                       );
                     }
+
                     if (state is TarjetasError) {
                       return Center(child: Text("Error: ${state.message}"));
                     }
+
                     return const Center(
                       child: Text("Selecciona un día para ver las crisis"),
                     );
@@ -167,29 +152,6 @@ class _DiaryPageState extends State<DiaryPage> {
             ],
           ),
         ),
-       bottomNavigationBar: CustomBottomNavBar(
-  currentIndex: 1, // 🔥 el calendario estará seleccionado al abrir
-  onTap: (index) {
-    // Aquí manejas la acción según el ícono tocado
-    switch (index) {
-      case 0:
-        debugPrint("Home seleccionado");
-        break;
-      case 1:
-        debugPrint("Calendario seleccionado");
-        break;
-      case 2:
-        debugPrint("Agregar seleccionado");
-        break;
-      case 3:
-        debugPrint("Notas seleccionadas");
-        break;
-      case 4:
-        debugPrint("Ajustes seleccionados");
-        break;
-    }
-  },
-),
       ),
     );
   }

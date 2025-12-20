@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                   backgroundColor: Colors.green,
                 ),
               );
-              Navigator.pushNamed(context, AppRoutes.diary);
+              Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
             }
           },
           builder: (context, state) {
