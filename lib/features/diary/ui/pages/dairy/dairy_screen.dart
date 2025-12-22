@@ -39,7 +39,15 @@ class _DiaryPageState extends State<DiaryPage> {
           debugPrint("Día cambiado: ${state.selectedDay}");
         }
         if (state is AdverseEventAdded) {
-          debugPrint("efecto agregado: ${state.av.description}");
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+          }
         }
         if (state is CrisisAdded) {
           final authState = context.read<AuthBloc>().state;
@@ -58,7 +66,6 @@ class _DiaryPageState extends State<DiaryPage> {
           child: Column(
             children: [
               const SizedBox(height: 350, child: DiaryCalendar()),
-
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -104,7 +111,7 @@ class _DiaryPageState extends State<DiaryPage> {
                         }
                       },
                     ),
-                    //boton añadir efecto
+
                     CustomActionButton(
                       text: "Añadir Efecto",
                       icon: Icons.add,
@@ -132,8 +139,13 @@ class _DiaryPageState extends State<DiaryPage> {
                             description: result,
                             userId: userId!,
                           );
+
                           context.read<DiaryBloc>().add(
                             AddAdverseEventEvent(efecto),
+                          );
+
+                          context.read<DiaryBloc>().add(
+                            LoadCalendarEvent(userId),
                           );
                         }
                       },
@@ -148,23 +160,70 @@ class _DiaryPageState extends State<DiaryPage> {
                       current is TarjetasLoaded || current is TarjetasError,
                   builder: (context, state) {
                     if (state is TarjetasLoaded) {
-                      if (state.crises.isEmpty) {
+                      final crises = state.crises;
+                      final eventos = state.ae;
+
+                      if (crises.isEmpty && eventos.isEmpty) {
                         return const Center(
-                          child: Text("No hay crisis registradas en este día"),
+                          child: Text(
+                            "No hay crisis ni eventos registrados en este día",
+                          ),
                         );
                       }
 
-                      return ListView.builder(
-                        itemCount: state.crises.length,
-                        itemBuilder: (context, index) {
-                          final crisis = state.crises[index];
-                          return CrisisCard(
-                            tipo: crisis.type,
-                            horario: crisis.timeRange,
-                            cantidad: crisis.quantity,
-                            fecha: crisis.crisisDate,
-                          );
-                        },
+                      return ListView(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        children: [
+                          // SECCIÓN CRISIS
+                          if (crises.isNotEmpty) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                "Crisis",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            ...crises.map(
+                              (crisis) => CrisisCard(
+                                tipo: crisis.type,
+                                horario: crisis.timeRange,
+                                cantidad: crisis.quantity,
+                                fecha: crisis.crisisDate,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          // SECCIÓN EVENTOS ADVERSOS
+                          if (eventos.isNotEmpty) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                "Eventos Adversos",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            ...eventos.map(
+                              (evento) => AdverseEventCard(
+                                descripcion: evento.description,
+                                fecha: evento.eventDate,
+                                fechaRegistro: evento.registerDate,
+                              ),
+                            ),
+                          ],
+                        ],
                       );
                     }
 
@@ -173,7 +232,7 @@ class _DiaryPageState extends State<DiaryPage> {
                     }
 
                     return const Center(
-                      child: Text("Selecciona un día para ver las crisis"),
+                      child: Text("Selecciona un día para ver los registros"),
                     );
                   },
                 ),

@@ -26,8 +26,9 @@ class CrisisAdded extends DiaryState {
 //para las tarjetas
 class TarjetasLoaded extends DiaryState {
   final List<Crisis> crises;
+  final List<AdverseEvent> ae;
 
-  TarjetasLoaded(this.crises);
+  TarjetasLoaded(this.crises, this.ae);
 }
 
 class TarjetasError extends DiaryState {

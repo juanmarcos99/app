@@ -1,5 +1,4 @@
 import 'package:app/features/diary/diary.dart';
-import 'package:flutter/foundation.dart';
 abstract class DiaryEvent {}
 
 class AddCrisisEvent extends DiaryEvent {
