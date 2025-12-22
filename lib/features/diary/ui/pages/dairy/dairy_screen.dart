@@ -26,9 +26,7 @@ class _DiaryPageState extends State<DiaryPage> {
           ),
         );
 
-        context.read<DiaryBloc>().add(
-          LoadCalendarEvent(authState.user.id!),
-        );
+        context.read<DiaryBloc>().add(LoadCalendarEvent(authState.user.id!));
       }
     });
   }
@@ -39,6 +37,9 @@ class _DiaryPageState extends State<DiaryPage> {
       listener: (context, state) {
         if (state is DayChangedState) {
           debugPrint("Día cambiado: ${state.selectedDay}");
+        }
+        if (state is AdverseEventAdded) {
+          debugPrint("efecto agregado: ${state.av.description}");
         }
         if (state is CrisisAdded) {
           final authState = context.read<AuthBloc>().state;
@@ -53,15 +54,16 @@ class _DiaryPageState extends State<DiaryPage> {
         }
       },
       child: Scaffold(
-      
-
         body: SafeArea(
           child: Column(
             children: [
               const SizedBox(height: 350, child: DiaryCalendar()),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -77,9 +79,9 @@ class _DiaryPageState extends State<DiaryPage> {
                         );
 
                         if (result != null) {
-                          final daySelected =
-                              context.read<DiaryBloc>().daySelected;
-
+                          final daySelected = context
+                              .read<DiaryBloc>()
+                              .daySelected;
                           final authState = context.read<AuthBloc>().state;
                           int? userId;
                           if (authState is UserLoggedIn) {
@@ -102,12 +104,39 @@ class _DiaryPageState extends State<DiaryPage> {
                         }
                       },
                     ),
-
+                    //boton añadir efecto
                     CustomActionButton(
                       text: "Añadir Efecto",
                       icon: Icons.add,
                       backgroundColor: AppColors.secundary,
-                      onPressed: () {},
+                      onPressed: () async {
+                        final result = await showDialog<String>(
+                          context: context,
+                          useRootNavigator: false,
+                          builder: (_) => const RegistroEfectDialog(),
+                        );
+
+                        if (result != null) {
+                          final daySelected = context
+                              .read<DiaryBloc>()
+                              .daySelected;
+                          final authState = context.read<AuthBloc>().state;
+                          int? userId;
+                          if (authState is UserLoggedIn) {
+                            userId = authState.user.id;
+                          }
+
+                          final efecto = AdverseEvent(
+                            registerDate: DateTime.now(),
+                            eventDate: daySelected,
+                            description: result,
+                            userId: userId!,
+                          );
+                          context.read<DiaryBloc>().add(
+                            AddAdverseEventEvent(efecto),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),

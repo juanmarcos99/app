@@ -49,6 +49,18 @@ class AppDatabase {
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         ''');
+
+        // Tabla de eventos adversos
+        await db.execute('''
+          CREATE TABLE adverse_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            registeredDate TEXT NOT NULL,   -- fecha de registro
+            eventDate TEXT NOT NULL,        -- fecha del evento adverso
+            description TEXT NOT NULL,      -- descripción
+            userId INTEGER NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        ''');
       },
     );
 

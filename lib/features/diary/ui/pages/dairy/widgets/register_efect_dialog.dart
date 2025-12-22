@@ -44,8 +44,7 @@ class _RegistroEfectDialogState extends State<RegistroEfectDialog> {
         ElevatedButton.icon(
           onPressed: () {
             final descripcion = descripcionController.text.trim();
-            print("Descripción ingresada: $descripcion");
-            Navigator.pop(context);
+            Navigator.pop(context, descripcion);
           },
           icon: const Icon(Icons.save, color: Colors.white),
           label: const Text("Guardar", style: TextStyle(color: Colors.white)),

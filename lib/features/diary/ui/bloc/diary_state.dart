@@ -46,3 +46,9 @@ class CalendarError extends DiaryState {
   final String message;
   CalendarError(this.message);
 }
+
+//estado para añadir un evento adverso
+class AdverseEventAdded extends DiaryState {
+  final AdverseEvent av;
+  AdverseEventAdded(this.av);
+}

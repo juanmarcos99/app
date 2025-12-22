@@ -1,4 +1,3 @@
-import 'package:app/app_routes.dart';
 import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
 import '../../../diary.dart';

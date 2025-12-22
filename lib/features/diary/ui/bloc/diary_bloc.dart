@@ -6,23 +6,27 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
   final AddCrisis addCrisis;
   final GetCrisesByDay getCrisesByDay;
   final GetCrisesDays getCrisesDays;
+  final AddAdverseEvent addAdverseEvent;
 
   ///Atributo que guarda el día seleccionado
   DateTime daySelected = DateUtils.dateOnly(DateTime.now());
 
-  DiaryBloc(this.addCrisis, this.getCrisesByDay, this.getCrisesDays)
-    : super(DiaryInitial()) {
+  DiaryBloc(
+    this.addCrisis,
+    this.getCrisesByDay,
+    this.getCrisesDays,
+    this.addAdverseEvent,
+  ) : super(DiaryInitial()) {
     // Evento para cambiar el día
     on<DayChangeEvent>((event, emit) {
-      // Normalizamos al inicio del día
       daySelected = DateUtils.dateOnly(event.newDay);
       emit(DayChangedState(daySelected));
     });
+
     // Evento para cargar el calendario
     on<LoadCalendarEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
-        //Aquí llamas al repositorio para obtener los días con crisis
         final crisisDays = (await getCrisesDays(event.userId)).toSet();
         emit(CalendarLoaded(crisisDays));
       } catch (e) {
@@ -38,7 +42,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
           DateUtils.dateOnly(event.date),
           event.userId,
         );
-        debugPrint("Crisis cargadas:");
+
         emit(TarjetasLoaded(crises));
       } catch (e) {
         emit(TarjetasError(e.toString()));
@@ -51,7 +55,18 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
       try {
         await addCrisis(event.crisis);
         emit(CrisisAdded(event.crisis));
-        
+      } catch (e) {
+        emit(DiaryError(e.toString()));
+      }
+    });
+
+    //para añadir evento adverso
+    on<AddAdverseEventEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        debugPrint("entro al add evento adverso");
+        await addAdverseEvent(event.av);
+        emit(AdverseEventAdded(event.av));
       } catch (e) {
         emit(DiaryError(e.toString()));
       }

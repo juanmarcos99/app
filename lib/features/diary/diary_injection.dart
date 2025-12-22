@@ -9,10 +9,16 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<CrisisLocalDataSource>(
     () => CrisisLocalDataSourceImpl(sldiary<Database>()),
   );
+  sldiary.registerLazySingleton<AdverseEventLocalDataSource>(
+    () => AdverseEventLocalDataSourceImpl(sldiary<Database>()),
+  );
 
   // Repositorio
   sldiary.registerLazySingleton<CrisisRepository>(
     () => CrisisRepositoryImpl(sldiary<CrisisLocalDataSource>()),
+  );
+  sldiary.registerLazySingleton<AdverseEventRepository>(
+    () => AdverseEventRepositoryImpl(sldiary<AdverseEventLocalDataSource>()),
   );
 
   // Casos de uso
@@ -25,9 +31,17 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetCrisesDays>(
     () => GetCrisesDays(sldiary<CrisisRepository>()),
   );
+  sldiary.registerLazySingleton<AddAdverseEvent>(
+    () => AddAdverseEvent(sldiary<AdverseEventRepository>()),
+  );
 
   // Bloc
   sldiary.registerLazySingleton<DiaryBloc>(
-    () => DiaryBloc(sldiary<AddCrisis>(), sldiary<GetCrisesByDay>(),sldiary<GetCrisesDays>() ),
+    () => DiaryBloc(
+      sldiary<AddCrisis>(),
+      sldiary<GetCrisesByDay>(),
+      sldiary<GetCrisesDays>(),
+      sldiary<AddAdverseEvent>(),
+    ),
   );
 }

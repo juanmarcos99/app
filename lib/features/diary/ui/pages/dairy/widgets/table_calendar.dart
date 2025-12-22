@@ -39,9 +39,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
             onDaySelected: (day, newFocusedDay) {
               if (day.isAfter(DateTime.now())) return;
-
               final normalized = DateUtils.dateOnly(day);
-
               setState(() {
                 selectedDay = normalized;
                 focusedDay = normalized;

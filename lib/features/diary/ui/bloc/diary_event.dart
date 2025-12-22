@@ -1,4 +1,5 @@
 import 'package:app/features/diary/diary.dart';
+import 'package:flutter/foundation.dart';
 abstract class DiaryEvent {}
 
 class AddCrisisEvent extends DiaryEvent {
@@ -20,4 +21,10 @@ class LoadTarjetasEvent extends DiaryEvent {
 class LoadCalendarEvent extends DiaryEvent {
   final int userId;
   LoadCalendarEvent(this.userId);
+}
+
+class AddAdverseEventEvent extends DiaryEvent {
+  final AdverseEvent av;
+ 
+  AddAdverseEventEvent(this.av);
 }

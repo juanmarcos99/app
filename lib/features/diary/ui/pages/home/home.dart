@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:app/core/theme/style/colors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
