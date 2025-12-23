@@ -2,7 +2,6 @@ import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/theme/style/colors.dart';
 
-
 class RegisterCrisisDialog extends StatefulWidget {
   final Crisis? initialCrisis; // 🔥 null = registrar, no null = editar
 
@@ -45,7 +44,12 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
       final crisis = widget.initialCrisis!;
 
       fecha = crisis.crisisDate ?? DateTime.now();
-      horario = crisis.timeRange;
+
+      // 🔥 FIX DEL DROPDOWN: solo asignar si existe en la lista
+      horario = horarios.contains(crisis.timeRange)
+          ? crisis.timeRange
+          : null;
+
       tipoSeleccionado = tiposCrisis.contains(crisis.type)
           ? crisis.type
           : 'Añadir otro tipo';
@@ -151,7 +155,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
             final crisis = Crisis(
               id: widget.initialCrisis?.id,
               registeredDate: widget.initialCrisis?.registeredDate,
-              crisisDate: widget.initialCrisis?.crisisDate,
+              crisisDate: fecha, // 🔥 SIEMPRE correcto
               timeRange: horario ?? '',
               quantity: int.tryParse(cantidadController.text.trim()) ?? 0,
               type: tipoFinal,
