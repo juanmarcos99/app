@@ -40,7 +40,8 @@ class TarjetasError extends DiaryState {
 //para el calendario
 class CalendarLoaded extends DiaryState {
   final  Set <DateTime> crisisDays;
-  CalendarLoaded(this.crisisDays);
+  final  Set <DateTime> aeDays;
+  CalendarLoaded(this.crisisDays,this.aeDays);
 }
 
 class CalendarError extends DiaryState {

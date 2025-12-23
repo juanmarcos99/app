@@ -22,12 +22,15 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: BlocBuilder<DiaryBloc, DiaryState>(
-        buildWhen: (prev, curr) => curr is CalendarLoaded || curr is CalendarError,
+        buildWhen: (prev, curr) =>
+            curr is CalendarLoaded || curr is CalendarError,
         builder: (context, state) {
-          // Lista de días con crisis
-          Set <DateTime> crisisDays = {};
+          Set<DateTime> crisisDays = {};
+          Set<DateTime> aeDays = {};
+
           if (state is CalendarLoaded) {
             crisisDays = state.crisisDays.toSet();
+            aeDays = state.aeDays.toSet();
           }
 
           return TableCalendar(
@@ -40,12 +43,12 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
             onDaySelected: (day, newFocusedDay) {
               if (day.isAfter(DateTime.now())) return;
               final normalized = DateUtils.dateOnly(day);
+
               setState(() {
                 selectedDay = normalized;
                 focusedDay = normalized;
               });
 
-              // Disparamos eventos al Bloc
               context.read<DiaryBloc>().add(DayChangeEvent(normalized));
 
               final authState = context.read<AuthBloc>().state;
@@ -86,124 +89,107 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
             calendarBuilders: CalendarBuilders(
               defaultBuilder: (context, day, focusedDay) {
-                final normalizedDay = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalizedDay);
+                final normalized = DateUtils.dateOnly(day);
+                final hasCrisis = crisisDays.contains(normalized);
+                final hasAE = aeDays.contains(normalized);
 
-                return Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Fondo día normal
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        '${day.day}',
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    if (hasCrisis)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: FractionallySizedBox(
-                          widthFactor: 0.7,
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary, // 🎨 Barrita crisis
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                return _buildDayCell(
+                  day: day,
+                  backgroundColor: Colors.white,
+                  hasCrisis: hasCrisis,
+                  hasAE: hasAE,
                 );
               },
+
               todayBuilder: (context, day, focusedDay) {
-                final normalizedDay = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalizedDay);
+                final normalized = DateUtils.dateOnly(day);
+                final hasCrisis = crisisDays.contains(normalized);
+                final hasAE = aeDays.contains(normalized);
 
-                return Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.calendarActualDay, // Fondo día actual
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        '${day.day}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          
-                        ),
-                      ),
-                    ),
-                    if (hasCrisis)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: FractionallySizedBox(
-                          widthFactor: 0.7,
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary, // Barrita crisis
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                return _buildDayCell(
+                  day: day,
+                  backgroundColor: AppColors.calendarActualDay,
+                  hasCrisis: hasCrisis,
+                  hasAE: hasAE,
                 );
               },
-              selectedBuilder: (context, day, focusedDay) {
-                final normalizedDay = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalizedDay);
 
-                return Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight, // 🎨 Fondo día seleccionado
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        '${day.day}',
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          
-                        ),
-                      ),
-                    ),
-                    if (hasCrisis)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: FractionallySizedBox(
-                          widthFactor: 0.7,
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary, // 🎨 Barrita crisis
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+              selectedBuilder: (context, day, focusedDay) {
+                final normalized = DateUtils.dateOnly(day);
+                final hasCrisis = crisisDays.contains(normalized);
+                final hasAE = aeDays.contains(normalized);
+
+                return _buildDayCell(
+                  day: day,
+                  backgroundColor: AppColors.primaryLight,
+                  hasCrisis: hasCrisis,
+                  hasAE: hasAE,
                 );
               },
             ),
           );
         },
       ),
+    );
+  }
+
+  /// 🔥 Construye un día con barritas de crisis y eventos adversos
+  Widget _buildDayCell({
+    required DateTime day,
+    required Color backgroundColor,
+    required bool hasCrisis,
+    required bool hasAE,
+  }) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.all(4),
+          child: Text(
+            '${day.day}',
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+
+        /// Crisis (azul)
+        if (hasCrisis)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FractionallySizedBox(
+              widthFactor: 0.7,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+
+        /// Evento adverso (morado)
+        if (hasAE)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FractionallySizedBox(
+              widthFactor: 0.7,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 2),
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.secundary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -166,7 +166,7 @@ class _DiaryPageState extends State<DiaryPage> {
                       if (crises.isEmpty && eventos.isEmpty) {
                         return const Center(
                           child: Text(
-                            "No hay crisis ni eventos registrados en este día",
+                            "No hay crisis ni efectos registrados en este día",
                           ),
                         );
                       }

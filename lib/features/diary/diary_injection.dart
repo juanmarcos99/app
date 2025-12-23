@@ -37,6 +37,9 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetAdverseAventByDayAndUser>(
     () => GetAdverseAventByDayAndUser(sldiary<AdverseEventRepository>()),
   );
+  sldiary.registerLazySingleton<GetAdverseEventDaysByUser>(
+    () => GetAdverseEventDaysByUser(sldiary<AdverseEventRepository>()),
+  );
 
   // Bloc
   sldiary.registerLazySingleton<DiaryBloc>(
@@ -46,6 +49,7 @@ void initDiaryDependencies() {
       sldiary<GetCrisesDays>(),
       sldiary<AddAdverseEvent>(),
       sldiary<GetAdverseAventByDayAndUser>(),
+      sldiary<GetAdverseEventDaysByUser>()
     ),
   );
 }

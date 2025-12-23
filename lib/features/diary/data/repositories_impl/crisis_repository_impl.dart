@@ -21,14 +21,12 @@ class CrisisRepositoryImpl implements CrisisRepository {
 //para las tarjetas de crisis
   @override
   Future<List<Crisis>> getCrisesByDayAndUser(DateTime day, int userId) async {
-    // Normalizamos la fecha y delegamos al data source
     final result = await localDataSource.getCrisisByDateAndUser(day, userId);
     return result; // CrisisModel hereda de Crisis, así que puedes devolverlo directamente
   }
 //para el calendario
   @override
   Future<List<DateTime>> getCrisesDaysByUser(int userId) async {
-    // Delegamos al data source
     final result = await localDataSource.getCrisisDaysByUser(userId);
     return result;
   }
