@@ -37,4 +37,16 @@ class AdverseEventRepositoryImpl implements AdverseEventRepository {
   Future<void> deleteEvent(int id) {
     return localDataSource.deleteAdverseEvent(id);
   }
+  
+  @override
+  Future<void> updateEvent(AdverseEvent event) {
+    final model = AdverseEventModel(
+      id: event.id,
+      registerDate: event.registerDate,
+      eventDate: event.eventDate,
+      description: event.description,
+      userId: event.userId,
+    );
+    return localDataSource.updateAdverseEvent(model);
+  }
 }

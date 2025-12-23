@@ -1,4 +1,5 @@
 import 'package:app/features/diary/diary.dart';
+import 'package:app/features/diary/domain/use_cases/update_adverse_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +12,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
   final GetAdverseEventDaysByUser getAdverseEventDaysByUser;
   final DeleteCrisis deleteCrisis;
   final DeleteAdverseEvent deleteAdverseEvent;
+  final UpdateCrisis updateCrisis;
+  final UpdateAdverseEvent updateAdverseEvent;
 
   ///Atributo que guarda el día seleccionado
   DateTime daySelected = DateUtils.dateOnly(DateTime.now());
@@ -24,6 +27,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     this.getAdverseEventDaysByUser,
     this.deleteCrisis,
     this.deleteAdverseEvent,
+    this.updateCrisis,
+    this.updateAdverseEvent,
   ) : super(DiaryInitial()) {
     // Evento para cambiar el día
     on<DayChangeEvent>((event, emit) {
@@ -85,7 +90,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     });
 
     //para eliminar crisis
-  on<DeleteCrisisEvent>((event, emit) async {
+    on<DeleteCrisisEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
         await deleteCrisis(event.crisisId);
@@ -94,12 +99,31 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
         emit(DiaryError(e.toString()));
       }
     });
-  //para eliminar evento adverso
-  on<DeleteAdverseEventEvent>((event, emit) async {
+    //para eliminar evento adverso
+    on<DeleteAdverseEventEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
         await deleteAdverseEvent(event.adverseEventId);
         emit(AdverseEventDeleted(event.adverseEventId));
+      } catch (e) {
+        emit(DiaryError(e.toString()));
+      }
+    });
+    on<UpdateCrisisEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        await updateCrisis(event.crisis);
+        emit(CrisisUpdated(event.crisis));
+      } catch (e) {
+        emit(DiaryError(e.toString()));
+      }
+    });
+
+    on<UpdateAdverseEventEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        await updateAdverseEvent(event.adverseEvent);
+        emit(AdverseEventUpdated(event.adverseEvent));
       } catch (e) {
         emit(DiaryError(e.toString()));
       }

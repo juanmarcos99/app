@@ -37,3 +37,13 @@ class DeleteAdverseEventEvent extends DiaryEvent {
   final int adverseEventId;
   DeleteAdverseEventEvent(this.adverseEventId);
 }
+
+class UpdateCrisisEvent extends DiaryEvent {
+  final Crisis crisis;
+  UpdateCrisisEvent(this.crisis);
+}
+
+class UpdateAdverseEventEvent extends DiaryEvent {
+  final AdverseEvent adverseEvent;
+  UpdateAdverseEventEvent(this.adverseEvent);
+}

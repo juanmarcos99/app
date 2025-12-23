@@ -1,20 +1,20 @@
 class Crisis {
   final int? id;
-  final DateTime registeredDate;
-  final DateTime crisisDate;
-  final String timeRange;
-  final int quantity;
-  final String type;
-  final int userId;
+  final DateTime? registeredDate;
+  final DateTime? crisisDate;
+  final String? timeRange;
+  final int? quantity;
+  final String? type;
+  final int? userId;
 
   Crisis({
     this.id,
-    required this.registeredDate,
-    required this.crisisDate,
-    required this.timeRange,
-    required this.quantity,
-    required this.type,
-    required this.userId,
+    this.registeredDate,
+    this.crisisDate,
+    this.timeRange,
+    this.quantity,
+    this.type,
+    this.userId,
   });
 
   Crisis copyWith({

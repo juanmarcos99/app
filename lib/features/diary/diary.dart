@@ -11,6 +11,7 @@ export 'domain/use_cases/get_adverse_avent_by_day_and_user.dart';
 export 'domain/use_cases/get_adverse_event_days_by_user.dart';
 export 'domain/use_cases/delete_crisis.dart';
 export 'domain/use_cases/delete_adverse_event.dart';
+export 'domain/use_cases/update_crisis.dart';
 
 
 //data

@@ -4,20 +4,9 @@ import 'package:app/core/theme/style/colors.dart';
 import '../../../../diary.dart';
 
 class CrisisCard extends StatelessWidget {
-  final int id;
-  final String tipo;
-  final String horario;
-  final int cantidad;
-  final DateTime fecha;
+  final Crisis crisis;
 
-  const CrisisCard({
-    super.key,
-    required this.id,
-    required this.tipo,
-    required this.horario,
-    required this.cantidad,
-    required this.fecha,
-  });
+  const CrisisCard({super.key, required this.crisis});
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +16,30 @@ class CrisisCard extends StatelessWidget {
       elevation: 2,
       child: ListTile(
         leading: const Icon(Icons.warning, color: AppColors.primary),
-        title: Text(tipo, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text("$horario • Cantidad: $cantidad"),
+        title: Text(
+          crisis.type!,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text("${crisis.timeRange} • Cantidad: ${crisis.quantity}"),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // EDITAR
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () {},
+              onPressed: () async {
+                final result = await showDialog<Crisis>(
+                  context: context,
+                  useRootNavigator: false,
+                  builder: (_) => RegisterCrisisDialog(initialCrisis: crisis),
+                );
+                if (result != null) {
+                  context.read<DiaryBloc>().add(UpdateCrisisEvent(result));
+                }
+              },
             ),
 
-            // BOTÓN ELIMINAR
+            // ELIMINAR
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () async {
@@ -65,8 +67,7 @@ class CrisisCard extends StatelessWidget {
                 );
 
                 if (confirm == true) {
-                  context.read<DiaryBloc>().add(DeleteCrisisEvent(id));
-                  
+                  context.read<DiaryBloc>().add(DeleteCrisisEvent(crisis.id!));
                 }
               },
             ),

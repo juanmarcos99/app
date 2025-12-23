@@ -22,8 +22,8 @@ class AdverseEventModel extends AdverseEvent {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'registeredDate': registerDate.toIso8601String().split('T').first,
-      'eventDate': eventDate.toIso8601String().split('T').first,
+      'registeredDate': registerDate!.toIso8601String().split('T').first,
+      'eventDate': eventDate!.toIso8601String().split('T').first,
       'description': description,
       'userId': userId,
     };

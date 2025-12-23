@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/theme/style/colors.dart';
-import '../../../../diary.dart'; 
+import '../../../../diary.dart';
 
 class AdverseEventCard extends StatelessWidget {
-  final int id;
-  final String descripcion;
-  final DateTime fecha;
-  final DateTime fechaRegistro;
+  final AdverseEvent adverseEvent;
 
-  const AdverseEventCard({
-    super.key,
-    required this.id,
-    required this.descripcion,
-    required this.fecha,
-    required this.fechaRegistro,
-  });
+  const AdverseEventCard({super.key, required this.adverseEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +17,35 @@ class AdverseEventCard extends StatelessWidget {
       child: ListTile(
         leading: const Icon(Icons.error_outline, color: AppColors.primary),
         title: Text(
-          descripcion,
+          adverseEvent.description ?? '',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          "${_formatDate(fecha)} • Registrado: ${_formatDate(fechaRegistro)}",
+          "${_formatDate(adverseEvent.eventDate)} • Registrado: ${_formatDate(adverseEvent.registerDate)}",
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // EDITAR
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () {
-                // Aquí irá la funcionalidad de editar evento adverso
+              onPressed: () async {
+                final result = await showDialog<AdverseEvent>(
+                  context: context,
+                  useRootNavigator: false,
+                  builder: (_) =>
+                      RegistroEfectDialog(initialEvent: adverseEvent),
+                );
+
+                if (result != null) {
+                  context
+                      .read<DiaryBloc>()
+                      .add(UpdateAdverseEventEvent(result));
+                }
               },
             ),
 
-            //  BOTÓN ELIMINAR
+            // ELIMINAR
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () async {
@@ -69,10 +72,10 @@ class AdverseEventCard extends StatelessWidget {
                   ),
                 );
 
-                if (confirm == true) {
-                  context
-                      .read<DiaryBloc>()
-                      .add(DeleteAdverseEventEvent(id));
+                if (confirm == true && adverseEvent.id != null) {
+                  context.read<DiaryBloc>().add(
+                    DeleteAdverseEventEvent(adverseEvent.id!),
+                  );
                 }
               },
             ),
@@ -82,7 +85,8 @@ class AdverseEventCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return "-";
     return "${date.year}-${_two(date.month)}-${_two(date.day)}";
   }
 

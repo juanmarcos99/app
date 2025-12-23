@@ -1,30 +1,19 @@
+import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/theme/style/colors.dart';
 
-class CrisisFormResult {
-  final DateTime fecha;
-  final String horario;
-  final String tipo;
-  final int cantidad;
-
-  const CrisisFormResult({
-    required this.fecha,
-    required this.horario,
-    required this.tipo,
-    required this.cantidad,
-  });
-}
 
 class RegisterCrisisDialog extends StatefulWidget {
-  const RegisterCrisisDialog({super.key});
+  final Crisis? initialCrisis; // 🔥 null = registrar, no null = editar
+
+  const RegisterCrisisDialog({super.key, this.initialCrisis});
 
   @override
   State<RegisterCrisisDialog> createState() => _RegisterCrisisDialogState();
 }
 
 class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
-  final DateTime fecha = DateTime.now();
-
+  late DateTime fecha;
   String? horario;
   String? tipoSeleccionado;
 
@@ -46,6 +35,33 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
   final cantidadController = TextEditingController();
   final descripcionController = TextEditingController();
 
+  bool get isEditing => widget.initialCrisis != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (isEditing) {
+      final crisis = widget.initialCrisis!;
+
+      fecha = crisis.crisisDate ?? DateTime.now();
+      horario = crisis.timeRange;
+      tipoSeleccionado = tiposCrisis.contains(crisis.type)
+          ? crisis.type
+          : 'Añadir otro tipo';
+
+      if (tipoSeleccionado == 'Añadir otro tipo') {
+        descripcionController.text = crisis.type ?? '';
+      }
+
+      cantidadController.text = crisis.quantity?.toString() ?? '';
+    } else {
+      fecha = DateTime.now();
+      horario = null;
+      tipoSeleccionado = null;
+    }
+  }
+
   @override
   void dispose() {
     cantidadController.dispose();
@@ -58,7 +74,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
     return AlertDialog(
       backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      title: const Text("Registro de Crisis"),
+      title: Text(isEditing ? "Editar Crisis" : "Registro de Crisis"),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.55,
@@ -66,28 +82,30 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Horario
               const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
-                initialValue: horario,
-                items: horarios.map((h) => DropdownMenuItem(value: h, child: Text(h))).toList(),
+                value: horario,
+                items: horarios
+                    .map((h) => DropdownMenuItem(value: h, child: Text(h)))
+                    .toList(),
                 onChanged: (value) => setState(() => horario = value),
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
 
-              // Tipo de crisis
               const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
                 value: tipoSeleccionado,
-                items: tiposCrisis.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                items: tiposCrisis
+                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .toList(),
                 onChanged: (value) => setState(() => tipoSeleccionado = value),
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
 
-              // Campos según selección
-              if (tipoSeleccionado != null && tipoSeleccionado != 'Añadir otro tipo')
+              if (tipoSeleccionado != null &&
+                  tipoSeleccionado != 'Añadir otro tipo')
                 TextFormField(
                   controller: cantidadController,
                   keyboardType: TextInputType.number,
@@ -125,22 +143,28 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: const Text("Cancelar"),
         ),
         ElevatedButton.icon(
-          // Siempre activo, sin validación previa
           onPressed: () {
             final tipoFinal = tipoSeleccionado == 'Añadir otro tipo'
                 ? descripcionController.text.trim()
                 : tipoSeleccionado ?? '';
 
-            final result = CrisisFormResult(
-              fecha: fecha,
-              horario: horario ?? '',
-              tipo: tipoFinal,
-              cantidad: int.tryParse(cantidadController.text.trim()) ?? 0,
+            final crisis = Crisis(
+              id: widget.initialCrisis?.id,
+              registeredDate: widget.initialCrisis?.registeredDate,
+              crisisDate: widget.initialCrisis?.crisisDate,
+              timeRange: horario ?? '',
+              quantity: int.tryParse(cantidadController.text.trim()) ?? 0,
+              type: tipoFinal,
+              userId: widget.initialCrisis?.userId,
             );
-            Navigator.pop(context, result);
+
+            Navigator.pop(context, crisis);
           },
           icon: const Icon(Icons.save, color: AppColors.white),
-          label: const Text("Guardar", style: TextStyle(color: AppColors.white)),
+          label: Text(
+            isEditing ? "Guardar cambios" : "Guardar",
+            style: const TextStyle(color: AppColors.white),
+          ),
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
         ),
       ],

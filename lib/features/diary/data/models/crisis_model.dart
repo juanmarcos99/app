@@ -14,8 +14,8 @@ class CrisisModel extends Crisis {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'registeredDate': registeredDate.toIso8601String(),
-      'crisisDate': crisisDate.toIso8601String().split('T').first,
+      'registeredDate': registeredDate!.toIso8601String(),
+      'crisisDate': crisisDate!.toIso8601String().split('T').first,
       'timeRange': timeRange,
       'quantity': quantity,
       'type': type,

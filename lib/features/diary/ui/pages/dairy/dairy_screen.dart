@@ -38,6 +38,30 @@ class _DiaryPageState extends State<DiaryPage> {
         if (state is DayChangedState) {
           debugPrint("Día cambiado: ${state.selectedDay}");
         }
+        if (state is AdverseEventUpdated) {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+            
+          }
+        }
+        if (state is CrisisUpdated) {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+            
+          }
+        }
 
         if (state is AdverseEventDeleted) {
           final authState = context.read<AuthBloc>().state;
@@ -109,7 +133,7 @@ class _DiaryPageState extends State<DiaryPage> {
                       icon: Icons.add,
                       backgroundColor: AppColors.primary,
                       onPressed: () async {
-                        final result = await showDialog<CrisisFormResult>(
+                        final result = await showDialog<Crisis>(
                           context: context,
                           useRootNavigator: false,
                           builder: (_) => const RegisterCrisisDialog(),
@@ -128,9 +152,9 @@ class _DiaryPageState extends State<DiaryPage> {
                           final crisis = CrisisModel(
                             registeredDate: DateTime.now(),
                             crisisDate: daySelected,
-                            timeRange: result.horario,
-                            quantity: result.cantidad,
-                            type: result.tipo,
+                            timeRange: result.timeRange,
+                            quantity: result.quantity,
+                            type: result.type,
                             userId: userId!,
                           );
 
@@ -147,7 +171,7 @@ class _DiaryPageState extends State<DiaryPage> {
                       icon: Icons.add,
                       backgroundColor: AppColors.secundary,
                       onPressed: () async {
-                        final result = await showDialog<String>(
+                        final result = await showDialog<AdverseEvent>(
                           context: context,
                           useRootNavigator: false,
                           builder: (_) => const RegistroEfectDialog(),
@@ -166,7 +190,7 @@ class _DiaryPageState extends State<DiaryPage> {
                           final efecto = AdverseEvent(
                             registerDate: DateTime.now(),
                             eventDate: daySelected,
-                            description: result,
+                            description: result.description,
                             userId: userId!,
                           );
 
@@ -220,13 +244,7 @@ class _DiaryPageState extends State<DiaryPage> {
                               ),
                             ),
                             ...crises.map(
-                              (crisis) => CrisisCard(
-                                id: crisis.id!,
-                                tipo: crisis.type,
-                                horario: crisis.timeRange,
-                                cantidad: crisis.quantity,
-                                fecha: crisis.crisisDate,
-                              ),
+                              (crisis) => CrisisCard(crisis: crisis),
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -247,12 +265,8 @@ class _DiaryPageState extends State<DiaryPage> {
                               ),
                             ),
                             ...eventos.map(
-                              (evento) => AdverseEventCard(
-                                id: evento.id!,
-                                descripcion: evento.description,
-                                fecha: evento.eventDate,
-                                fechaRegistro: evento.registerDate,
-                              ),
+                              (evento) =>
+                                  AdverseEventCard(adverseEvent: evento),
                             ),
                           ],
                         ],

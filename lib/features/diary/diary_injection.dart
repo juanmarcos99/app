@@ -1,3 +1,4 @@
+import 'package:app/features/diary/domain/use_cases/update_adverse_event.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 import 'diary.dart';
@@ -35,7 +36,9 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<DeleteCrisis>(
     () => DeleteCrisis(sldiary<CrisisRepository>()),
   );
- 
+  sldiary.registerLazySingleton<UpdateCrisis>(
+    () => UpdateCrisis(sldiary<CrisisRepository>()),
+  );
 
   sldiary.registerLazySingleton<AddAdverseEvent>(
     () => AddAdverseEvent(sldiary<AdverseEventRepository>()),
@@ -49,6 +52,9 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<DeleteAdverseEvent>(
     () => DeleteAdverseEvent(sldiary<AdverseEventRepository>()),
   );
+  sldiary.registerLazySingleton<UpdateAdverseEvent>(
+    () => UpdateAdverseEvent(sldiary<AdverseEventRepository>()),
+  );
 
   // Bloc
   sldiary.registerLazySingleton<DiaryBloc>(
@@ -61,6 +67,8 @@ void initDiaryDependencies() {
       sldiary<GetAdverseEventDaysByUser>(),
       sldiary<DeleteCrisis>(),
       sldiary<DeleteAdverseEvent>(),
+      sldiary<UpdateCrisis>(),
+      sldiary<UpdateAdverseEvent>(),
     ),
   );
 }

@@ -8,4 +8,6 @@ abstract class AdverseEventRepository {
   Future<List<DateTime>> getAdverseEventDaysByUser(int userId);
 
   Future<void> deleteEvent(int eventId);
+
+  Future<void> updateEvent(AdverseEvent event);
 }

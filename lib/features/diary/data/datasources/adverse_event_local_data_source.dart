@@ -9,6 +9,7 @@ abstract class AdverseEventLocalDataSource {
   );
   Future<List<DateTime>> getAdverseEventDaysByUser(int userId);
   Future<int> deleteAdverseEvent(int id);
+  Future <void> updateAdverseEvent(AdverseEventModel event);
 }
 
 class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
@@ -70,6 +71,20 @@ class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
       );
     } catch (e) {
       return -1;
+    }
+  }
+
+  @override
+  Future<void> updateAdverseEvent(AdverseEventModel event) async {
+    try {
+      await db.update(
+        'adverse_events',
+        event.toMap(),
+        where: 'id = ?',
+        whereArgs: [event.id],
+      );
+    } catch (e) {
+      throw Exception('Failed to update adverse event: $e');
     }
   }
 }
