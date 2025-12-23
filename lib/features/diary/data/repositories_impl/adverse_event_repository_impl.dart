@@ -32,4 +32,9 @@ class AdverseEventRepositoryImpl implements AdverseEventRepository {
     final result = await localDataSource.getAdverseEventDaysByUser(userId);
     return result;
   }
+
+  @override
+  Future<void> deleteEvent(int id) {
+    return localDataSource.deleteAdverseEvent(id);
+  }
 }

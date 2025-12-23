@@ -38,6 +38,36 @@ class _DiaryPageState extends State<DiaryPage> {
         if (state is DayChangedState) {
           debugPrint("Día cambiado: ${state.selectedDay}");
         }
+
+        if (state is AdverseEventDeleted) {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+            context.read<DiaryBloc>().add(
+              LoadCalendarEvent(authState.user.id!),
+            );
+          }
+        }
+
+        if (state is CrisisDeleted) {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is UserLoggedIn) {
+            context.read<DiaryBloc>().add(
+              LoadTarjetasEvent(
+                userId: authState.user.id!,
+                date: context.read<DiaryBloc>().daySelected,
+              ),
+            );
+            context.read<DiaryBloc>().add(
+              LoadCalendarEvent(authState.user.id!),
+            );
+          }
+        }
         if (state is AdverseEventAdded) {
           final authState = context.read<AuthBloc>().state;
           if (authState is UserLoggedIn) {
@@ -191,6 +221,7 @@ class _DiaryPageState extends State<DiaryPage> {
                             ),
                             ...crises.map(
                               (crisis) => CrisisCard(
+                                id: crisis.id!,
                                 tipo: crisis.type,
                                 horario: crisis.timeRange,
                                 cantidad: crisis.quantity,
@@ -217,6 +248,7 @@ class _DiaryPageState extends State<DiaryPage> {
                             ),
                             ...eventos.map(
                               (evento) => AdverseEventCard(
+                                id: evento.id!,
                                 descripcion: evento.description,
                                 fecha: evento.eventDate,
                                 fechaRegistro: evento.registerDate,

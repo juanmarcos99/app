@@ -9,6 +9,8 @@ export 'domain/use_cases/get_crises_by_day_and_user.dart';
 export 'domain/use_cases/add_event.dart';
 export 'domain/use_cases/get_adverse_avent_by_day_and_user.dart';
 export 'domain/use_cases/get_adverse_event_days_by_user.dart';
+export 'domain/use_cases/delete_crisis.dart';
+export 'domain/use_cases/delete_adverse_event.dart';
 
 
 //data
@@ -32,7 +34,7 @@ export 'ui/pages/dairy/widgets/register_crisis_dialog.dart';
 export 'ui/pages/dairy/widgets/register_efect_dialog.dart';
 export 'ui/pages/dairy/widgets/crisis_cards_by_day.dart';
 export 'ui/pages/widgets/custom_bottom_nav_bar.dart';
-export 'ui/pages/widgets/adverse_event_card.dart';
+export 'ui/pages/dairy/widgets/adverse_event_card.dart';
 export 'ui/bloc/diary_event.dart';
 export 'ui/bloc/diary_state.dart';
 export 'ui/bloc/diary_bloc.dart';

@@ -1,94 +1,105 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:app/core/theme/style/colors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  List<String> get reminderMessages => const [
+    "Aún no has registrado tus crisis esta semana.",
+    "Revisa si hubo eventos adversos recientes que debas anotar.",
+    "Mantener el diario actualizado ayuda a detectar patrones.",
+    "Si tuviste síntomas hoy, recuerda registrarlos.",
+    "Hace varios días que no actualizas tu diario.",
+    "Un registro consistente facilita el seguimiento clínico.",
+    "Verifica si necesitas completar datos pendientes de esta semana.",
+  ];
+
   @override
   Widget build(BuildContext context) {
+
+    // Elegimos 3 mensajes aleatorios sin repetir
+    final selectedMessages = reminderMessages.toList()..shuffle();
+    final messagesToShow = selectedMessages.take(3).toList();
+
     return Scaffold(
       backgroundColor: Colors.white,
-
-     
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: SizedBox(
-            height: 300,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: 10,
-                minY: 0,
-                barTouchData: BarTouchData(enabled: true),
-
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        const months = [
-                          "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-                          "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-                        ];
-                        return Text(
-                          months[value.toInt()],
-                          style: const TextStyle(fontSize: 12),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 2,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: const TextStyle(fontSize: 12),
-                        );
-                      },
-                    ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Título elegante
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  "Recordatorios",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
-
-                gridData: FlGridData(show: true),
-                borderData: FlBorderData(show: false),
-
-                barGroups: [
-                  _bar(0, 3, Colors.red),
-                  _bar(1, 5, Colors.orange),
-                  _bar(2, 2, Colors.yellow),
-                  _bar(3, 6, Colors.green),
-                  _bar(4, 4, Colors.teal),
-                  _bar(5, 7, Colors.blue),
-                  _bar(6, 5, Colors.indigo),
-                  _bar(7, 8, Colors.purple),
-                  _bar(8, 6, Colors.pink),
-                  _bar(9, 9, Colors.brown),
-                  _bar(10, 7, Colors.cyan),
-                  _bar(11, 4, Colors.lime),
-                ],
               ),
-            ),
+
+              const SizedBox(height: 10),
+
+              // Varias burbujas
+              ...messagesToShow.map((msg) => ReminderBubble(message: msg)),
+
+              const SizedBox(height: 30),
+
+              // Aquí puedes agregar más contenido si quieres
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  BarChartGroupData _bar(int x, double y, Color color) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y,
-          color: color,
-          width: 18,
-          borderRadius: BorderRadius.circular(4),
+// ------------------------------------------------------------
+// 🔥 Widget de burbuja profesional
+// ------------------------------------------------------------
+class ReminderBubble extends StatelessWidget {
+  final String message;
+
+  const ReminderBubble({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight.withOpacity(0.25),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.4),
+          width: 1.2,
         ),
-      ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.lightbulb_outline,
+            color: AppColors.primary,
+            size: 28,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -54,3 +54,13 @@ class AdverseEventAdded extends DiaryState {
   final AdverseEvent av;
   AdverseEventAdded(this.av);
 }
+
+class CrisisDeleted extends DiaryState {
+  final int crisisId;
+  CrisisDeleted(this.crisisId);
+}
+
+class AdverseEventDeleted extends DiaryState {
+  final int adverseEventId;
+  AdverseEventDeleted(this.adverseEventId);
+}

@@ -6,4 +6,6 @@ abstract class AdverseEventRepository {
   Future<List<AdverseEvent>> getAdverseEventByDayAndUser(DateTime day, int userId);
   //para los punticos del calendario de los dias q hay crisis
   Future<List<DateTime>> getAdverseEventDaysByUser(int userId);
+
+  Future<void> deleteEvent(int eventId);
 }

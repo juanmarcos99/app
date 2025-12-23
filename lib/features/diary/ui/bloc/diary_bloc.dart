@@ -9,6 +9,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
   final AddAdverseEvent addAdverseEvent;
   final GetAdverseAventByDayAndUser getAdverseAventByDayAndUser;
   final GetAdverseEventDaysByUser getAdverseEventDaysByUser;
+  final DeleteCrisis deleteCrisis;
+  final DeleteAdverseEvent deleteAdverseEvent;
 
   ///Atributo que guarda el día seleccionado
   DateTime daySelected = DateUtils.dateOnly(DateTime.now());
@@ -20,6 +22,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     this.addAdverseEvent,
     this.getAdverseAventByDayAndUser,
     this.getAdverseEventDaysByUser,
+    this.deleteCrisis,
+    this.deleteAdverseEvent,
   ) : super(DiaryInitial()) {
     // Evento para cambiar el día
     on<DayChangeEvent>((event, emit) {
@@ -75,6 +79,27 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
         debugPrint("entro al add evento adverso");
         await addAdverseEvent(event.av);
         emit(AdverseEventAdded(event.av));
+      } catch (e) {
+        emit(DiaryError(e.toString()));
+      }
+    });
+
+    //para eliminar crisis
+  on<DeleteCrisisEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        await deleteCrisis(event.crisisId);
+        emit(CrisisDeleted(event.crisisId));
+      } catch (e) {
+        emit(DiaryError(e.toString()));
+      }
+    });
+  //para eliminar evento adverso
+  on<DeleteAdverseEventEvent>((event, emit) async {
+      emit(DiaryLoading());
+      try {
+        await deleteAdverseEvent(event.adverseEventId);
+        emit(AdverseEventDeleted(event.adverseEventId));
       } catch (e) {
         emit(DiaryError(e.toString()));
       }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/theme/style/colors.dart';
+import '../../../../diary.dart';
 
 class CrisisCard extends StatelessWidget {
+  final int id;
   final String tipo;
   final String horario;
   final int cantidad;
@@ -9,6 +12,7 @@ class CrisisCard extends StatelessWidget {
 
   const CrisisCard({
     super.key,
+    required this.id,
     required this.tipo,
     required this.horario,
     required this.cantidad,
@@ -30,14 +34,40 @@ class CrisisCard extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () {
-                // 🔥 Aquí irá la funcionalidad de editar
-              },
+              onPressed: () {},
             ),
+
+            // BOTÓN ELIMINAR
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                // 🔥 Aquí irá la funcionalidad de eliminar
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text("Eliminar crisis"),
+                    content: const Text(
+                      "¿Estás seguro de que deseas eliminar esta crisis?",
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancelar"),
+                        onPressed: () => Navigator.pop(context, false),
+                      ),
+                      TextButton(
+                        child: const Text(
+                          "Eliminar",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () => Navigator.pop(context, true),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true) {
+                  context.read<DiaryBloc>().add(DeleteCrisisEvent(id));
+                  
+                }
               },
             ),
           ],

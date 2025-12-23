@@ -30,4 +30,8 @@ class CrisisRepositoryImpl implements CrisisRepository {
     final result = await localDataSource.getCrisisDaysByUser(userId);
     return result;
   }
+ @override
+  Future<void> deleteCrisis(int crisisId) async {
+    await localDataSource.deleteCrisis(crisisId);
+  }
 }

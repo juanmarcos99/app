@@ -8,6 +8,7 @@ abstract class AdverseEventLocalDataSource {
     int userId,
   );
   Future<List<DateTime>> getAdverseEventDaysByUser(int userId);
+  Future<int> deleteAdverseEvent(int id);
 }
 
 class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
@@ -57,5 +58,18 @@ class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
         .map((row) => DateTime.parse(row['eventDate'] as String))
         .map((d) => DateTime(d.year, d.month, d.day)) // normalizamos
         .toList();
+  }
+
+  @override
+  Future<int> deleteAdverseEvent(int id) async {
+    try {
+      return await db.delete(
+        'adverse_events',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      return -1;
+    }
   }
 }
