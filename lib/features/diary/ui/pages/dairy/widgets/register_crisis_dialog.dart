@@ -46,9 +46,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
       fecha = crisis.crisisDate ?? DateTime.now();
 
       // 🔥 FIX DEL DROPDOWN: solo asignar si existe en la lista
-      horario = horarios.contains(crisis.timeRange)
-          ? crisis.timeRange
-          : null;
+      horario = horarios.contains(crisis.timeRange) ? crisis.timeRange : null;
 
       tipoSeleccionado = tiposCrisis.contains(crisis.type)
           ? crisis.type
@@ -86,7 +84,10 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
+              const Text(
+                "Horario del episodio",
+                style: TextStyle(fontSize: 16),
+              ),
               DropdownButtonFormField<String>(
                 value: horario,
                 items: horarios
@@ -173,5 +174,5 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
         ),
       ],
     );
-  }
+  } 
 }

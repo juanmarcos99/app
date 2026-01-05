@@ -51,4 +51,20 @@ class CrisisRepositoryImpl implements CrisisRepository {
     );
     await localDataSource.updateCrisis(model);
   }
+
+  @override
+  Future<List<Crisis>> getCrisesByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  ) async {
+    final result = await localDataSource.getCrisisByMonthAndYear(
+      month,
+      year,
+      userId,
+    );
+    return result;
+  }
+
+  
 }

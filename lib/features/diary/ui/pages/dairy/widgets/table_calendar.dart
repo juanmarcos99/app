@@ -20,120 +20,157 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: BlocBuilder<DiaryBloc, DiaryState>(
-        buildWhen: (prev, curr) =>
-            curr is CalendarLoaded || curr is CalendarError,
-        builder: (context, state) {
-          Set<DateTime> crisisDays = {};
-          Set<DateTime> aeDays = {};
 
-          if (state is CalendarLoaded) {
-            crisisDays = state.crisisDays.toSet();
-            aeDays = state.aeDays.toSet();
-          }
+      // Espaciado externo del calendario
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
 
-          return TableCalendar(
-            locale: 'es_ES',
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.now(),
-            focusedDay: focusedDay,
-            selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+      child: ConstrainedBox(
+        // Altura mínima para evitar que el calendario se aplaste
+        constraints: const BoxConstraints(
+          minHeight: 380,
+        ),
 
-            onDaySelected: (day, newFocusedDay) {
-              if (day.isAfter(DateTime.now())) return;
-              final normalized = DateUtils.dateOnly(day);
+        child: BlocBuilder<DiaryBloc, DiaryState>(
+          buildWhen: (prev, curr) =>
+              curr is CalendarLoaded || curr is CalendarError,
+          builder: (context, state) {
+            Set<DateTime> crisisDays = {};
+            Set<DateTime> aeDays = {};
 
-              setState(() {
-                selectedDay = normalized;
-                focusedDay = normalized;
-              });
+            if (state is CalendarLoaded) {
+              crisisDays = state.crisisDays.toSet();
+              aeDays = state.aeDays.toSet();
+            }
 
-              context.read<DiaryBloc>().add(DayChangeEvent(normalized));
-
-              final authState = context.read<AuthBloc>().state;
-              if (authState is UserLoggedIn) {
-                context.read<DiaryBloc>().add(
-                  LoadTarjetasEvent(
-                    userId: authState.user.id!,
-                    date: normalized,
-                  ),
-                );
-
-                context.read<DiaryBloc>().add(
-                  LoadCalendarEvent(authState.user.id!),
-                );
-              }
-            },
-
-            calendarFormat: CalendarFormat.month,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
-              leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
-              rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
-            ),
-
-            calendarStyle: CalendarStyle(
-              cellMargin: const EdgeInsets.all(2),
-              outsideTextStyle: const TextStyle(color: Colors.grey),
-            ),
-
-            daysOfWeekStyle: const DaysOfWeekStyle(
-              weekdayStyle: TextStyle(color: Colors.black),
-              weekendStyle: TextStyle(color: Colors.black),
-            ),
-
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
+            return TableCalendar(
+              locale: 'es_ES',
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.now(),
+              focusedDay: focusedDay,
+              selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+              daysOfWeekHeight: 32,
+              onDaySelected: (day, newFocusedDay) {
+                if (day.isAfter(DateTime.now())) return;
                 final normalized = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalized);
-                final hasAE = aeDays.contains(normalized);
 
-                return _buildDayCell(
-                  day: day,
-                  backgroundColor: Colors.white,
-                  hasCrisis: hasCrisis,
-                  hasAE: hasAE,
-                );
+                setState(() {
+                  selectedDay = normalized;
+                  focusedDay = normalized;
+                });
+
+                context.read<DiaryBloc>().add(DayChangeEvent(normalized));
+
+                final authState = context.read<AuthBloc>().state;
+                if (authState is UserLoggedIn) {
+                  context.read<DiaryBloc>().add(
+                    LoadTarjetasEvent(
+                      userId: authState.user.id!,
+                      date: normalized,
+                    ),
+                  );
+
+                  context.read<DiaryBloc>().add(
+                    LoadCalendarEvent(authState.user.id!),
+                  );
+                }
               },
 
-              todayBuilder: (context, day, focusedDay) {
-                final normalized = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalized);
-                final hasAE = aeDays.contains(normalized);
+              calendarFormat: CalendarFormat.month,
+              startingDayOfWeek: StartingDayOfWeek.monday,
 
-                return _buildDayCell(
-                  day: day,
-                  backgroundColor: AppColors.calendarActualDay,
-                  hasCrisis: hasCrisis,
-                  hasAE: hasAE,
-                );
-              },
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
+                rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
 
-              selectedBuilder: (context, day, focusedDay) {
-                final normalized = DateUtils.dateOnly(day);
-                final hasCrisis = crisisDays.contains(normalized);
-                final hasAE = aeDays.contains(normalized);
+                // Espaciado inferior del header
+                headerMargin: EdgeInsets.only(bottom: 12),
+              ),
 
-                return _buildDayCell(
-                  day: day,
-                  backgroundColor: AppColors.primaryLight,
-                  hasCrisis: hasCrisis,
-                  hasAE: hasAE,
-                );
-              },
-            ),
-          );
-        },
+              daysOfWeekStyle: const DaysOfWeekStyle(
+                weekdayStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+                weekendStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+
+                // Espaciado entre días de semana y celdas
+                decoration: BoxDecoration(),
+              ),
+
+              calendarStyle: CalendarStyle(
+                cellMargin: const EdgeInsets.all(4),
+
+                // Altura mínima de cada celda
+                cellPadding: const EdgeInsets.symmetric(vertical: 6),
+
+                outsideTextStyle: const TextStyle(color: Colors.grey),
+                defaultTextStyle: const TextStyle(fontSize: 14),
+                weekendTextStyle: const TextStyle(fontSize: 14),
+                todayDecoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                ),
+                selectedDecoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                ),
+              ),
+
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) {
+                  final normalized = DateUtils.dateOnly(day);
+                  final hasCrisis = crisisDays.contains(normalized);
+                  final hasAE = aeDays.contains(normalized);
+
+                  return _buildDayCell(
+                    day: day,
+                    backgroundColor: Colors.white,
+                    hasCrisis: hasCrisis,
+                    hasAE: hasAE,
+                  );
+                },
+
+                todayBuilder: (context, day, focusedDay) {
+                  final normalized = DateUtils.dateOnly(day);
+                  final hasCrisis = crisisDays.contains(normalized);
+                  final hasAE = aeDays.contains(normalized);
+
+                  return _buildDayCell(
+                    day: day,
+                    backgroundColor: AppColors.calendarActualDay,
+                    hasCrisis: hasCrisis,
+                    hasAE: hasAE,
+                  );
+                },
+
+                selectedBuilder: (context, day, focusedDay) {
+                  final normalized = DateUtils.dateOnly(day);
+                  final hasCrisis = crisisDays.contains(normalized);
+                  final hasAE = aeDays.contains(normalized);
+
+                  return _buildDayCell(
+                    day: day,
+                    backgroundColor: AppColors.primaryLight,
+                    hasCrisis: hasCrisis,
+                    hasAE: hasAE,
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  /// 🔥 Construye un día con barritas de crisis y eventos adversos
   Widget _buildDayCell({
     required DateTime day,
     required Color backgroundColor,
@@ -145,18 +182,20 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
         Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             border: Border.all(color: Colors.grey.shade300),
           ),
           alignment: Alignment.topLeft,
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(6),
           child: Text(
             '${day.day}',
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+            ),
           ),
         ),
 
-        /// Crisis (azul)
         if (hasCrisis)
           Align(
             alignment: Alignment.bottomCenter,
@@ -173,7 +212,6 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
             ),
           ),
 
-        /// Evento adverso (morado)
         if (hasAE)
           Align(
             alignment: Alignment.bottomCenter,

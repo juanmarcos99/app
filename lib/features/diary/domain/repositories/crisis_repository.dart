@@ -10,4 +10,6 @@ abstract class CrisisRepository {
   Future<void> deleteCrisis(int crisisId);
   //para actualizar crisis
   Future<void> updateCrisis(Crisis crisis);
+  //para obtener una crisis por id mes y año
+  Future<List<Crisis>> getCrisesByMonthAndYear(int month, int year, int userId);
 }

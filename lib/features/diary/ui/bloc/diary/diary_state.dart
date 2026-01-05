@@ -37,11 +37,16 @@ class TarjetasError extends DiaryState {
   TarjetasError(this.message);
 }
 
+class TarjetasLoading extends DiaryState {
+  final String message;
+  TarjetasLoading(this.message);
+}
+
 //para el calendario
 class CalendarLoaded extends DiaryState {
-  final  Set <DateTime> crisisDays;
-  final  Set <DateTime> aeDays;
-  CalendarLoaded(this.crisisDays,this.aeDays);
+  final Set<DateTime> crisisDays;
+  final Set<DateTime> aeDays;
+  CalendarLoaded(this.crisisDays, this.aeDays);
 }
 
 class CalendarError extends DiaryState {

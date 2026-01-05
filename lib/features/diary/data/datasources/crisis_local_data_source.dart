@@ -8,6 +8,11 @@ abstract class CrisisLocalDataSource {
   Future<int> deleteCrisis(int id);
   Future<int> updateCrisis(CrisisModel crisis);
   Future<List<DateTime>> getCrisisDaysByUser(int userId);
+  Future<List<CrisisModel>> getCrisisByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  );
 }
 
 // permite cambiar de DB sin que se afecte la app
@@ -37,7 +42,8 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
     );
     return result.map((map) => CrisisModel.fromMap(map)).toList();
   }
-//para las tarjetas 
+
+  //para las tarjetas
   @override
   Future<List<CrisisModel>> getCrisisByDateAndUser(
     DateTime date,
@@ -59,7 +65,7 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
     return result.map((map) => CrisisModel.fromMap(map)).toList();
   }
 
-//para mostrar los dias con crisis en el calendario
+  //para mostrar los dias con crisis en el calendario
   @override
   Future<List<DateTime>> getCrisisDaysByUser(int userId) async {
     final result = await db.rawQuery(
@@ -86,5 +92,24 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
       where: 'id = ?',
       whereArgs: [crisis.id],
     );
+  }
+
+  @override
+  Future<List<CrisisModel>> getCrisisByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  ) async {
+    final monthStr = month.toString().padLeft(2, '0');
+    final yearStr = year.toString();
+    final result = await db.rawQuery(
+      ''' SELECT * FROM crisis 
+      WHERE strftime('%m', crisisDate) = ? 
+      AND strftime('%Y', crisisDate) = ? 
+      AND userId = ? 
+      ORDER BY crisisDate DESC ''',
+      [monthStr, yearStr, userId],
+    );
+    return result.map((map) => CrisisModel.fromMap(map)).toList();
   }
 }

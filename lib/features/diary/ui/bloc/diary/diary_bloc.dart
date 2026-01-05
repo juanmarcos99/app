@@ -62,7 +62,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
         );
         emit(TarjetasLoaded(crises, eventos));
       } catch (e) {
-        emit(TarjetasError(e.toString()));
+        emit(TarjetasLoading(e.toString()));
       }
     });
 

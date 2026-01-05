@@ -9,7 +9,12 @@ abstract class AdverseEventLocalDataSource {
   );
   Future<List<DateTime>> getAdverseEventDaysByUser(int userId);
   Future<int> deleteAdverseEvent(int id);
-  Future <void> updateAdverseEvent(AdverseEventModel event);
+  Future<void> updateAdverseEvent(AdverseEventModel event);
+  Future<List<AdverseEventModel>> getAdverseEventByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  );
 }
 
 class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
@@ -86,5 +91,24 @@ class AdverseEventLocalDataSourceImpl implements AdverseEventLocalDataSource {
     } catch (e) {
       throw Exception('Failed to update adverse event: $e');
     }
+  }
+
+  @override
+  Future<List<AdverseEventModel>> getAdverseEventByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  ) async {
+    final monthStr = month.toString().padLeft(2, '0');
+    final yearStr = year.toString();
+    final result = await db.rawQuery(
+      ''' SELECT * FROM adverse_events
+      WHERE strftime('%m', eventDate) = ? 
+      AND strftime('%Y', eventDate) = ? 
+      AND userId = ? 
+      ORDER BY eventDate DESC ''',
+      [monthStr, yearStr, userId],
+    );
+    return result.map((map) => AdverseEventModel.fromMap(map)).toList();
   }
 }

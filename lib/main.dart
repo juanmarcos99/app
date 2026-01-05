@@ -26,6 +26,7 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => GetIt.instance.get<AuthBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<DiaryBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<ReportBloc>()),
       ],
       child: MaterialApp(
         initialRoute: AppRoutes.login,
@@ -35,9 +36,10 @@ class MainApp extends StatelessWidget {
           AppRoutes.diary: (context) => const DiaryPage(),
           AppRoutes.home: (context) => const HomePage(),
           AppRoutes.mainNavigationPage: (context) => const MainNavigationPage(),
-          AppRoutes.pdfPage: (context) => const PdfPage(),
+          AppRoutes.medication: (context) => const MedicationPage(),
           AppRoutes.settingsPage: (context) => const SettingsPage(),
           AppRoutes.addPage: (context) => const AddPage(),
+          AppRoutes.pdf: (context) => const ExportPdfPage(),
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

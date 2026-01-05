@@ -7,11 +7,12 @@ class AppRoutes {
   static const register = '/register';
   static const diary = '/diary';
   static const home = '/home';
-  static const mainNavigationPage = '/MainNavigationPage';
-  static const pdfPage = '/PdfPage';
-  static const settingsPage = '/SettingsPage';
-  static const addPage = '/AddPage';
-
+  static const mainNavigationPage = '/mainNavigation';
+  static const medication = '/medication';
+  static const settingsPage = '/settings';
+  static const addPage = '/add';
+  static const pdf = '/pdf';
+  
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
@@ -24,12 +25,14 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const HomePage());
       case mainNavigationPage:
         return MaterialPageRoute(builder: (_) => const MainNavigationPage());
-      case pdfPage:
-        return MaterialPageRoute(builder: (_) => const PdfPage());
+      case medication:
+        return MaterialPageRoute(builder: (_) => const MedicationPage());
       case settingsPage:
         return MaterialPageRoute(builder: (_) => const SettingsPage());
       case addPage:
         return MaterialPageRoute(builder: (_) => const AddPage());
+      case pdf:
+        return MaterialPageRoute(builder: (_) => const ExportPdfPage());
       default:
         return MaterialPageRoute(
           builder: (_) =>

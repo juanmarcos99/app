@@ -49,4 +49,18 @@ class AdverseEventRepositoryImpl implements AdverseEventRepository {
     );
     return localDataSource.updateAdverseEvent(model);
   }
+
+  @override
+  Future<List<AdverseEvent>> getAdverseEventByMonthAndYear(
+    int month,
+    int year,
+    int userId,
+  ) async {
+    final result = await localDataSource.getAdverseEventByMonthAndYear(
+      month,
+      year,
+      userId,
+    );
+    return result;
+  }
 }

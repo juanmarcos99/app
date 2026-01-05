@@ -23,10 +23,8 @@ class _LoginPageState extends State<LoginPage> {
           listenWhen: (previous, current) =>
               current is AuthFailure || current is UserLoggedIn,
           listener: (context, state) {
-            print("🔎 Listener recibió estado: $state");
 
             if (state is AuthFailure) {
-              print("❌ Error de login: ${state.message}");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
@@ -36,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
             }
 
             if (state is UserLoggedIn) {
-              print("✅ Usuario logueado: ${state.user.userName}");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text("Bienvenido ${state.user.userName}"),
@@ -47,7 +44,6 @@ class _LoginPageState extends State<LoginPage> {
             }
           },
           builder: (context, state) {
-            print("🎨 Builder dibujando con estado: $state");
 
             return Column(
               children: [
@@ -103,12 +99,10 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               final username = usernameController.text.trim();
                               final password = passwordController.text.trim();
-                              print("🚀 Botón Entrar presionado con usuario=$username, password=$password");
 
                               context.read<AuthBloc>().add(
                                 LoginUserEvent(username, password),
                               );
-                              print("📤 Evento LoginUserEvent enviado al AuthBloc");
                             },
                           ),
                           const SizedBox(height: 25),
