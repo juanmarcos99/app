@@ -35,6 +35,7 @@ export 'ui/pages/medication/medication_page.dart';
 export 'ui/pages/settings/settings_page.dart';
 export 'ui/pages/add/AddPage.dart';
 export 'ui/pages/pdf/pdf.dart';
+export 'ui/pages/pdf/widgets/pdf_card.dart';
 export 'ui/pages/dairy/widgets/table_calendar.dart';
 export 'ui/pages/dairy/widgets/custom_action_button.dart';
 export 'ui/pages/dairy/widgets/register_crisis_dialog.dart';

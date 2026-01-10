@@ -1,7 +1,8 @@
 import 'package:app/app_routes.dart';
-import 'package:app/features/diary/ui/pages/pdf/pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/core.dart';
+import 'package:app/features/auth/auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -70,26 +71,23 @@ class SettingsPage extends StatelessWidget {
 
                             const SizedBox(height: 12),
 
-                            const Text(
-                              'Jane Doe',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.secundary,
-                              ),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            Text(
-                              'Miembro básico',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.grey,
-                              ),
+                            Builder(
+                              builder: (context) {
+                                String user = "";
+                                final authState = context.read<AuthBloc>().state;
+                                if (authState is UserLoggedIn) {
+                                  user = authState.user.name;
+                                }
+                                return Text(
+                                  user.isNotEmpty ? user : "Invitado",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.secundary,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

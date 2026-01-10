@@ -8,7 +8,7 @@ class User {
   final String passwordHash; // en BD guardas hash, no texto plano
   final String role; // doctor o paciente
 
-  User({
+  User({ 
     this.id,
     required this.name,
     required this.lastName,

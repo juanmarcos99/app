@@ -32,8 +32,8 @@ class CustomBottomNavBar extends StatelessWidget {
           label: "Agregar",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.description),
-          label: "PDF",
+          icon: Icon(Icons.medication),
+          label: "Medicaciones",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),

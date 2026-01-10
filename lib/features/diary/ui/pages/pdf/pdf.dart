@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ExportPdfPage extends StatefulWidget {
   const ExportPdfPage({super.key});
@@ -19,6 +19,8 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   String? selectedMonth;
   String? selectedYear;
   final TextEditingController pdfNameController = TextEditingController();
+
+  List<FileSystemEntity> generatedPdfs = [];
 
   final List<String> months = const [
     "Enero",
@@ -42,22 +44,20 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
     super.initState();
     final currentYear = DateTime.now().year;
     years = List.generate(6, (i) => (currentYear - i).toString());
+    loadGeneratedPdfs();
   }
 
-  // ---------------------------------------------------------
-  // GUARDAR PDF EN DESCARGAS
-  // ---------------------------------------------------------
+  Future<void> loadGeneratedPdfs() async {
+    final dir = Directory('/storage/emulated/0/Download');
+    final files = dir.listSync().where((f) => f.path.endsWith(".pdf")).toList();
+
+    setState(() => generatedPdfs = files);
+  }
+
   Future<String> savePdfToDownloads(List<int> bytes, String fileName) async {
     await Permission.storage.request();
 
-    Directory? directory;
-
-    if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-    } else {
-      directory = await getApplicationDocumentsDirectory();
-    }
-
+    Directory directory = Directory('/storage/emulated/0/Download');
     final file = File('${directory.path}/$fileName.pdf');
     await file.writeAsBytes(bytes);
 
@@ -79,26 +79,23 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
         }
 
         if (state is ReportPdfGenerated) {
-          Navigator.pop(context); // Cerrar loading
+          Navigator.pop(context);
 
-          // 1. Guardar en Descargas
           final savedPath = await savePdfToDownloads(
             state.pdfBytes,
             pdfNameController.text.trim(),
           );
 
-          // 2. Mostrar mensaje
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("PDF guardado en: $savedPath")),
           );
 
-          // 3. Abrir con el lector nativo del teléfono
+          await loadGeneratedPdfs();
           await OpenFilex.open(savedPath);
         }
 
         if (state is ReportError) {
-          Navigator.pop(context); // Cerrar loading
-
+          Navigator.pop(context);
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -122,9 +119,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
               ),
               child: Column(
                 children: [
-                  // ---------------------------
                   // ENCABEZADO
-                  // ---------------------------
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -171,9 +166,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                     ),
                   ),
 
-                  // ---------------------------
-                  // CONTENIDO SCROLLABLE
-                  // ---------------------------
+                  // CONTENIDO
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24),
@@ -189,18 +182,9 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             ),
                           ),
 
-                          const SizedBox(height: 8),
-
-                          Text(
-                            "Selecciona el período y asigna un nombre al archivo para generar tu resumen de salud.",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.grey.withOpacity(0.9),
-                            ),
-                          ),
-
                           const SizedBox(height: 32),
 
+                          // FORMULARIO
                           Row(
                             children: [
                               Expanded(
@@ -233,7 +217,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: AppColors.secundary,
-                              letterSpacing: 0.5,
                             ),
                           ),
 
@@ -241,61 +224,56 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
                           TextField(
                             controller: pdfNameController,
-                            style: const TextStyle(
-                              color: AppColors.secundary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
                             decoration: InputDecoration(
                               hintText: "Escribe el nombre del archivo",
-                              hintStyle: TextStyle(
-                                color: AppColors.grey.withOpacity(0.7),
-                              ),
                               filled: true,
                               fillColor: Colors.grey.shade100,
-                              prefixIcon: const Icon(
-                                Icons.description,
-                                color: AppColors.grey,
-                              ),
+                              prefixIcon: const Icon(Icons.description),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: const BorderSide(
-                                  color: AppColors.primary,
-                                  width: 2,
-                                ),
                               ),
                             ),
                           ),
 
                           const SizedBox(height: 40),
+
+                          // LISTA DE PDFs GENERADOS
+                          const Text(
+                            "PDFs generados",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.secundary,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...generatedPdfs.map((file) {
+                            final name = file.path.split('/').last;
+                            return PdfCard(
+                              fileName: name,
+                              onOpen: () => OpenFilex.open(file.path),
+                              onShare: () async {
+                                await Share.shareXFiles([
+                                  XFile(file.path),
+                                ], text: "Aquí tienes tu reporte en PDF");
+                              },
+                              onDelete: () {
+                                File(file.path).deleteSync();
+                                loadGeneratedPdfs();
+                              },
+                            );
+                          }).toList(),
                         ],
                       ),
                     ),
                   ),
 
-                  // ---------------------------
                   // BOTÓN GENERAR PDF
-                  // ---------------------------
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          elevation: 6,
-                          shadowColor: AppColors.primary.withOpacity(0.3),
-                        ),
                         onPressed: () {
                           if (selectedMonth == null || selectedYear == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -309,9 +287,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                           if (pdfNameController.text.trim().isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  "Ingresa un nombre para el archivo",
-                                ),
+                                content: Text("Ingresa un nombre"),
                               ),
                             );
                             return;
@@ -319,8 +295,8 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
                           final monthIndex = months.indexOf(selectedMonth!) + 1;
                           final yearInt = int.parse(selectedYear!);
-                          int userId = -1;
 
+                          int userId = -1;
                           final authState = context.read<AuthBloc>().state;
                           if (authState is UserLoggedIn) {
                             userId = authState.user.id!;
@@ -335,17 +311,24 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             ),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.download, color: AppColors.white),
+                            Icon(Icons.download, color: Colors.white),
                             SizedBox(width: 8),
                             Text(
                               "Generar PDF",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -362,9 +345,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
     );
   }
 
-  // ---------------------------------------------------------
-  // WIDGET: Dropdown estilizado
-  // ---------------------------------------------------------
   Widget _buildDropdownField({
     required String label,
     required String? value,
@@ -380,7 +360,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: AppColors.secundary,
-            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 6),
@@ -396,7 +375,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
             hint: const Text("Seleccionar"),
             isExpanded: true,
             underline: const SizedBox(),
-            icon: const Icon(Icons.expand_more, color: AppColors.grey),
+            icon: const Icon(Icons.expand_more),
             items: items
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
