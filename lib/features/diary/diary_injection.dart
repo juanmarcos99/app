@@ -14,12 +14,21 @@ void initDiaryDependencies() {
     () => AdverseEventLocalDataSourceImpl(sldiary<Database>()),
   );
 
+  //SERVICEs
+  sldiary.registerLazySingleton<PdfGeneratorService>(
+    () => PdfGeneratorService(),
+  );
+
   // Repositorio
   sldiary.registerLazySingleton<CrisisRepository>(
     () => CrisisRepositoryImpl(sldiary<CrisisLocalDataSource>()),
   );
   sldiary.registerLazySingleton<AdverseEventRepository>(
     () => AdverseEventRepositoryImpl(sldiary<AdverseEventLocalDataSource>()),
+  );
+
+  sldiary.registerLazySingleton<PdfRepository>(
+    () => PdfRepositoryImpl(sldiary<PdfGeneratorService>()),
   );
 
   // Casos de uso
@@ -56,8 +65,20 @@ void initDiaryDependencies() {
     () => UpdateAdverseEvent(sldiary<AdverseEventRepository>()),
   );
 
+  sldiary.registerLazySingleton<GetCrisesByMonthAndYearUseCase>(
+    () => GetCrisesByMonthAndYearUseCase(sldiary<CrisisRepository>()),
+  );
+  sldiary.registerLazySingleton<GetAdverseEventsByMonthAndYearUseCase>(
+    () => GetAdverseEventsByMonthAndYearUseCase(
+      sldiary<AdverseEventRepository>(),
+    ),
+  );
+  sldiary.registerLazySingleton<GeneratePdfUseCase>(
+    () => GeneratePdfUseCase(sldiary<PdfRepository>()),
+  );
+
   // Bloc
-  sldiary.registerLazySingleton<DiaryBloc>(
+  sldiary.registerFactory<DiaryBloc>(
     () => DiaryBloc(
       sldiary<AddCrisis>(),
       sldiary<GetCrisesByDay>(),
@@ -69,6 +90,15 @@ void initDiaryDependencies() {
       sldiary<DeleteAdverseEvent>(),
       sldiary<UpdateCrisis>(),
       sldiary<UpdateAdverseEvent>(),
+    ),
+  );
+
+  sldiary.registerFactory<ReportBloc>(
+    () => ReportBloc(
+      getCrisesByMonthAndYearUseCase: sldiary<GetCrisesByMonthAndYearUseCase>(),
+      getAdverseEventsByMonthAndYearUseCase:
+          sldiary<GetAdverseEventsByMonthAndYearUseCase>(),
+      generatePdfUseCase: sldiary<GeneratePdfUseCase>(),
     ),
   );
 }

@@ -20,7 +20,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     const SettingsPage(),
   ];
 
-  final List<String> _titles = ["Home", "Diario", "Agregar", "PDF", "Ajustes"];
+  final List<String> _titles = ["Home", "Diario", "Agregar", "Medicacíon", "Ajustes"];
 
   @override
   Widget build(BuildContext context) {

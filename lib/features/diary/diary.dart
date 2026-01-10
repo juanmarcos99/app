@@ -17,7 +17,6 @@ export 'domain/use_cases/get_crisis_by_month_and_year.dart';
 export 'domain/use_cases/get_adverse_event_by_month_year_uc.dart';
 export 'domain/use_cases/generate_pdf_usecase.dart';
 
-
 //data
 export 'data/datasources/crisis_local_data_source.dart';
 export 'data/datasources/adverse_event_local_data_source.dart';

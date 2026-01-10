@@ -5,6 +5,8 @@ import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:app/features/auth/auth.dart';
+import 'package:open_filex/open_filex.dart';
 
 class ExportPdfPage extends StatefulWidget {
   const ExportPdfPage({super.key});
@@ -19,8 +21,18 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   final TextEditingController pdfNameController = TextEditingController();
 
   final List<String> months = const [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
   ];
 
   late final List<String> years;
@@ -69,22 +81,27 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
         if (state is ReportPdfGenerated) {
           Navigator.pop(context); // Cerrar loading
 
-          final path = await savePdfToDownloads(
+          // 1. Guardar en Descargas
+          final savedPath = await savePdfToDownloads(
             state.pdfBytes,
             pdfNameController.text.trim(),
           );
 
+          // 2. Mostrar mensaje
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("PDF guardado en: $path")),
+            SnackBar(content: Text("PDF guardado en: $savedPath")),
           );
+
+          // 3. Abrir con el lector nativo del teléfono
+          await OpenFilex.open(savedPath);
         }
 
         if (state is ReportError) {
           Navigator.pop(context); // Cerrar loading
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
@@ -184,9 +201,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
                           const SizedBox(height: 32),
 
-                          // ---------------------------
-                          // SELECTORES MES / AÑO
-                          // ---------------------------
                           Row(
                             children: [
                               Expanded(
@@ -213,9 +227,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
                           const SizedBox(height: 24),
 
-                          // ---------------------------
-                          // NOMBRE DEL ARCHIVO PDF
-                          // ---------------------------
                           const Text(
                             "Nombre del archivo PDF",
                             style: TextStyle(
@@ -298,24 +309,31 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                           if (pdfNameController.text.trim().isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Ingresa un nombre para el archivo"),
+                                content: Text(
+                                  "Ingresa un nombre para el archivo",
+                                ),
                               ),
                             );
                             return;
                           }
 
-                          final monthIndex =
-                              months.indexOf(selectedMonth!) + 1;
+                          final monthIndex = months.indexOf(selectedMonth!) + 1;
                           final yearInt = int.parse(selectedYear!);
+                          int userId = -1;
+
+                          final authState = context.read<AuthBloc>().state;
+                          if (authState is UserLoggedIn) {
+                            userId = authState.user.id!;
+                          }
 
                           context.read<ReportBloc>().add(
-                                GenerateMonthlyReportEvent(
-                                  month: monthIndex,
-                                  year: yearInt,
-                                  userId: 1, // Ajusta según tu auth
-                                  fileName: pdfNameController.text.trim(),
-                                ),
-                              );
+                            GenerateMonthlyReportEvent(
+                              month: monthIndex,
+                              year: yearInt,
+                              userId: userId,
+                              fileName: pdfNameController.text.trim(),
+                            ),
+                          );
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,

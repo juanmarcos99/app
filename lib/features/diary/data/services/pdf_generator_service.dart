@@ -17,9 +17,14 @@ class PdfGeneratorService {
       headers: ['Fecha', 'Horario', 'Tipo de crisis', 'Cantidad'],
       data: crises.map((c) {
         final date = c.crisisDate.toString().split(' ').first;
-        final time = c.crisisDate.toString().split(' ').last.substring(0, 5);
+        final time = c.timeRange; // ← USAMOS EL RANGO REAL
 
-        return [date, time, c.type, c.quantity.toString()];
+        return [
+          date,
+          time,
+          c.type,
+          c.quantity.toString(),
+        ];
       }).toList(),
       headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
@@ -35,7 +40,10 @@ class PdfGeneratorService {
       headers: ['Fecha', 'Descripción'],
       data: adverseEvents.map((e) {
         final date = e.eventDate.toString().split(' ').first;
-        return [date, e.description];
+        return [
+          date,
+          e.description,
+        ];
       }).toList(),
       headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
