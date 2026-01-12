@@ -13,11 +13,11 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed, // 🔥 permite más de 3 ítems
+      type: BottomNavigationBarType.fixed, // permite más de 3 ítems
       currentIndex: currentIndex,
       onTap: onTap,
-      selectedItemColor: Colors.blue, // 🎨 color seleccionado
-      unselectedItemColor: Colors.grey, // 🎨 color no seleccionado
+      selectedItemColor: Colors.blue, // color seleccionado
+      unselectedItemColor: Colors.grey, //  color no seleccionado
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),

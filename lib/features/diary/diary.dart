@@ -32,6 +32,10 @@ export 'ui/pages/dairy/dairy_screen.dart';
 export 'ui/pages/home/home.dart';
 export 'ui/pages/navigator/navigator.dart';
 export 'ui/pages/medication/medication_page.dart';
+export 'ui/pages/medication/Widgets/medication_action_button.dart';
+export 'ui/pages/medication/Widgets/medication_card.dart';
+export 'ui/pages/medication/Widgets/medication_footer_button.dart';
+export 'ui/pages/medication/Widgets/add_medication.dart';
 export 'ui/pages/settings/settings_page.dart';
 export 'ui/pages/add/AddPage.dart';
 export 'ui/pages/pdf/pdf.dart';
@@ -43,7 +47,6 @@ export 'ui/pages/dairy/widgets/register_efect_dialog.dart';
 export 'ui/pages/dairy/widgets/crisis_cards_by_day.dart';
 export 'ui/pages/widgets/custom_bottom_nav_bar.dart';
 export 'ui/pages/dairy/widgets/adverse_event_card.dart';
-
 export 'ui/bloc/diary/diary_event.dart';
 export 'ui/bloc/diary/diary_state.dart';
 export 'ui/bloc/diary/diary_bloc.dart';
