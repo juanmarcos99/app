@@ -176,8 +176,38 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: () {
-                              // sin lógica por ahora
+                            onPressed: () async {
+                              final result = await showDialog<AdverseEvent>(
+                                context: context,
+                                useRootNavigator: false,
+                                builder: (_) => const RegistroEfectDialog(),
+                              );
+
+                              if (result != null) {
+                                final authState = context
+                                    .read<AuthBloc>()
+                                    .state;
+                                if (authState is! UserLoggedIn) return;
+
+                                final userId = authState.user.id!;
+                                final daySelected = context
+                                    .read<DiaryBloc>()
+                                    .daySelected;
+
+                                final efecto = AdverseEvent(
+                                  registerDate: DateTime.now(),
+                                  eventDate:DateTime.now(),
+                                  description: result.description,
+                                  userId: userId,
+                                );
+
+                                context.read<DiaryBloc>().add(
+                                  AddAdverseEventEvent(efecto),
+                                );
+                                context.read<DiaryBloc>().add(
+                                  LoadCalendarEvent(userId),
+                                );
+                              }
                             },
                           ),
                         ),
@@ -205,8 +235,29 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: () {
-                              // sin lógica por ahora
+                            onPressed: () async {
+                              final result = await showDialog<Medication>(
+                                context: context,
+                                useRootNavigator: false,
+                                builder: (_) =>
+                                    const RegisterMedicationDialog(),
+                              );
+
+                              final authState = context.read<AuthBloc>().state;
+                              if (authState is! UserLoggedIn) return;
+
+                              final userId = authState.user.id!;
+
+                              if (result != null) {
+                                // Asignar userId antes de enviarlo al bloc
+                                final medWithUser = result.copyWith(
+                                  userId: userId,
+                                );
+
+                                context.read<MedicationBloc>().add(
+                                  AddMedicationEvent(medWithUser),
+                                );
+                              }
                             },
                           ),
                         ),
