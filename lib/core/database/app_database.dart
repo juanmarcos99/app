@@ -40,11 +40,11 @@ class AppDatabase {
         await db.execute('''
           CREATE TABLE crisis (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            registeredDate TEXT NOT NULL,   -- ISO 8601 completo
-            crisisDate TEXT NOT NULL,       -- YYYY-MM-DD
-            timeRange TEXT NOT NULL,        -- ej. "6:00 am - 10:00 am"
+            registeredDate TEXT NOT NULL,
+            crisisDate TEXT NOT NULL,
+            timeRange TEXT NOT NULL,
             quantity INTEGER NOT NULL,
-            type TEXT NOT NULL,             -- ej. "Focal aware"
+            type TEXT NOT NULL,
             userId INTEGER NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
@@ -54,11 +54,37 @@ class AppDatabase {
         await db.execute('''
           CREATE TABLE adverse_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            registeredDate TEXT NOT NULL,   -- fecha de registro
-            eventDate TEXT NOT NULL,        -- fecha del evento adverso
-            description TEXT NOT NULL,      -- descripción
+            registeredDate TEXT NOT NULL,
+            eventDate TEXT NOT NULL,
+            description TEXT NOT NULL,
             userId INTEGER NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        ''');
+
+        // ---------------------------------------------------------
+        // 🔥 TABLA: medicamentos (CORREGIDA)
+        // ---------------------------------------------------------
+        await db.execute('''
+          CREATE TABLE medicamentos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            dosage TEXT NOT NULL,
+            notes TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        ''');
+
+        // ---------------------------------------------------------
+        // 🔥 TABLA: horarios (CORREGIDA)
+        // ---------------------------------------------------------
+        await db.execute('''
+          CREATE TABLE horarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            medicationId INTEGER NOT NULL,
+            time TEXT NOT NULL,
+            FOREIGN KEY (medicationId) REFERENCES medicamentos(id) ON DELETE CASCADE
           )
         ''');
       },

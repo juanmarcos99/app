@@ -1,0 +1,67 @@
+import '../../diary.dart';
+
+class MedicationRepositoryImpl implements MedicationRepository {
+  final MedicationLocalDataSource localDataSource;
+
+  MedicationRepositoryImpl(this.localDataSource);
+
+  // -------------------------------------------------------------
+  // Add medication + schedules
+  // -------------------------------------------------------------
+  @override
+  Future<void> addMedication(Medication medication) async {
+    final model = MedicationModel(
+      id: medication.id,
+      userId: medication.userId,
+      name: medication.name,
+      dosage: medication.dosage,
+      notes: medication.notes,
+      schedules: medication.schedules,
+    );
+
+    await localDataSource.addMedication(model);
+  }
+
+  // -------------------------------------------------------------
+  //Update medication + schedules
+  // -------------------------------------------------------------
+  @override
+  Future<void> updateMedication(Medication medication) async {
+    final model = MedicationModel(
+      id: medication.id,
+      userId: medication.userId,
+      name: medication.name,
+      dosage: medication.dosage,
+      notes: medication.notes,
+      schedules: medication.schedules,
+    );
+
+    await localDataSource.updateMedication(model);
+  }
+
+  // -------------------------------------------------------------
+  //Delete medication (horarios se borran por ON DELETE CASCADE)
+  // -------------------------------------------------------------
+  @override
+  Future<void> deleteMedication(int id) async {
+    await localDataSource.deleteMedication(id);
+  }
+
+  // -------------------------------------------------------------
+  // Get medication by ID (incluye horarios)
+  // -------------------------------------------------------------
+  @override
+  Future<Medication?> getMedicationById(int id) async {
+    final model = await localDataSource.getMedicationById(id);
+    return model; // MedicationModel extiende Medication
+  }
+
+  // -------------------------------------------------------------
+  // Get all medications for a user (incluye horarios)
+  // -------------------------------------------------------------
+  @override
+  Future<List<Medication>> getMedicationsByUser(int userId) async {
+    final result = await localDataSource.getMedicationsByUser(userId);
+    return result; // MedicationModel extiende Medication
+  }
+}

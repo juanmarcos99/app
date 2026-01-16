@@ -6,23 +6,36 @@ import 'diary.dart';
 final sldiary = GetIt.instance;
 
 void initDiaryDependencies() {
-  // Datasource
+  // -------------------------------------------------------------
+  // DATASOURCES
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<CrisisLocalDataSource>(
     () => CrisisLocalDataSourceImpl(sldiary<Database>()),
   );
+
   sldiary.registerLazySingleton<AdverseEventLocalDataSource>(
     () => AdverseEventLocalDataSourceImpl(sldiary<Database>()),
   );
 
-  //SERVICEs
+  // 🔥 Medication datasource
+  sldiary.registerLazySingleton<MedicationLocalDataSource>(
+    () => MedicationLocalDataSourceImpl(sldiary<Database>()),
+  );
+
+  // -------------------------------------------------------------
+  // SERVICES
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<PdfGeneratorService>(
     () => PdfGeneratorService(),
   );
 
-  // Repositorio
+  // -------------------------------------------------------------
+  // REPOSITORIES
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<CrisisRepository>(
     () => CrisisRepositoryImpl(sldiary<CrisisLocalDataSource>()),
   );
+
   sldiary.registerLazySingleton<AdverseEventRepository>(
     () => AdverseEventRepositoryImpl(sldiary<AdverseEventLocalDataSource>()),
   );
@@ -31,7 +44,14 @@ void initDiaryDependencies() {
     () => PdfRepositoryImpl(sldiary<PdfGeneratorService>()),
   );
 
-  // Casos de uso
+  // 🔥 Medication repository
+  sldiary.registerLazySingleton<MedicationRepository>(
+    () => MedicationRepositoryImpl(sldiary<MedicationLocalDataSource>()),
+  );
+
+  // -------------------------------------------------------------
+  // USE CASES — CRISIS
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<AddCrisis>(
     () => AddCrisis(sldiary<CrisisRepository>()),
   );
@@ -41,7 +61,6 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetCrisesDays>(
     () => GetCrisesDays(sldiary<CrisisRepository>()),
   );
-
   sldiary.registerLazySingleton<DeleteCrisis>(
     () => DeleteCrisis(sldiary<CrisisRepository>()),
   );
@@ -49,6 +68,9 @@ void initDiaryDependencies() {
     () => UpdateCrisis(sldiary<CrisisRepository>()),
   );
 
+  // -------------------------------------------------------------
+  // USE CASES — ADVERSE EVENTS
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<AddAdverseEvent>(
     () => AddAdverseEvent(sldiary<AdverseEventRepository>()),
   );
@@ -65,6 +87,9 @@ void initDiaryDependencies() {
     () => UpdateAdverseEvent(sldiary<AdverseEventRepository>()),
   );
 
+  // -------------------------------------------------------------
+  // USE CASES — PDF
+  // -------------------------------------------------------------
   sldiary.registerLazySingleton<GetCrisesByMonthAndYearUseCase>(
     () => GetCrisesByMonthAndYearUseCase(sldiary<CrisisRepository>()),
   );
@@ -77,7 +102,32 @@ void initDiaryDependencies() {
     () => GeneratePdfUseCase(sldiary<PdfRepository>()),
   );
 
-  // Bloc
+  // -------------------------------------------------------------
+  // USE CASES — MEDICATION
+  // -------------------------------------------------------------
+  sldiary.registerLazySingleton<AddMedication>(
+    () => AddMedication(sldiary<MedicationRepository>()),
+  );
+
+  sldiary.registerLazySingleton<UpdateMedication>(
+    () => UpdateMedication(sldiary<MedicationRepository>()),
+  );
+
+  sldiary.registerLazySingleton<DeleteMedication>(
+    () => DeleteMedication(sldiary<MedicationRepository>()),
+  );
+
+  sldiary.registerLazySingleton<GetMedicationsByUser>(
+    () => GetMedicationsByUser(sldiary<MedicationRepository>()),
+  );
+
+  sldiary.registerLazySingleton<GetMedicationById>(
+    () => GetMedicationById(sldiary<MedicationRepository>()),
+  );
+
+  // -------------------------------------------------------------
+  // BLOCS
+  // -------------------------------------------------------------
   sldiary.registerFactory<DiaryBloc>(
     () => DiaryBloc(
       sldiary<AddCrisis>(),
@@ -99,6 +149,16 @@ void initDiaryDependencies() {
       getAdverseEventsByMonthAndYearUseCase:
           sldiary<GetAdverseEventsByMonthAndYearUseCase>(),
       generatePdfUseCase: sldiary<GeneratePdfUseCase>(),
+    ),
+  );
+
+  // 🔥 MedicationBloc
+  sldiary.registerFactory<MedicationBloc>(
+    () => MedicationBloc(
+      addMedication: sldiary<AddMedication>(),
+      updateMedication: sldiary<UpdateMedication>(),
+      deleteMedication: sldiary<DeleteMedication>(),
+      getMedicationsByUser: sldiary<GetMedicationsByUser>(),
     ),
   );
 }
