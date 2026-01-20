@@ -7,8 +7,11 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Asegura que la inicialización se complete antes de usar el servicio
+  late final Future<void> _initialized;
+
   NotificationService() {
-    _init();
+    _initialized = _init();
   }
 
   Future<void> _init() async {
@@ -22,9 +25,9 @@ class NotificationService {
 
     await _notificationsPlugin.initialize(initSettings);
 
-    // Inicializamos las zonas horarias
+    // Inicializar zonas horarias ANTES de usar tz.local
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('America/Havana')); // ajusta según tu zona
+    tz.setLocalLocation(tz.getLocation('America/Havana'));
   }
 
   Future<void> addDailyAlert({
@@ -33,6 +36,8 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
+    await _initialized; // ← IMPORTANTE
+
     final now = DateTime.now();
     final scheduledDate = DateTime(
       now.year,
@@ -71,19 +76,29 @@ class NotificationService {
   }
 
   Future<void> cancelAlert(int notificationId) async {
+    await _initialized; // ← por seguridad
     await _notificationsPlugin.cancel(notificationId);
   }
 
   Future<void> cancelAllAlerts() async {
+    await _initialized; // ← por seguridad
     await _notificationsPlugin.cancelAll();
+  }
+
+  Future<bool> isNotificationScheduled(int notificationId) async {
+    await _initialized; // ← por seguridad
+    final pending = await _notificationsPlugin.pendingNotificationRequests();
+    return pending.any((n) => n.id == notificationId);
   }
 
   tz.TZDateTime _nextInstanceOfTime(DateTime scheduledDate) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime.from(scheduledDate, tz.local);
+
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
+
     return scheduled;
   }
 }

@@ -86,19 +86,20 @@ class _MedicationPageState extends State<MedicationPage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color(0xFF3381C1),
           elevation: 4,
-          onPressed: () async {
-            final result = await showDialog<Medication>(
+          onPressed: () async {            
+            final result = await showDialog<(Medication, bool)>(
               context: context,
               useRootNavigator: false,
               builder: (_) => const RegisterMedicationDialog(),
             );
 
             if (result != null && userId != null) {
-              // Asignar userId antes de enviarlo al bloc
-              final medWithUser = result.copyWith(userId: userId!);
+              final (medication, shouldSchedule) = result;
+
+              final medWithUser = medication.copyWith(userId: userId!);
 
               context.read<MedicationBloc>().add(
-                AddMedicationEvent(medWithUser),
+                AddMedicationEvent(medWithUser, shouldSchedule),
               );
             }
           },

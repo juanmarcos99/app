@@ -196,7 +196,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
                                 final efecto = AdverseEvent(
                                   registerDate: DateTime.now(),
-                                  eventDate:DateTime.now(),
+                                  eventDate: DateTime.now(),
                                   description: result.description,
                                   userId: userId,
                                 );
@@ -236,26 +236,30 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                               ),
                             ),
                             onPressed: () async {
-                              final result = await showDialog<Medication>(
-                                context: context,
-                                useRootNavigator: false,
-                                builder: (_) =>
-                                    const RegisterMedicationDialog(),
-                              );
-
+                              final result =
+                                  await showDialog<(Medication, bool)>(
+                                    context: context,
+                                    useRootNavigator: false,
+                                    builder: (_) =>
+                                        const RegisterMedicationDialog(),
+                                  );
                               final authState = context.read<AuthBloc>().state;
                               if (authState is! UserLoggedIn) return;
 
                               final userId = authState.user.id!;
 
-                              if (result != null) {
-                                // Asignar userId antes de enviarlo al bloc
-                                final medWithUser = result.copyWith(
-                                  userId: userId,
+                              if (result != null && userId != null) {
+                                final (medication, shouldSchedule) = result;
+
+                                final medWithUser = medication.copyWith(
+                                  userId: userId!,
                                 );
 
                                 context.read<MedicationBloc>().add(
-                                  AddMedicationEvent(medWithUser),
+                                  AddMedicationEvent(
+                                    medWithUser,
+                                    shouldSchedule,
+                                  ),
                                 );
                               }
                             },

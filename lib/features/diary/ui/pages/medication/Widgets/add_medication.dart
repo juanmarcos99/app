@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:app/core/theme/style/colors.dart';
 import '../../../../diary.dart';
+import '../../../../../../core/core.dart';
+
 
 class RegisterMedicationDialog extends StatefulWidget {
   final Medication? initialMedication; // null = registrar, no null = editar
@@ -16,8 +18,10 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
   final dosageController = TextEditingController();
   final notesController = TextEditingController();
 
-  /// Ahora usamos objetos Schedule en lugar de Strings
   List<Schedule> selectedSchedules = [];
+
+  /// Switch para activar/desactivar notificaciones
+  bool shouldScheduleNotifications = true;
 
   bool get isEditing => widget.initialMedication != null;
 
@@ -31,7 +35,30 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       dosageController.text = med.dosage!;
       notesController.text = med.notes ?? " ";
       selectedSchedules = List<Schedule>.from(med.schedules!);
+
+      /// 🔥 Aquí verificamos si ya hay notificaciones programadas
+      _loadNotificationStatus();
     }
+  }
+
+  /// 🔥 Verifica si las notificaciones están programadas para este medicamento
+  Future<void> _loadNotificationStatus() async {
+    if (selectedSchedules.isEmpty) return;
+
+    final firstSchedule = selectedSchedules.first;
+
+    // Si notificationId es null, no puede estar programada
+    if (firstSchedule.notificationId == null) {
+      setState(() => shouldScheduleNotifications = false);
+      return;
+    }
+
+    final service = NotificationService();
+    final isScheduled = await service.isNotificationScheduled(firstSchedule.notificationId!);
+
+    setState(() {
+      shouldScheduleNotifications = isScheduled;
+    });
   }
 
   @override
@@ -50,13 +77,12 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
 
     if (picked != null) {
       setState(() {
-        // Creamos un Schedule con el horario seleccionado
         selectedSchedules.add(
           Schedule(
-            id: null, // se asignará al guardar en BD
+            id: null,
             medicationId: widget.initialMedication?.id ?? 0,
             time: picked,
-            notificationId: 0, // se asignará al programar notificación
+            notificationId: DateTime.now().millisecondsSinceEpoch % 2147483647,
           ),
         );
       });
@@ -72,7 +98,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
 
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.55,
+        height: MediaQuery.of(context).size.height * 0.60,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,6 +136,24 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                   hintText: "Ej: Tomar con comida",
                 ),
               ),
+              const SizedBox(height: 20),
+
+              // SWITCH DE NOTIFICACIONES
+              Row(
+                children: [
+                  Switch(
+                    value: shouldScheduleNotifications,
+                    onChanged: (v) {
+                      setState(() => shouldScheduleNotifications = v);
+                    },
+                  ),
+                  const Text(
+                    "Programar notificaciones",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 20),
 
               // HORARIOS
@@ -162,10 +206,10 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
               name: nameController.text.trim(),
               dosage: dosageController.text.trim(),
               notes: notesController.text.trim(),
-              schedules: selectedSchedules, // ahora es List<Schedule>
+              schedules: selectedSchedules,
             );
 
-            Navigator.pop(context, medication);
+            Navigator.pop(context, (medication, shouldScheduleNotifications));
           },
           icon: const Icon(Icons.save, color: AppColors.white),
           label: Text(

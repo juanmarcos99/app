@@ -1,5 +1,7 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../diary/diary.dart';
+import '../../../../../core/core.dart';
 
 class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
   final AddMedication addMedication;
@@ -21,7 +23,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
 
       try {
         final meds = await getMedicationsByUser(event.userId);
-       
+
         emit(MedicationLoaded(meds));
       } catch (e) {
         emit(MedicationError("Error al cargar medicaciones"));
@@ -35,16 +37,32 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
       emit(MedicationLoading());
 
       try {
+        final notificationService = NotificationService();
+
+        // 1. Programar notificaciones si el usuario lo pidió
+        if (event.shouldScheduleNotifications) {
+          for (final schedule in event.medication.schedules!) {
+            await notificationService.addDailyAlert(
+              notificationId: schedule.notificationId!, 
+              time: schedule.time!, // ← corregido
+              title: "Recordatorio de medicación",
+              body: "Es hora de tomar ${event.medication.name}",
+            );
+          }
+        }
+
+        // 2. Guardar la medicación
         await addMedication(event.medication);
 
         emit(MedicationAdded(event.medication));
       } catch (e) {
+        debugPrint("Error en MedicationBloc - AddMedicationEvent: $e");
         emit(MedicationError("Error al añadir medicación"));
       }
     });
 
     // -------------------------------------------------------------
-    // 🔥 Actualizar medicación
+    // Actualizar medicación
     // -------------------------------------------------------------
     on<UpdateMedicationEvent>((event, emit) async {
       emit(MedicationLoading());
