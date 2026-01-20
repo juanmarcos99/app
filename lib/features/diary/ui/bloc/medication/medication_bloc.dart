@@ -72,22 +72,22 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
       try {
         final service = NotificationService();
 
-        // 1️⃣ OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
+        //  OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
         final oldSchedules = await getSchedulesWithNotificationIds(
           event.medication.id!,
         );
 
-        // 2️⃣ CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
+        //  CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
         for (final schedule in oldSchedules) {
           if (schedule.notificationId != null) {
             await service.cancelAlert(schedule.notificationId!);
           }
         }
 
-        // 3️⃣ ACTUALIZAR EL MEDICAMENTO EN LA BD
+        // ACTUALIZAR EL MEDICAMENTO EN LA BD
         await updateMedication(event.medication);
 
-        // 4️⃣ SI EL USUARIO QUIERE NOTIFICACIONES → PROGRAMAR NUEVAS
+        // SI EL USUARIO QUIERE NOTIFICACIONES → PROGRAMAR NUEVAS
         if (event.shouldScheduleNotifications) {
           for (final schedule in event.medication.schedules!) {
             await service.addDailyAlert(
@@ -99,12 +99,13 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
           }
         }
 
-        // 5️⃣ EMITIR ESTADOS
+        // EMITIR ESTADOS
         emit(MedicationUpdated(event.medication));
 
         final meds = await getMedicationsByUser(event.medication.userId!);
         emit(MedicationLoaded(meds));
       } catch (e) {
+        debugPrint("Error en MedicationBloc - updateMedicationEvent: $e");
         emit(MedicationError("Error al actualizar medicación"));
       }
     });

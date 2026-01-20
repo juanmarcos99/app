@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permisos de almacenamiento (los tuyos actuales) -->
+    <!-- Permisos de almacenamiento -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/> 
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
 
-    <!-- ⭐ Permisos necesarios para notificaciones -->
+    <!-- ⭐ Permisos necesarios para notificaciones exactas -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -18,9 +18,10 @@
         android:label="app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:usesExactAlarm="true">   <!-- ⭐ ESTA LÍNEA ES LA QUE FALTABA -->
 
-        <!-- ⭐ Receivers necesarios para notificaciones programadas -->
+        <!-- Receivers -->
         <receiver
             android:exported="false"
             android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />

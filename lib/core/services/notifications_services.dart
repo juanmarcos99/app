@@ -7,7 +7,6 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// Asegura que la inicialización se complete antes de usar el servicio
   late final Future<void> _initialized;
 
   NotificationService() {
@@ -25,7 +24,21 @@ class NotificationService {
 
     await _notificationsPlugin.initialize(initSettings);
 
-    // Inicializar zonas horarias ANTES de usar tz.local
+    // ⭐ Crear canal (OBLIGATORIO en release)
+    final androidPlugin = _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    await androidPlugin?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'daily_channel_id',
+        'Daily Notifications',
+        description: 'Notificaciones diarias programadas',
+        importance: Importance.max,
+      ),
+    );
+
+    // ⭐ Inicializar zonas horarias
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('America/Havana'));
   }
@@ -36,7 +49,7 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    await _initialized; // ← IMPORTANTE
+    await _initialized;
 
     final now = DateTime.now();
     final scheduledDate = DateTime(
@@ -76,17 +89,17 @@ class NotificationService {
   }
 
   Future<void> cancelAlert(int notificationId) async {
-    await _initialized; // ← por seguridad
+    await _initialized;
     await _notificationsPlugin.cancel(notificationId);
   }
 
   Future<void> cancelAllAlerts() async {
-    await _initialized; // ← por seguridad
+    await _initialized;
     await _notificationsPlugin.cancelAll();
   }
 
   Future<bool> isNotificationScheduled(int notificationId) async {
-    await _initialized; // ← por seguridad
+    await _initialized;
     final pending = await _notificationsPlugin.pendingNotificationRequests();
     return pending.any((n) => n.id == notificationId);
   }
