@@ -6,13 +6,15 @@ plugins {
 
 android {
     namespace = "com.example.app"
-    compileSdk = flutter.compileSdkVersion
+
+    // ⭐ No uses flutter.compileSdkVersion → ponlo explícito
+    compileSdk = 36
     ndkVersion = "29.0.14206865"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true   // 👈 CORRECTO EN KTS
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -21,10 +23,15 @@ android {
 
     defaultConfig {
         applicationId = "com.example.app"
+
+        // ⭐ No uses flutter.targetSdkVersion → ponlo explícito
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 33
+
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        multiDexEnabled = true   // ⭐ Necesario para notificaciones + BD + plugins
     }
 
     buildTypes {
@@ -39,5 +46,8 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3") // 👈 CORRECTO EN KTS
+    // ⭐ Usa la versión moderna (igual que tu proyecto de prueba)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
+    implementation("androidx.multidex:multidex:2.0.1")
 }

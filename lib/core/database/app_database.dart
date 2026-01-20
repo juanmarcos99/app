@@ -11,7 +11,9 @@ class AppDatabase {
       join(await getDatabasesPath(), 'app.db'),
       version: 1,
       onCreate: (db, version) async {
-        // Tabla de usuarios
+        // ---------------------------------------------------------
+        // USERS
+        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +27,9 @@ class AppDatabase {
           )
         ''');
 
-        // Tabla de pacientes
+        // ---------------------------------------------------------
+        // PATIENTS
+        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE patients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +40,9 @@ class AppDatabase {
           )
         ''');
 
-        // Tabla de crisis
+        // ---------------------------------------------------------
+        // CRISIS
+        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE crisis (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,7 +56,9 @@ class AppDatabase {
           )
         ''');
 
-        // Tabla de eventos adversos
+        // ---------------------------------------------------------
+        // ADVERSE EVENTS
+        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE adverse_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,10 +71,10 @@ class AppDatabase {
         ''');
 
         // ---------------------------------------------------------
-        // 🔥 TABLA: medicamentos (CORREGIDA)
+        // MEDICATIONS (camelCase + corregida)
         // ---------------------------------------------------------
         await db.execute('''
-          CREATE TABLE medicamentos (
+          CREATE TABLE medications (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             userId INTEGER NOT NULL,
             name TEXT NOT NULL,
@@ -77,14 +85,15 @@ class AppDatabase {
         ''');
 
         // ---------------------------------------------------------
-        // 🔥 TABLA: horarios (CORREGIDA)
+        // SCHEDULES (camelCase + notificationId)
         // ---------------------------------------------------------
         await db.execute('''
-          CREATE TABLE horarios (
+          CREATE TABLE schedules (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             medicationId INTEGER NOT NULL,
             time TEXT NOT NULL,
-            FOREIGN KEY (medicationId) REFERENCES medicamentos(id) ON DELETE CASCADE
+            notificationId INTEGER NOT NULL,
+            FOREIGN KEY (medicationId) REFERENCES medications(id) ON DELETE CASCADE
           )
         ''');
       },

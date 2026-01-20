@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import '../../diary.dart';
+import '../../diary.dart'; // aquí tienes tus entidades y modelos
 
 abstract class MedicationLocalDataSource {
   Future<int> addMedication(MedicationModel medication);
@@ -9,7 +9,7 @@ abstract class MedicationLocalDataSource {
   Future<MedicationModel?> getMedicationById(int id);
   Future<List<MedicationModel>> getMedicationsByUser(int userId);
 
-  Future<List<String>> getSchedulesByMedication(int medicationId);
+  Future<List<ScheduleModel>> getSchedulesByMedication(int medicationId);
 }
 
 class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
@@ -18,20 +18,24 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
   MedicationLocalDataSourceImpl(this.db);
 
   // -------------------------------------------------------------
-  //  Insertar medicamento + horarios
+  // Insertar medicamento + horarios
   // -------------------------------------------------------------
   @override
   Future<int> addMedication(MedicationModel medication) async {
     try {
-      // Insertamos el medicamento
-      final medId = await db.insert('medicamentos', medication.toMap());
+      // Insertamos el medicamento en la tabla correcta
+      final medId = await db.insert('medications', medication.toMap());
 
-      // Insertamos los horarios asociados
-      for (final time in medication.schedules!) {
-        await db.insert('horarios', {
-          'medicationId': medId,
-          'time': time,
-        });
+      // Insertamos los horarios asociados en la tabla schedules
+      for (final schedule in medication.schedules!) {
+        final scheduleModel = ScheduleModel(
+          id: schedule.id,
+          medicationId: medId,
+          time: schedule.time,
+          notificationId: schedule.notificationId,
+        );
+
+        await db.insert('schedules', scheduleModel.toMap());
       }
 
       return medId;
@@ -48,7 +52,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     try {
       // Actualizamos el medicamento
       final result = await db.update(
-        'medicamentos',
+        'medications',
         medication.toMap(),
         where: 'id = ?',
         whereArgs: [medication.id],
@@ -56,17 +60,21 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
 
       // Borramos horarios anteriores
       await db.delete(
-        'horarios',
+        'schedules',
         where: 'medicationId = ?',
         whereArgs: [medication.id],
       );
 
       // Insertamos los nuevos horarios
-      for (final time in medication.schedules!) {
-        await db.insert('horarios', {
-          'medicationId': medication.id,
-          'time': time,
-        });
+      for (final schedule in medication.schedules!) {
+        final scheduleModel = ScheduleModel(
+          id: schedule.id,
+          medicationId: medication.id!,
+          time: schedule.time,
+          notificationId: schedule.notificationId,
+        );
+
+        await db.insert('schedules', scheduleModel.toMap());
       }
 
       return result;
@@ -80,21 +88,21 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
   // -------------------------------------------------------------
   @override
   Future<int> deleteMedication(int id) async {
-    return await db.delete('medicamentos', where: 'id = ?', whereArgs: [id]);
+    return await db.delete('medications', where: 'id = ?', whereArgs: [id]);
   }
 
   // -------------------------------------------------------------
   // Obtener horarios por medicamento
   // -------------------------------------------------------------
   @override
-  Future<List<String>> getSchedulesByMedication(int medicationId) async {
+  Future<List<ScheduleModel>> getSchedulesByMedication(int medicationId) async {
     final result = await db.query(
-      'horarios',
+      'schedules',
       where: 'medicationId = ?',
       whereArgs: [medicationId],
     );
 
-    return result.map((m) => m['time'] as String).toList();
+    return result.map((m) => ScheduleModel.fromMap(m)).toList();
   }
 
   // -------------------------------------------------------------
@@ -103,7 +111,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
   @override
   Future<MedicationModel?> getMedicationById(int id) async {
     final result = await db.query(
-      'medicamentos',
+      'medications',
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -121,7 +129,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
   @override
   Future<List<MedicationModel>> getMedicationsByUser(int userId) async {
     final result = await db.query(
-      'medicamentos',
+      'medications',
       where: 'userId = ?',
       whereArgs: [userId],
       orderBy: 'id DESC',
@@ -130,9 +138,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     final List<MedicationModel> list = [];
 
     for (final map in result) {
-      final schedules = await getSchedulesByMedication(
-        int.parse(map['id'].toString()),
-      );
+      final schedules = await getSchedulesByMedication(map['id'] as int);
       list.add(MedicationModel.fromMap(map, schedules));
     }
 

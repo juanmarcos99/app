@@ -2,6 +2,7 @@
 export 'domain/entities/crisis.dart';
 export 'domain/entities/adverse_event.dart';
 export 'domain/entities/medication.dart';
+export 'domain/entities/schedule.dart';
 export 'domain/repositories/crisis_repository.dart';
 export 'domain/repositories/adverse_event_repository.dart';
 export 'domain/repositories/medication_repository.dart';

@@ -23,7 +23,7 @@ class MedicationModel extends Medication {
 
   factory MedicationModel.fromMap(
     Map<String, dynamic> map,
-    List<String> schedules, // se inyecta desde la tabla horarios
+    List<Schedule> schedules, // se inyecta desde la tabla horarios
   ) {
     return MedicationModel(
       id: map['id'],

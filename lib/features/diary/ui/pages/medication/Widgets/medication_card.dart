@@ -15,7 +15,10 @@ class MedicationCard extends StatelessWidget {
     const Color statusColor = Colors.green;
     const String statusText = "ACTIVO";
 
-    final String frequency = _formatFrequency(medication.schedules!);
+    final String frequency = _formatFrequency(
+      context,
+      medication.schedules ?? [],
+    );
 
     final String notes = medication.notes?.trim().isEmpty == true
         ? "Sin notas"
@@ -32,7 +35,6 @@ class MedicationCard extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1)),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -115,9 +117,15 @@ class MedicationCard extends StatelessWidget {
             children: [
               // NOTIFICACIONES
               IconButton(
-                icon: const Icon(Icons.notifications, size: 22, color: Colors.grey),
+                icon: const Icon(
+                  Icons.notifications,
+                  size: 22,
+                  color: Colors.grey,
+                ),
                 onPressed: () {
-                  debugPrint("Toggle notifications for medication ${medication.id}");
+                  debugPrint(
+                    "Toggle notifications for medication ${medication.id}",
+                  );
                 },
               ),
 
@@ -165,7 +173,10 @@ class MedicationCard extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                             ),
-                            child: const Text("Eliminar", style: TextStyle(color: AppColors.white),),
+                            child: const Text(
+                              "Eliminar",
+                              style: TextStyle(color: AppColors.white),
+                            ),
                             onPressed: () => Navigator.pop(context, true),
                           ),
                         ],
@@ -187,8 +198,14 @@ class MedicationCard extends StatelessWidget {
     );
   }
 
-  String _formatFrequency(List<String> schedules) {
+  /// Ahora recibe List< Schedule> en lugar de List<String>
+  String _formatFrequency(BuildContext context, List<Schedule> schedules) {
     if (schedules.isEmpty) return "Sin horarios";
-    return schedules.join(", ");
+    return schedules
+        .map(
+          (s) =>
+              s.time != null ? s.time!.format(context) : "Horario no definido",
+        )
+        .join(", ");
   }
 }

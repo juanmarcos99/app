@@ -16,7 +16,8 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
   final dosageController = TextEditingController();
   final notesController = TextEditingController();
 
-  List<String> selectedSchedules = [];
+  /// Ahora usamos objetos Schedule en lugar de Strings
+  List<Schedule> selectedSchedules = [];
 
   bool get isEditing => widget.initialMedication != null;
 
@@ -29,7 +30,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       nameController.text = med.name!;
       dosageController.text = med.dosage!;
       notesController.text = med.notes ?? " ";
-      selectedSchedules = List<String>.from(med.schedules!);
+      selectedSchedules = List<Schedule>.from(med.schedules!);
     }
   }
 
@@ -48,9 +49,16 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
     );
 
     if (picked != null) {
-      final formatted = picked.format(context); // Ej: "8:30 AM"
       setState(() {
-        selectedSchedules.add(formatted);
+        // Creamos un Schedule con el horario seleccionado
+        selectedSchedules.add(
+          Schedule(
+            id: null, // se asignará al guardar en BD
+            medicationId: widget.initialMedication?.id ?? 0,
+            time: picked,
+            notificationId: 0, // se asignará al programar notificación
+          ),
+        );
       });
     }
   }
@@ -65,7 +73,6 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.55,
-
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,13 +118,14 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
 
               Wrap(
                 spacing: 8,
-                children: selectedSchedules.map((hour) {
+                children: selectedSchedules.map((schedule) {
+                  final formatted = schedule.time?.format(context);
                   return Chip(
-                    label: Text(hour),
+                    label: Text(formatted!),
                     deleteIcon: const Icon(Icons.close),
                     onDeleted: () {
                       setState(() {
-                        selectedSchedules.remove(hour);
+                        selectedSchedules.remove(schedule);
                       });
                     },
                   );
@@ -154,7 +162,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
               name: nameController.text.trim(),
               dosage: dosageController.text.trim(),
               notes: notesController.text.trim(),
-              schedules: selectedSchedules,
+              schedules: selectedSchedules, // ahora es List<Schedule>
             );
 
             Navigator.pop(context, medication);

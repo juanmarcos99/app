@@ -1,10 +1,12 @@
+import 'schedule.dart';
+
 class Medication {
   final int? id;
   final int? userId;
   final String? name;
   final String? dosage;
   final String? notes;
-  final List<String>? schedules; // e.g. ["08:00", "12:00"]
+  final List<Schedule>? schedules;
 
   Medication({
     this.id,
@@ -21,7 +23,7 @@ class Medication {
     String? name,
     String? dosage,
     String? notes,
-    List<String>? schedules,
+    List<Schedule>? schedules,
   }) {
     return Medication(
       id: id ?? this.id,
