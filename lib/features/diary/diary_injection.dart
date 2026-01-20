@@ -124,6 +124,10 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetMedicationById>(
     () => GetMedicationById(sldiary<MedicationRepository>()),
   );
+  sldiary.registerLazySingleton<GetSchedulesWithNotificationIdsUseCase>(
+    () =>
+        GetSchedulesWithNotificationIdsUseCase(sldiary<MedicationRepository>()),
+  );
 
   // -------------------------------------------------------------
   // BLOCS
@@ -152,13 +156,15 @@ void initDiaryDependencies() {
     ),
   );
 
-  // 🔥 MedicationBloc
+  //  MedicationBloc
   sldiary.registerFactory<MedicationBloc>(
     () => MedicationBloc(
       addMedication: sldiary<AddMedication>(),
       updateMedication: sldiary<UpdateMedication>(),
       deleteMedication: sldiary<DeleteMedication>(),
       getMedicationsByUser: sldiary<GetMedicationsByUser>(),
+      getSchedulesWithNotificationIds:
+          sldiary<GetSchedulesWithNotificationIdsUseCase>(),
     ),
   );
 }

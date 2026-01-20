@@ -135,15 +135,21 @@ class MedicationCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.edit, size: 22, color: Colors.grey),
                 onPressed: () async {
-                  final result = await showDialog<Medication>(
+                  final result = await showDialog<(Medication, bool)>(
                     context: context,
                     useRootNavigator: false,
                     builder: (_) =>
                         RegisterMedicationDialog(initialMedication: medication),
                   );
+
                   if (result != null) {
+                    final updatedMedication = result.$1;
+                    final shouldSchedule = result.$2;
                     context.read<MedicationBloc>().add(
-                      UpdateMedicationEvent(result),
+                      UpdateMedicationEvent(
+                        updatedMedication,
+                        shouldScheduleNotifications: shouldSchedule,
+                      ),
                     );
                   }
                 },

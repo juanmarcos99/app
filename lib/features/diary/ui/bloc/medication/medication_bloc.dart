@@ -8,12 +8,14 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
   final UpdateMedication updateMedication;
   final DeleteMedication deleteMedication;
   final GetMedicationsByUser getMedicationsByUser;
+  final GetSchedulesWithNotificationIdsUseCase getSchedulesWithNotificationIds;
 
   MedicationBloc({
     required this.addMedication,
     required this.updateMedication,
     required this.deleteMedication,
     required this.getMedicationsByUser,
+    required this.getSchedulesWithNotificationIds,
   }) : super(MedicationInitial()) {
     // -------------------------------------------------------------
     //  Cargar medicaciones
@@ -43,8 +45,8 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
         if (event.shouldScheduleNotifications) {
           for (final schedule in event.medication.schedules!) {
             await notificationService.addDailyAlert(
-              notificationId: schedule.notificationId!, 
-              time: schedule.time!, // ← corregido
+              notificationId: schedule.notificationId!,
+              time: schedule.time!,
               title: "Recordatorio de medicación",
               body: "Es hora de tomar ${event.medication.name}",
             );
@@ -68,8 +70,36 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
       emit(MedicationLoading());
 
       try {
+        final service = NotificationService();
+
+        // 1️⃣ OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
+        final oldSchedules = await getSchedulesWithNotificationIds(
+          event.medication.id!,
+        );
+
+        // 2️⃣ CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
+        for (final schedule in oldSchedules) {
+          if (schedule.notificationId != null) {
+            await service.cancelAlert(schedule.notificationId!);
+          }
+        }
+
+        // 3️⃣ ACTUALIZAR EL MEDICAMENTO EN LA BD
         await updateMedication(event.medication);
 
+        // 4️⃣ SI EL USUARIO QUIERE NOTIFICACIONES → PROGRAMAR NUEVAS
+        if (event.shouldScheduleNotifications) {
+          for (final schedule in event.medication.schedules!) {
+            await service.addDailyAlert(
+              notificationId: schedule.notificationId!,
+              time: schedule.time!,
+              title: "Recordatorio de medicación",
+              body: "Es hora de tomar ${event.medication.name}",
+            );
+          }
+        }
+
+        // 5️⃣ EMITIR ESTADOS
         emit(MedicationUpdated(event.medication));
 
         final meds = await getMedicationsByUser(event.medication.userId!);
@@ -80,15 +110,33 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
     });
 
     // -------------------------------------------------------------
-    // 🔥 Eliminar medicación
+    //  Eliminar medicación
     // -------------------------------------------------------------
     on<DeleteMedicationEvent>((event, emit) async {
       emit(MedicationLoading());
 
       try {
+        final service = NotificationService();
+
+        // 1️⃣ OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
+        final oldSchedules = await getSchedulesWithNotificationIds(
+          event.medicationId,
+        );
+
+        // 2️⃣ CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
+        for (final schedule in oldSchedules) {
+          if (schedule.notificationId != null) {
+            await service.cancelAlert(schedule.notificationId!);
+          }
+        }
+
+        // 3️⃣ ELIMINAR EL MEDICAMENTO (horarios se borran por cascade)
         await deleteMedication(event.medicationId);
 
+        // 4️⃣ EMITIR ESTADO
         emit(MedicationDeleted(event.medicationId));
+
+     
       } catch (e) {
         emit(MedicationError("Error al eliminar medicación"));
       }

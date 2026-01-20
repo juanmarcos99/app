@@ -64,4 +64,12 @@ class MedicationRepositoryImpl implements MedicationRepository {
     final result = await localDataSource.getMedicationsByUser(userId);
     return result; // MedicationModel extiende Medication
   }
+
+  @override
+  Future<List<Schedule>> getSchedulesWithNotificationIds(
+    int medicationId,
+  ) async {
+    final result = await localDataSource.getSchedulesByMedication(medicationId);
+    return result;
+  }
 }

@@ -19,6 +19,7 @@ export 'domain/use_cases/update_crisis.dart';
 export 'domain/use_cases/get_crisis_by_month_and_year.dart';
 export 'domain/use_cases/get_adverse_event_by_month_year_uc.dart';
 export 'domain/use_cases/generate_pdf_usecase.dart';
+export 'domain/use_cases/medications/get_schedules.dart';
 export 'package:app/features/diary/domain/use_cases/medications/add_medication.dart';
 export 'package:app/features/diary/domain/use_cases/medications/delete_medication.dart';
 export 'package:app/features/diary/domain/use_cases/medications/get_medication_by_user.dart';

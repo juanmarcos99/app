@@ -38,11 +38,15 @@ class AddMedicationEvent extends MedicationEvent {
 // -------------------------------------------------------------
 class UpdateMedicationEvent extends MedicationEvent {
   final Medication medication;
+  final bool shouldScheduleNotifications;
 
-  const UpdateMedicationEvent(this.medication);
+  const UpdateMedicationEvent(
+    this.medication, {
+    required this.shouldScheduleNotifications,
+  });
 
   @override
-  List<Object?> get props => [medication];
+  List<Object?> get props => [medication, shouldScheduleNotifications];
 }
 
 // -------------------------------------------------------------
