@@ -11,9 +11,7 @@ class AppDatabase {
       join(await getDatabasesPath(), 'app.db'),
       version: 1,
       onCreate: (db, version) async {
-        // ---------------------------------------------------------
-        // USERS
-        // ---------------------------------------------------------
+      
         await db.execute('''
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,9 +25,7 @@ class AppDatabase {
           )
         ''');
 
-        // ---------------------------------------------------------
-        // PATIENTS
-        // ---------------------------------------------------------
+        
         await db.execute('''
           CREATE TABLE patients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,9 +36,6 @@ class AppDatabase {
           )
         ''');
 
-        // ---------------------------------------------------------
-        // CRISIS
-        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE crisis (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,9 +49,6 @@ class AppDatabase {
           )
         ''');
 
-        // ---------------------------------------------------------
-        // ADVERSE EVENTS
-        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE adverse_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,9 +60,6 @@ class AppDatabase {
           )
         ''');
 
-        // ---------------------------------------------------------
-        // MEDICATIONS (camelCase + corregida)
-        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE medications (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,9 +71,6 @@ class AppDatabase {
           )
         ''');
 
-        // ---------------------------------------------------------
-        // SCHEDULES (camelCase + notificationId)
-        // ---------------------------------------------------------
         await db.execute('''
           CREATE TABLE schedules (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -8,19 +8,16 @@ abstract class MedicationState extends Equatable {
   List<Object?> get props => [];
 }
 
-// -------------------------------------------------------------
-// 🔥 Estado inicial
-// -------------------------------------------------------------
+// Estado inicial
+
 class MedicationInitial extends MedicationState {}
 
-// -------------------------------------------------------------
-// 🔥 Estado de carga
-// -------------------------------------------------------------
+// Estado de carga
+
 class MedicationLoading extends MedicationState {}
 
-// -------------------------------------------------------------
-// 🔥 Estado cuando ya tenemos la lista de medicamentos
-// -------------------------------------------------------------
+// Estado cuando ya tenemos la lista de medicamentos
+
 class MedicationLoaded extends MedicationState {
   final List<Medication> medications;
 
@@ -43,7 +40,7 @@ class MedicationError extends MedicationState {
 }
 
 // -------------------------------------------------------------
-// 🔥 Estado cuando se añade una medicación
+// Estado cuando se añade una medicación
 // -------------------------------------------------------------
 class MedicationAdded extends MedicationState {
   final Medication medication;
@@ -54,9 +51,8 @@ class MedicationAdded extends MedicationState {
   List<Object?> get props => [medication];
 }
 
-// -------------------------------------------------------------
 // 🔥 Estado cuando se actualiza una medicación
-// -------------------------------------------------------------
+
 class MedicationUpdated extends MedicationState {
   final Medication medication;
 
@@ -66,9 +62,8 @@ class MedicationUpdated extends MedicationState {
   List<Object?> get props => [medication];
 }
 
-// -------------------------------------------------------------
-// 🔥 Estado cuando se elimina una medicación
-// -------------------------------------------------------------
+// Estado cuando se elimina una medicación
+
 class MedicationDeleted extends MedicationState {
   final int medicationId;
 

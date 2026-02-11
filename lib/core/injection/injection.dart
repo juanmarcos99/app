@@ -5,7 +5,7 @@ import '../database/app_database.dart';
 final slCore = GetIt.instance;
 
 Future<void> initCoreDependencies() async {
-  // Base de datos (transversal)
+  // Base de datos 
   final db = await AppDatabase.getDatabase();
   slCore.registerLazySingleton<Database>(() => db);
 

@@ -16,8 +16,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    // Elegimos 3 mensajes aleatorios sin repetir
     final selectedMessages = reminderMessages.toList()..shuffle();
     final messagesToShow = selectedMessages.take(3).toList();
 
@@ -29,7 +27,6 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Título elegante
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
@@ -41,15 +38,9 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
-              // Varias burbujas
               ...messagesToShow.map((msg) => ReminderBubble(message: msg)),
-
               const SizedBox(height: 30),
-
-              // Aquí puedes agregar más contenido si quieres
             ],
           ),
         ),
@@ -58,9 +49,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------------
-// 🔥 Widget de burbuja profesional
-// ------------------------------------------------------------
 class ReminderBubble extends StatelessWidget {
   final String message;
 

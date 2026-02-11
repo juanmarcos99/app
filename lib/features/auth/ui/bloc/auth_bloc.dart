@@ -14,14 +14,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc(this.registerUser, this.loginUser, this.registerPatient)
     : super(const AuthInitial()) {
-    //------------------------------------------------------------------------
-    //                        Blocs para el registro
-    //------------------------------------------------------------------------
-    // ------------------------Registro del usuario-------------------------
     on<RegisterUserEvent>((event, emit) async {
-      emit(
-        const AuthLoading(),
-      ); //Se emite el estado de carga mientras se ejecuta el registro
+      emit(const AuthLoading());
       try {
         _userId = await registerUser(
           event.user,
@@ -53,34 +47,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    //---------------------Se registra el paciente------------------------
     on<RegisterPatientEvent>((event, emit) async {
-      // Si por alguna razón llega antes de tener _userId, protegemos.
       if (_userId == null) {
         emit(
           const AuthFailure('Aún no hay userId para registrar el paciente.'),
         );
         return;
       }
-      emit(
-        const AuthLoading(),
-      ); //Se emite el estado de carga mientras se registra
+      emit(const AuthLoading());
       try {
-        final patientWithId = event.patient.copyWith(
-          userId: _userId,
-        ); //transcribo el paceitne con el userId correspondiente a la relacion paciente con el user
+        final patientWithId = event.patient.copyWith(userId: _userId);
         await registerPatient(patientWithId);
-        emit(UserFullyRegistrated(user!)); // ahora sí, registro completo
+        emit(UserFullyRegistrated(user!));
       } catch (e) {
         emit(AuthFailure('Error al registrar paciente: $e'));
       }
     });
 
-    //------------------------------------------------------------------------
-    //                        Blocs para el login
-    //------------------------------------------------------------------------
     on<LoginUserEvent>((event, emit) async {
-      emit(const AuthLoading()); // Emite loading mientras se procesa
+      emit(const AuthLoading());
       try {
         final loggedUser = await loginUser(event.username, event.password);
         if (loggedUser != null) {

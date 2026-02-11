@@ -1,4 +1,5 @@
 import 'package:app/features/auth/data/auth_data.dart';
+import 'package:app/core/core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -45,14 +46,14 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
     } on DatabaseException catch (e) {
       //Verificamos si el error es por UNIQUE constraint
       if (e.isUniqueConstraintError()) {
-        debugPrint("Username ya existe: $e");
+        Logger.w("Username ya existe: $e", error: e);
         return -2; // código especial para username duplicado
       } else {
-        debugPrint("Error de base de datos: $e");
+        Logger.e("Error de base de datos: $e", error: e);
         return -1; // otro error
       }
-    } catch (e) {
-      debugPrint("Error inesperado: $e");
+    } catch (e, st) {
+      Logger.e("Error inesperado: $e", error: e, stack: st);
       return -1;
     }
   }

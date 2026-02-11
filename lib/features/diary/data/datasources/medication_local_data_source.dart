@@ -17,9 +17,6 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
 
   MedicationLocalDataSourceImpl(this.db);
 
-  // -------------------------------------------------------------
-  // Insertar medicamento + horarios
-  // -------------------------------------------------------------
   @override
   Future<int> addMedication(MedicationModel medication) async {
     try {
@@ -44,9 +41,6 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     }
   }
 
-  // -------------------------------------------------------------
-  // Actualizar medicamento + horarios
-  // -------------------------------------------------------------
   @override
   Future<int> updateMedication(MedicationModel medication) async {
     try {
@@ -83,18 +77,12 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     }
   }
 
-  // -------------------------------------------------------------
-  // Borrar medicamento + horarios (ON DELETE CASCADE)
-  // -------------------------------------------------------------
-  @override
+ @override
   Future<int> deleteMedication(int id) async {
     return await db.delete('medications', where: 'id = ?', whereArgs: [id]);
   }
 
-  // -------------------------------------------------------------
-  // Obtener horarios por medicamento
-  // -------------------------------------------------------------
-  @override
+ @override
   Future<List<ScheduleModel>> getSchedulesByMedication(int medicationId) async {
     final result = await db.query(
       'schedules',
@@ -105,10 +93,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     return result.map((m) => ScheduleModel.fromMap(m)).toList();
   }
 
-  // -------------------------------------------------------------
-  // Obtener medicamento por ID (incluye horarios)
-  // -------------------------------------------------------------
-  @override
+   @override
   Future<MedicationModel?> getMedicationById(int id) async {
     final result = await db.query(
       'medications',
@@ -123,10 +108,7 @@ class MedicationLocalDataSourceImpl implements MedicationLocalDataSource {
     return MedicationModel.fromMap(result.first, schedules);
   }
 
-  // -------------------------------------------------------------
-  // Obtener todos los medicamentos de un usuario (incluye horarios)
-  // -------------------------------------------------------------
-  @override
+ @override
   Future<List<MedicationModel>> getMedicationsByUser(int userId) async {
     final result = await db.query(
       'medications',

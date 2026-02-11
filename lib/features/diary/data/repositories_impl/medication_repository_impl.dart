@@ -5,10 +5,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
 
   MedicationRepositoryImpl(this.localDataSource);
 
-  // -------------------------------------------------------------
-  // Add medication + schedules
-  // -------------------------------------------------------------
-  @override
+    @override
   Future<void> addMedication(Medication medication) async {
     final model = MedicationModel(
       id: medication.id,
@@ -22,10 +19,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
     await localDataSource.addMedication(model);
   }
 
-  // -------------------------------------------------------------
-  //Update medication + schedules
-  // -------------------------------------------------------------
-  @override
+ @override
   Future<void> updateMedication(Medication medication) async {
     final model = MedicationModel(
       id: medication.id,
@@ -39,27 +33,18 @@ class MedicationRepositoryImpl implements MedicationRepository {
     await localDataSource.updateMedication(model);
   }
 
-  // -------------------------------------------------------------
-  //Delete medication (horarios se borran por ON DELETE CASCADE)
-  // -------------------------------------------------------------
   @override
   Future<void> deleteMedication(int id) async {
     await localDataSource.deleteMedication(id);
   }
 
-  // -------------------------------------------------------------
-  // Get medication by ID (incluye horarios)
-  // -------------------------------------------------------------
   @override
   Future<Medication?> getMedicationById(int id) async {
     final model = await localDataSource.getMedicationById(id);
     return model; // MedicationModel extiende Medication
   }
 
-  // -------------------------------------------------------------
-  // Get all medications for a user (incluye horarios)
-  // -------------------------------------------------------------
-  @override
+   @override
   Future<List<Medication>> getMedicationsByUser(int userId) async {
     final result = await localDataSource.getMedicationsByUser(userId);
     return result; // MedicationModel extiende Medication

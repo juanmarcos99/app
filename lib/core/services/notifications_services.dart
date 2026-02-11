@@ -24,7 +24,7 @@ class NotificationService {
 
     await _notificationsPlugin.initialize(initSettings);
 
-    // ⭐ Crear canal (OBLIGATORIO en release)
+    // Crear canal 
     final androidPlugin = _notificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
@@ -38,7 +38,7 @@ class NotificationService {
       ),
     );
 
-    // ⭐ Inicializar zonas horarias
+    // Inicializar zonas horarias
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('America/Havana'));
   }

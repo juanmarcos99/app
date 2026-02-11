@@ -1,4 +1,5 @@
 import 'package:app/features/diary/diary.dart';
+import 'package:app/core/core.dart';
 import 'package:app/features/diary/domain/use_cases/update_adverse_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,7 +82,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     on<AddAdverseEventEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
-        debugPrint("entro al add evento adverso");
+        Logger.d("entro al add evento adverso");
         await addAdverseEvent(event.av);
         emit(AdverseEventAdded(event.av));
       } catch (e) {

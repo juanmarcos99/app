@@ -17,9 +17,8 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
     required this.getMedicationsByUser,
     required this.getSchedulesWithNotificationIds,
   }) : super(MedicationInitial()) {
-    // -------------------------------------------------------------
     //  Cargar medicaciones
-    // -------------------------------------------------------------
+
     on<LoadMedicationsEvent>((event, emit) async {
       emit(MedicationLoading());
 
@@ -32,16 +31,16 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
       }
     });
 
-    // -------------------------------------------------------------
+    
     // Añadir medicación
-    // -------------------------------------------------------------
+    
     on<AddMedicationEvent>((event, emit) async {
       emit(MedicationLoading());
 
       try {
         final notificationService = NotificationService();
 
-        // 1. Programar notificaciones si el usuario lo pidió
+        //  Programa notificsaciones si el usuario lo pidó
         if (event.shouldScheduleNotifications) {
           for (final schedule in event.medication.schedules!) {
             await notificationService.addDailyAlert(
@@ -53,19 +52,19 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
           }
         }
 
-        // 2. Guardar la medicación
+        //  Guardar la medicación
         await addMedication(event.medication);
 
         emit(MedicationAdded(event.medication));
       } catch (e) {
-        debugPrint("Error en MedicationBloc - AddMedicationEvent: $e");
+        Logger.e("Error en MedicationBloc - AddMedicationEvent: $e", error: e);
         emit(MedicationError("Error al añadir medicación"));
       }
     });
 
-    // -------------------------------------------------------------
+   
     // Actualizar medicación
-    // -------------------------------------------------------------
+    
     on<UpdateMedicationEvent>((event, emit) async {
       emit(MedicationLoading());
 
@@ -105,39 +104,37 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
         final meds = await getMedicationsByUser(event.medication.userId!);
         emit(MedicationLoaded(meds));
       } catch (e) {
-        debugPrint("Error en MedicationBloc - updateMedicationEvent: $e");
+        Logger.e("Error en MedicationBloc - updateMedicationEvent: $e", error: e);
         emit(MedicationError("Error al actualizar medicación"));
       }
     });
 
-    // -------------------------------------------------------------
+    
     //  Eliminar medicación
-    // -------------------------------------------------------------
+    
     on<DeleteMedicationEvent>((event, emit) async {
       emit(MedicationLoading());
 
       try {
         final service = NotificationService();
 
-        // 1️⃣ OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
+        //  OBTENER LOS HORARIOS ANTIGUOS DESDE LA BD
         final oldSchedules = await getSchedulesWithNotificationIds(
           event.medicationId,
         );
 
-        // 2️⃣ CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
+        //  CANCELAR TODAS LAS NOTIFICACIONES ANTIGUAS
         for (final schedule in oldSchedules) {
           if (schedule.notificationId != null) {
             await service.cancelAlert(schedule.notificationId!);
           }
         }
 
-        // 3️⃣ ELIMINAR EL MEDICAMENTO (horarios se borran por cascade)
+        // ELIMINAR EL MEDICAMENTO (horarios se borran por cascade)
         await deleteMedication(event.medicationId);
 
-        // 4️⃣ EMITIR ESTADO
+        //  EMITIR ESTADO
         emit(MedicationDeleted(event.medicationId));
-
-     
       } catch (e) {
         emit(MedicationError("Error al eliminar medicación"));
       }

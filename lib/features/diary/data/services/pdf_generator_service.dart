@@ -10,9 +10,6 @@ class PdfGeneratorService {
   }) async {
     final pdf = pw.Document();
 
-    // ---------------------------------------------------------
-    //  MAPEADOR EXACTO DE RANGOS REALES → RANGOS DE LA TABLA
-    // ---------------------------------------------------------
     String mapExactRange(String input) {
       final s = input.trim().toLowerCase();
 
@@ -25,18 +22,15 @@ class PdfGeneratorService {
       return input; // fallback
     }
 
-    // ---------------------------------------------------------
     //  MAPEADOR DE TIPOS REALES → FC, FI, TB, OT
-    // ---------------------------------------------------------
+
     String mapType(String type) {
       final t = type.trim().toLowerCase();
-
-      if (t.contains('focales') && t.contains('consc')) {
-        return 'FC'; // Focales conscientes
-      }
-
       if (t.contains('focales') && t.contains('inconsc')) {
         return 'FI'; // Focales inconscientes
+      }
+      if (t.contains('focales') && t.contains('consc')) {
+        return 'FC'; // Focales conscientes
       }
 
       if (t.contains('tónico') ||
@@ -51,9 +45,6 @@ class PdfGeneratorService {
       return 'OT';
     }
 
-    // ---------------------------------------------------------
-    // 1) FILAS DE LA TABLA (FORMATO FINAL)
-    // ---------------------------------------------------------
     final List<String> timeTypeRows = [
       '6am-10am / FC',
       '6am-10am / FI',
@@ -82,64 +73,41 @@ class PdfGeneratorService {
         .map((e) => e.toLowerCase().replaceAll(' ', ''))
         .toList();
 
-    // ---------------------------------------------------------
-    // 2) MATRIZ VACÍA (20 filas × 31 días)
-    // ---------------------------------------------------------
+    // MATRIZ VACÍA 20 filas × 31 día
     final crisisMatrix = List<List<String>>.generate(
       timeTypeRows.length,
       (_) => List<String>.filled(31, '', growable: false),
     );
 
-    // ---------------------------------------------------------
-    // 3) LLENAR MATRIZ CON ASTERISCOS + DEBUG
-    // ---------------------------------------------------------
+    // LLENAR MATRIZ CON ASTERISCOS + DEBUG
+
     for (final c in crises) {
       if (c.crisisDate == null) continue;
 
       final day = c.crisisDate!.day;
       if (day < 1 || day > 31) continue;
 
-      print("--------------------------------------------------");
-      print("CRISIS RAW:");
-      print("  timeRange: '${c.timeRange}'");
-      print("  type:      '${c.type}'");
-      print("  date:      ${c.crisisDate?.day}");
-      print("  quantity:  ${c.quantity}");
-
       final mappedRange = mapExactRange(c.timeRange ?? '');
       final mappedType = mapType(c.type ?? '');
       final key = '$mappedRange / $mappedType';
       final normalizedKey = key.toLowerCase().replaceAll(' ', '');
 
-      print("MAPPED:");
-      print("  mappedRange: '$mappedRange'");
-      print("  mappedType:  '$mappedType'");
-      print("  key:         '$key'");
-      print("  normalized:  '$normalizedKey'");
-
       final rowIndex = normalizedRows.indexOf(normalizedKey);
-      print("ROW INDEX: $rowIndex");
 
       if (rowIndex == -1) {
-        print("❌ NO MATCH FOUND FOR THIS CRISIS");
         continue;
       }
-
-      print("✅ MATCH FOUND → row $rowIndex, day $day");
-      print("ADDING MARK → row $rowIndex, col ${day - 1}");
 
       final marks = (c.quantity ?? 0).toString();
       crisisMatrix[rowIndex][day - 1] = marks;
     }
 
-    // ---------------------------------------------------------
-    // 4) TABLA MENSUAL DE CRISIS (COMPACTA)
-    // ---------------------------------------------------------
+    //  TABLA MENSUAL DE CRISIS COMPATA
     final crisisTable = pw.Table(
       border: pw.TableBorder.all(color: PdfColors.grey600, width: 0.3),
       defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
       children: [
-        // Encabezado
+        // Encabezao
         pw.TableRow(
           decoration: const pw.BoxDecoration(color: PdfColors.grey300),
           children: [
@@ -193,9 +161,8 @@ class PdfGeneratorService {
       ],
     );
 
-    // ---------------------------------------------------------
-    // 5) TABLA DE EVENTOS ADVERSOS
-    // ---------------------------------------------------------
+    //  TABLA DE EVENTOS ADVERSOS
+
     final adverseEventsTable = pw.Table.fromTextArray(
       headers: ['Fecha', 'Descripción'],
       data: adverseEvents.map((e) {
@@ -209,9 +176,8 @@ class PdfGeneratorService {
       cellAlignment: pw.Alignment.centerLeft,
     );
 
-    // ---------------------------------------------------------
-    // 6) PÁGINA DEL PDF
-    // ---------------------------------------------------------
+    // PÁGINA DEL PDF
+
     pdf.addPage(
       pw.MultiPage(
         margin: const pw.EdgeInsets.all(20),

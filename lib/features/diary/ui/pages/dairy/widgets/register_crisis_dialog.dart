@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app/core/theme/style/colors.dart';
 
 class RegisterCrisisDialog extends StatefulWidget {
-  final Crisis? initialCrisis; // 🔥 null = registrar, no null = editar
+  final Crisis? initialCrisis;
 
   const RegisterCrisisDialog({super.key, this.initialCrisis});
 
@@ -42,12 +42,8 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
 
     if (isEditing) {
       final crisis = widget.initialCrisis!;
-
       fecha = crisis.crisisDate ?? DateTime.now();
-
-      // 🔥 FIX DEL DROPDOWN: solo asignar si existe en la lista
       horario = horarios.contains(crisis.timeRange) ? crisis.timeRange : null;
-
       tipoSeleccionado = tiposCrisis.contains(crisis.type)
           ? crisis.type
           : 'Añadir otro tipo';
@@ -84,10 +80,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Horario del episodio",
-                style: TextStyle(fontSize: 16),
-              ),
+              const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
                 value: horario,
                 items: horarios
@@ -97,7 +90,6 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
-
               const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
                 value: tipoSeleccionado,
@@ -108,7 +100,6 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                 decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
               const SizedBox(height: 20),
-
               if (tipoSeleccionado != null &&
                   tipoSeleccionado != 'Añadir otro tipo')
                 TextFormField(
@@ -119,7 +110,6 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
-
               if (tipoSeleccionado == 'Añadir otro tipo') ...[
                 TextFormField(
                   controller: descripcionController,
@@ -156,7 +146,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
             final crisis = Crisis(
               id: widget.initialCrisis?.id,
               registeredDate: widget.initialCrisis?.registeredDate,
-              crisisDate: fecha, // 🔥 SIEMPRE correcto
+              crisisDate: fecha,
               timeRange: horario ?? '',
               quantity: int.tryParse(cantidadController.text.trim()) ?? 0,
               type: tipoFinal,
@@ -174,5 +164,5 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
         ),
       ],
     );
-  } 
+  }
 }

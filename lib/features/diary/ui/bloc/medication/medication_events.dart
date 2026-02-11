@@ -8,9 +8,6 @@ abstract class MedicationEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// -------------------------------------------------------------
-// 🔥 1. Cargar todas las medicaciones del usuario
-// -------------------------------------------------------------
 class LoadMedicationsEvent extends MedicationEvent {
   final int userId;
 
@@ -20,9 +17,8 @@ class LoadMedicationsEvent extends MedicationEvent {
   List<Object?> get props => [userId];
 }
 
-// -------------------------------------------------------------
-// 🔥 2. Añadir una medicación
-// -------------------------------------------------------------
+// Añadir una medicación
+
 class AddMedicationEvent extends MedicationEvent {
   final Medication medication;
   final bool shouldScheduleNotifications;
@@ -33,9 +29,8 @@ class AddMedicationEvent extends MedicationEvent {
   List<Object?> get props => [medication, shouldScheduleNotifications];
 }
 
-// -------------------------------------------------------------
-// 🔥 3. Actualizar una medicación
-// -------------------------------------------------------------
+//  Actualizar una medicación
+
 class UpdateMedicationEvent extends MedicationEvent {
   final Medication medication;
   final bool shouldScheduleNotifications;
@@ -49,9 +44,8 @@ class UpdateMedicationEvent extends MedicationEvent {
   List<Object?> get props => [medication, shouldScheduleNotifications];
 }
 
-// -------------------------------------------------------------
-// 🔥 4. Eliminar una medicación
-// -------------------------------------------------------------
+//  Eliminar una medicación
+
 class DeleteMedicationEvent extends MedicationEvent {
   final int medicationId;
 
