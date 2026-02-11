@@ -145,7 +145,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
                   return _buildDayCell(
                     day: day,
-                    backgroundColor: AppColors.calendarActualDay,
+                    backgroundColor: AppColors.surfaceSoft,
                     hasCrisis: hasCrisis,
                     hasAE: hasAE,
                   );
@@ -221,7 +221,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                 margin: const EdgeInsets.only(bottom: 2),
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.secundary,
+                  color: AppColors.secondary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

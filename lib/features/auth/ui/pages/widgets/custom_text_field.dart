@@ -25,7 +25,7 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: const TextStyle(color: AppColors.grey),
+        labelStyle: const TextStyle(color: AppColors.gray300),
         enabledBorder: const UnderlineInputBorder(
           borderSide: BorderSide(
             color: Color.fromARGB(255, 212, 212, 212),

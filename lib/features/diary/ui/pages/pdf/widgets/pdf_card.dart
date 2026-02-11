@@ -44,7 +44,7 @@ class PdfCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.secundary,
+                color: AppColors.secondary,
               ),
             ),
           ),
@@ -58,7 +58,7 @@ class PdfCard extends StatelessWidget {
             offset: const Offset(0, 10),
             surfaceTintColor: Colors.white,
             shadowColor: Colors.black.withValues(alpha:0.1),
-            icon: const Icon(Icons.more_vert, color: AppColors.secundary),
+            icon: const Icon(Icons.more_vert, color: AppColors.secondary),
             onSelected: (value) {
               if (value == 'abrir') onOpen();
               if (value == 'compartir') onShare();
@@ -71,7 +71,7 @@ class PdfCard extends StatelessWidget {
                   children: const [
                     Icon(
                       Icons.open_in_new,
-                      color: AppColors.secundary,
+                      color: AppColors.secondary,
                       size: 20,
                     ),
                     SizedBox(width: 12),
@@ -79,7 +79,7 @@ class PdfCard extends StatelessWidget {
                       "Abrir",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.secundary,
+                        color: AppColors.secondary,
                       ),
                     ),
                   ],
@@ -89,13 +89,13 @@ class PdfCard extends StatelessWidget {
                 value: 'compartir',
                 child: Row(
                   children: const [
-                    Icon(Icons.share, color: AppColors.secundary, size: 20),
+                    Icon(Icons.share, color: AppColors.secondary, size: 20),
                     SizedBox(width: 12),
                     Text(
                       "Compartir",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.secundary,
+                        color: AppColors.secondary,
                       ),
                     ),
                   ],

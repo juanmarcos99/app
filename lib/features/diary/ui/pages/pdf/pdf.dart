@@ -156,7 +156,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.secundary,
+                                color: AppColors.secondary,
                               ),
                             ),
                           ),
@@ -178,7 +178,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.secundary,
+                              color: AppColors.secondary,
                             ),
                           ),
 
@@ -216,7 +216,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.secundary,
+                              color: AppColors.secondary,
                             ),
                           ),
 
@@ -243,7 +243,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.secundary,
+                              color: AppColors.secondary,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -360,7 +360,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: AppColors.secundary,
+            color: AppColors.secondary,
           ),
         ),
         const SizedBox(height: 6),

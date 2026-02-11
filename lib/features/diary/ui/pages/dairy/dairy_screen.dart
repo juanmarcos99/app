@@ -118,7 +118,7 @@ class _DiaryPageState extends State<DiaryPage> {
               CustomActionButton(
                 text: "Añadir Efecto",
                 icon: Icons.add,
-                backgroundColor: AppColors.secundary,
+                backgroundColor: AppColors.secondary,
                 onPressed: () => _handleAddAdverseEvent(context),
               ),
             ],
@@ -140,7 +140,7 @@ class _DiaryPageState extends State<DiaryPage> {
               child: CustomActionButton(
                 text: "Añadir Efecto",
                 icon: Icons.add,
-                backgroundColor: AppColors.secundary,
+                backgroundColor: AppColors.secondary,
                 onPressed: () => _handleAddAdverseEvent(context),
               ),
             ),
