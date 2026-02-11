@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -24,7 +25,6 @@ class NotificationService {
 
     await _notificationsPlugin.initialize(initSettings);
 
-    // Crear canal 
     final androidPlugin = _notificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
@@ -38,9 +38,10 @@ class NotificationService {
       ),
     );
 
-    // Inicializar zonas horarias
+    // Inicializar zonas horarias dinámicamente
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('America/Havana'));
+    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
   Future<void> addDailyAlert({
@@ -81,7 +82,7 @@ class NotificationService {
       body,
       _nextInstanceOfTime(scheduledDate),
       details,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,

@@ -60,10 +60,10 @@ class ReminderBubble extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withOpacity(0.25),
+        color: AppColors.primaryLight.withValues(alpha:0.25),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.4),
+          color: AppColors.primary.withValues(alpha:0.4),
           width: 1.2,
         ),
       ),

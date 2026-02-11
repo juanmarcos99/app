@@ -1,6 +1,5 @@
-import 'package:app/features/auth/data/auth_data.dart';
+import 'package:app/features/auth/auth.dart';
 import 'package:app/core/core.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class UserLocalDataSource {

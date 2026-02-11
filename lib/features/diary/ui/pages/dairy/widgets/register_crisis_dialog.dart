@@ -82,7 +82,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
             children: [
               const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
-                value: horario,
+                initialValue: horario,
                 items: horarios
                     .map((h) => DropdownMenuItem(value: h, child: Text(h)))
                     .toList(),
@@ -92,7 +92,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               const SizedBox(height: 20),
               const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
               DropdownButtonFormField<String>(
-                value: tipoSeleccionado,
+                initialValue: tipoSeleccionado,
                 items: tiposCrisis
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),

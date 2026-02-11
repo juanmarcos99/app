@@ -163,7 +163,7 @@ class PdfGeneratorService {
 
     //  TABLA DE EVENTOS ADVERSOS
 
-    final adverseEventsTable = pw.Table.fromTextArray(
+    final adverseEventsTable = pw.TableHelper.fromTextArray(
       headers: ['Fecha', 'Descripción'],
       data: adverseEvents.map((e) {
         final date = e.eventDate.toString().split(' ').first;

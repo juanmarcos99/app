@@ -1,5 +1,4 @@
-import 'package:app/features/auth/data/auth_data.dart';
-import 'package:app/features/auth/domain/auth_domain.dart';
+import 'package:app/features/auth/auth.dart';
 
 class PatientRepositoryImpl extends PatientRepository {
   final PatientLocalDataSources localDataSource;

@@ -2,7 +2,7 @@ import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../diary.dart';
-import 'package:app/features/diary/diary.dart';
+
 
 class MedicationCard extends StatefulWidget {
   final Medication medication;

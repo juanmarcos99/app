@@ -1,8 +1,7 @@
 import 'package:app/features/auth/domain/use_cases/login_user.dart';
 import 'package:app/features/auth/domain/use_cases/register_patient.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/features/auth/domain/auth_domain.dart';
-import '../auth_ui.dart';
+import 'package:app/features/auth/auth.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser; //caso de uso del registro de usuario

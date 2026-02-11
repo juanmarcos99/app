@@ -111,7 +111,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                 color: AppColors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
+                    color: Colors.black.withValues(alpha:0.06),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -126,7 +126,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                       vertical: 14,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.9),
+                      color: AppColors.white.withValues(alpha:0.9),
                       border: const Border(
                         bottom: BorderSide(color: Color(0xFFE2E8F0)),
                       ),
@@ -253,16 +253,17 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                               fileName: name,
                               onOpen: () => OpenFilex.open(file.path),
                               onShare: () async {
-                                await Share.shareXFiles([
-                                  XFile(file.path),
-                                ], text: "Aquí tienes tu reporte en PDF");
+                                await Share.shareXFiles(
+                                  [XFile(file.path)],
+                                  text: 'Aquí tienes tu reporte en PDF',
+                                );
                               },
                               onDelete: () {
                                 File(file.path).deleteSync();
                                 loadGeneratedPdfs();
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),

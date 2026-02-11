@@ -190,9 +190,6 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                                 if (authState is! UserLoggedIn) return;
 
                                 final userId = authState.user.id!;
-                                final daySelected = context
-                                    .read<DiaryBloc>()
-                                    .daySelected;
 
                                 final efecto = AdverseEvent(
                                   registerDate: DateTime.now(),
@@ -248,11 +245,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
                               final userId = authState.user.id!;
 
-                              if (result != null && userId != null) {
+                              if (result != null) {
                                 final (medication, shouldSchedule) = result;
 
                                 final medWithUser = medication.copyWith(
-                                  userId: userId!,
+                                  userId: userId,
                                 );
 
                                 context.read<MedicationBloc>().add(

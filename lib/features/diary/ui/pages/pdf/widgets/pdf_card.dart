@@ -26,7 +26,7 @@ class PdfCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -57,7 +57,7 @@ class PdfCard extends StatelessWidget {
             ),
             offset: const Offset(0, 10),
             surfaceTintColor: Colors.white,
-            shadowColor: Colors.black.withOpacity(0.1),
+            shadowColor: Colors.black.withValues(alpha:0.1),
             icon: const Icon(Icons.more_vert, color: AppColors.secundary),
             onSelected: (value) {
               if (value == 'abrir') onOpen();

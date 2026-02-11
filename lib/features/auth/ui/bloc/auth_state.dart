@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:app/features/auth/domain/auth_domain.dart';
+import 'package:app/features/auth/auth.dart';
 
 //estado abstracto del cual heredan los demas
 abstract class AuthState extends Equatable {

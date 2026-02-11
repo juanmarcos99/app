@@ -1,4 +1,3 @@
-import 'package:app/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/core.dart';
 import 'package:app/features/auth/auth.dart';
@@ -21,7 +20,7 @@ class SettingsPage extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha:0.06),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -52,7 +51,7 @@ class SettingsPage extends StatelessWidget {
                                 color: AppColors.primaryLight,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
+                                    color: Colors.black.withValues(alpha:0.15),
                                     blurRadius: 12,
                                     offset: const Offset(0, 6),
                                   ),
@@ -144,7 +143,7 @@ class SettingsPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              overlayColor: Colors.red.shade50.withOpacity(0.3),
+                              overlayColor: Colors.red.shade50.withValues(alpha:0.3),
                             ),
                             onPressed: () {},
                             child: const Text(
@@ -202,7 +201,7 @@ class _SettingsTile extends StatelessWidget {
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: iconColor),

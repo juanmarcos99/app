@@ -1,6 +1,6 @@
 import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
-import 'package:app/features/auth/ui/auth_ui.dart';
+import 'package:app/features/auth/auth.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -12,7 +12,7 @@ class AppRoutes {
   static const settingsPage = '/settings';
   static const addPage = '/add';
   static const pdf = '/pdf';
-  
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:

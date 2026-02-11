@@ -1,4 +1,4 @@
-import 'package:app/features/auth/domain/auth_domain.dart';
+import 'package:app/features/auth/auth.dart';
 
 //evento abstracto del cual heredan los demas
 abstract class AuthEvent {}
@@ -8,6 +8,7 @@ class RegisterUserEvent extends AuthEvent {
   final User user;
   RegisterUserEvent(this.user);
 }
+
 class RegisterPatientEvent extends AuthEvent {
   final Patient patient;
   RegisterPatientEvent(this.patient);

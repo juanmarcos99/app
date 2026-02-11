@@ -1,4 +1,4 @@
-import 'package:app/features/auth/domain/auth_domain.dart';
+import 'package:app/features/auth/auth.dart';
 
 class RegisterPatient {
   final PatientRepository patientRepository;
