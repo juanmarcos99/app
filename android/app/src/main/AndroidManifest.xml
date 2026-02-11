@@ -11,15 +11,14 @@
 
     <!-- ⭐ Permisos necesarios para notificaciones exactas -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:label="app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true"
-        android:usesExactAlarm="true">   <!-- ⭐ ESTA LÍNEA ES LA QUE FALTABA -->
+        android:requestLegacyExternalStorage="true">
 
         <!-- Receivers -->
         <receiver
