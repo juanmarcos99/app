@@ -4,7 +4,7 @@ class AppColors {
   AppColors._();
 
   // Colores de marca
-  static const Color primary = Color.fromARGB(255, 51, 128, 192);
+  static const Color primary = Color(0xFF3380C0);
   static const Color primaryLight = Color.fromARGB(255, 202, 241, 255);
   static const Color secondary = Color.fromARGB(255, 28, 68, 146);
 
@@ -24,7 +24,7 @@ class AppColors {
   static const Color gray50 = Color(0xFFF9FAFB);
   static const Color gray100 = Color(0xFFF3F4F6);
   static const Color gray200 = Color(0xFFE5E7EB);
-  static const Color gray300 = Color.fromARGB(255, 192, 192, 192);
+  static const Color gray300 = Color(0xFFC0C0C0);
   static const Color gray400 = Color(0xFF9CA3AF);
   static const Color gray500 = Color(0xFF6B7280);
   static const Color gray600 = Color(0xFF4B5563);
@@ -37,9 +37,9 @@ class AppColors {
   static const Color backgroundAlt = Color(0xFFE5E7EB);
 
   // Superficies modo claro
-  static const Color surface = white;
-  static const Color surfaceSoft = Color.fromARGB(255, 246, 246, 246);
-  static const Color surfaceSelected = Color.fromARGB(255, 241, 241, 241);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceSoft = Color(0xFFF6F6F6);
+  static const Color surfaceSelected = Color(0xFFF1F1F1);
 
   // Fondos modo oscuro
   static const Color darkBackground = Color(0xFF0D1117);
@@ -66,6 +66,10 @@ class AppColors {
   // Overlays
   static const Color overlaySoft = Color(0x66000000);
   static const Color overlayStrong = Color(0x99000000);
+
+  // Sombras
+  static const Color shadowLight = Color(0x40000000);
+  static const Color shadowDark = Color(0x66000000);
 
   // Gradientes
   static const List<Color> primaryGradient = [primary, secondary];

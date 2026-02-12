@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/theme/style/colors.dart';
-import 'package:app/features/auth/auth.dart'; //bloc y modelos
+import 'package:app/features/auth/auth.dart'; 
 
 class RegisterUserPage extends StatefulWidget {
   const RegisterUserPage({super.key});

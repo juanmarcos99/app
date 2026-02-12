@@ -23,12 +23,11 @@ class _LoginPageState extends State<LoginPage> {
           listenWhen: (previous, current) =>
               current is AuthFailure || current is UserLoggedIn,
           listener: (context, state) {
-
             if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
+                  content: Text(state.message, style: AppTypography.captionDark),
+                  backgroundColor: AppColors.error,
                 ),
               );
             }
@@ -36,15 +35,17 @@ class _LoginPageState extends State<LoginPage> {
             if (state is UserLoggedIn) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Bienvenido ${state.user.userName}"),
-                  backgroundColor: Colors.green,
+                  content: Text(
+                    "Bienvenido ${state.user.userName}",
+                    style: AppTypography.captionDark,
+                  ),
+                  backgroundColor: AppColors.success,
                 ),
               );
               Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
             }
           },
           builder: (context, state) {
-
             return Column(
               children: [
                 Expanded(
@@ -54,12 +55,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
+                          Text(
                             "Iniciar Sesión",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: AppTypography.headline1Light,
                           ),
                           const SizedBox(height: 30),
                           Image.asset(
@@ -87,9 +85,10 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               LetterNavButton(
-                                letter: "Olvidaste tu contraseña?",
+                                letter: "¿Olvidaste tu contraseña?",
                                 onTap: () {},
                                 fontSize: 13,
+                                color: AppColors.textSecondary,
                               ),
                             ],
                           ),
@@ -110,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                             letter: "Cambiar contraseña",
                             onTap: () {},
                             fontSize: 13,
-                            color: const Color.fromARGB(255, 255, 55, 135),
+                            color: AppColors.error,
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -123,13 +122,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Aun no tienes cuenta?",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400,
-                        ),
+                      Text(
+                        "¿Aún no tienes cuenta?",
+                        style: AppTypography.captionLight,
                       ),
                       LetterNavButton(
                         letter: "Registrarse",
@@ -137,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushNamed(context, AppRoutes.register);
                         },
                         fontSize: 16,
+                        color: AppColors.primary,
                       ),
                     ],
                   ),

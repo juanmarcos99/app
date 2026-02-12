@@ -10,11 +10,13 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = AppColors.primary, // azul oscuro por defecto
+    this.color = AppColors.primary,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 250,
       height: 50,
@@ -22,10 +24,9 @@ class PrimaryButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(45),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.25), // 👈 color de la sombra
-            blurRadius: 8, // qué tan difusa es
-            offset: const Offset(0, 5), // posición (x,y)
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -36,16 +37,11 @@ class PrimaryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(45),
           ),
-          elevation: 0, // quitamos la sombra propia del ElevatedButton
+          elevation: 0,
         ),
         child: Text(
           text.toUpperCase(),
-          style: const TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            letterSpacing: 1.2,
-          ),
+          style: isDark ? AppTypography.buttonDark : AppTypography.buttonLight,
         ),
       ),
     );

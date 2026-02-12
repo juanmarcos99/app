@@ -1,7 +1,7 @@
-import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:app/core/core.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String label;
   final String? hint;
   final IconData icon;
@@ -18,29 +18,54 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscure;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      obscureText: obscure,
+      controller: widget.controller,
+      obscureText: _obscureText,
+      style: AppTypography.inputLight,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        labelStyle: const TextStyle(color: AppColors.gray300),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Color.fromARGB(255, 212, 212, 212),
-            width: 1,
-          ),
+        labelText: widget.label,
+        hintText: widget.hint,
+        labelStyle: AppTypography.captionLight,
+        hintStyle: AppTypography.captionLight.copyWith(
+          color: AppColors.textDisabled,
         ),
-
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.gray300, width: 1),
+        ),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
-
         border: const UnderlineInputBorder(),
         filled: true,
         fillColor: AppColors.white,
-        prefixIcon: Icon(icon, color: AppColors.primary),
+        prefixIcon: Icon(widget.icon, color: AppColors.primary),
+        suffixIcon: widget.obscure
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: AppColors.gray300,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : null,
       ),
     );
   }
