@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
     final messagesToShow = selectedMessages.take(3).toList();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -81,7 +81,7 @@ class ReminderBubble extends StatelessWidget {
               message,
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: AppColors.black,
                 height: 1.35,
               ),
             ),

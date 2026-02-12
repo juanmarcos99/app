@@ -34,7 +34,7 @@ class _RegistroEfectDialogState extends State<RegistroEfectDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor:  AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Text(isEditing ? "Editar evento adverso" : "Registrar evento adverso"),
       content: SizedBox(
@@ -69,10 +69,10 @@ class _RegistroEfectDialogState extends State<RegistroEfectDialog> {
 
             Navigator.pop(context, ae);
           },
-          icon: const Icon(Icons.save, color: Colors.white),
+          icon: const Icon(Icons.save, color:  AppColors.white),
           label: Text(
             isEditing ? "Guardar cambios" : "Guardar",
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color:  AppColors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,

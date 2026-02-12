@@ -16,6 +16,8 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
   String? horario;
   String? tipoSeleccionado;
 
+  final _formKey = GlobalKey<FormState>();
+
   final List<String> horarios = [
     '6:00 am - 10:00 am',
     '10:00 am - 2:00 pm',
@@ -67,6 +69,28 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
     super.dispose();
   }
 
+  void _onSave() {
+    // valida todos los campos del formulario
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) return;
+
+    final tipoFinal = tipoSeleccionado == 'Añadir otro tipo'
+        ? descripcionController.text.trim()
+        : tipoSeleccionado ?? '';
+
+    final crisis = Crisis(
+      id: widget.initialCrisis?.id,
+      registeredDate: widget.initialCrisis?.registeredDate,
+      crisisDate: fecha,
+      timeRange: horario ?? '',
+      quantity: int.tryParse(cantidadController.text.trim()) ?? 0,
+      type: tipoFinal,
+      userId: widget.initialCrisis?.userId,
+    );
+
+    Navigator.pop(context, crisis);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -77,58 +101,106 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.55,
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Horario del episodio", style: TextStyle(fontSize: 16)),
-              DropdownButtonFormField<String>(
-                initialValue: horario,
-                items: horarios
-                    .map((h) => DropdownMenuItem(value: h, child: Text(h)))
-                    .toList(),
-                onChanged: (value) => setState(() => horario = value),
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 20),
-              const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
-              DropdownButtonFormField<String>(
-                initialValue: tipoSeleccionado,
-                items: tiposCrisis
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
-                onChanged: (value) => setState(() => tipoSeleccionado = value),
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 20),
-              if (tipoSeleccionado != null &&
-                  tipoSeleccionado != 'Añadir otro tipo')
-                TextFormField(
-                  controller: cantidadController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Cantidad de crisis ($tipoSeleccionado)",
-                    border: const OutlineInputBorder(),
-                  ),
+          child: Form(
+            key: _formKey, // formulario para validaciones
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Horario del episodio",
+                    style: TextStyle(fontSize: 16)),
+                DropdownButtonFormField<String>(
+                  initialValue: horario,
+                  items: horarios
+                      .map((h) =>
+                          DropdownMenuItem(value: h, child: Text(h)))
+                      .toList(),
+                  onChanged: (value) => setState(() => horario = value),
+                  decoration:
+                      const InputDecoration(border: OutlineInputBorder()),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Seleccione un horario';
+                    }
+                    return null;
+                  },
                 ),
-              if (tipoSeleccionado == 'Añadir otro tipo') ...[
-                TextFormField(
-                  controller: descripcionController,
-                  decoration: const InputDecoration(
-                    labelText: "Descripción del tipo",
-                    border: OutlineInputBorder(),
-                  ),
+                const SizedBox(height: 20),
+                const Text("Tipo de crisis", style: TextStyle(fontSize: 16)),
+                DropdownButtonFormField<String>(
+                  initialValue: tipoSeleccionado,
+                  items: tiposCrisis
+                      .map((t) =>
+                          DropdownMenuItem(value: t, child: Text(t)))
+                      .toList(),
+                  onChanged: (value) =>
+                      setState(() => tipoSeleccionado = value),
+                  decoration:
+                      const InputDecoration(border: OutlineInputBorder()),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Seleccione un tipo de crisis';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: cantidadController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "Cantidad",
-                    border: OutlineInputBorder(),
+                const SizedBox(height: 20),
+                if (tipoSeleccionado != null &&
+                    tipoSeleccionado != 'Añadir otro tipo')
+                  TextFormField(
+                    controller: cantidadController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Cantidad de crisis ($tipoSeleccionado)",
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Ingrese la cantidad de crisis';
+                      }
+                      final parsed = int.tryParse(value.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return 'Ingrese un número mayor que cero';
+                      }
+                      return null;
+                    },
                   ),
-                ),
+                if (tipoSeleccionado == 'Añadir otro tipo') ...[
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: descripcionController,
+                    decoration: const InputDecoration(
+                      labelText: "Descripción del tipo",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Ingrese la descripción del tipo de crisis';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: cantidadController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Cantidad",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Ingrese la cantidad de crisis';
+                      }
+                      final parsed = int.tryParse(value.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return 'Ingrese un número mayor que cero';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -138,23 +210,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
           child: const Text("Cancelar"),
         ),
         ElevatedButton.icon(
-          onPressed: () {
-            final tipoFinal = tipoSeleccionado == 'Añadir otro tipo'
-                ? descripcionController.text.trim()
-                : tipoSeleccionado ?? '';
-
-            final crisis = Crisis(
-              id: widget.initialCrisis?.id,
-              registeredDate: widget.initialCrisis?.registeredDate,
-              crisisDate: fecha,
-              timeRange: horario ?? '',
-              quantity: int.tryParse(cantidadController.text.trim()) ?? 0,
-              type: tipoFinal,
-              userId: widget.initialCrisis?.userId,
-            );
-
-            Navigator.pop(context, crisis);
-          },
+          onPressed: _onSave,
           icon: const Icon(Icons.save, color: AppColors.white),
           label: Text(
             isEditing ? "Guardar cambios" : "Guardar",

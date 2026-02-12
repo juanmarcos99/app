@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/core/core.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -16,8 +17,8 @@ class CustomBottomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed, // permite más de 3 ítems
       currentIndex: currentIndex,
       onTap: onTap,
-      selectedItemColor: Colors.blue, // color seleccionado
-      unselectedItemColor: Colors.grey, //  color no seleccionado
+      selectedItemColor: AppColors.primary, // color seleccionado
+      unselectedItemColor: AppColors.gray300, //  color no seleccionado
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),

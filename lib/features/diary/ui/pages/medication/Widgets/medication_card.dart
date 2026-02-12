@@ -22,7 +22,7 @@ class _MedicationCardState extends State<MedicationCard> {
     _loadNotificationStatus();
   }
 
-  /// 🔥 Consulta REAL del estado de notificaciones
+  //Cosulta REAL del estado de notificaciones
   Future<void> _loadNotificationStatus() async {
     final service = NotificationService();
 
@@ -65,11 +65,11 @@ class _MedicationCardState extends State<MedicationCard> {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: AppColors.gray200),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1)),
+          BoxShadow(color: AppColors.black, blurRadius: 4, offset: Offset(0, 1)),
         ],
       ),
       child: Column(
@@ -81,7 +81,7 @@ class _MedicationCardState extends State<MedicationCard> {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF101519),
+              color: AppColors.black,
             ),
           ),
 
@@ -90,12 +90,12 @@ class _MedicationCardState extends State<MedicationCard> {
           // Frecuencia
           Row(
             children: [
-              Icon(Icons.schedule, size: 18, color: Colors.grey.shade600),
+              Icon(Icons.schedule, size: 18, color: AppColors.gray500),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   "Frecuencia: $frequency",
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                  style: TextStyle(color: AppColors.gray500, fontSize: 14),
                 ),
               ),
             ],
@@ -106,12 +106,12 @@ class _MedicationCardState extends State<MedicationCard> {
           // Notas
           Row(
             children: [
-              Icon(Icons.notes, size: 18, color: Colors.grey.shade600),
+              Icon(Icons.notes, size: 18, color: AppColors.gray500),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   "Notas: $notes",
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                  style: TextStyle(color: AppColors.gray500, fontSize: 14),
                 ),
               ),
             ],
@@ -122,14 +122,14 @@ class _MedicationCardState extends State<MedicationCard> {
           // Footer
           Row(
             children: [
-              // 🔔 Toggle notificaciones
+              // notificaciones
               IconButton(
                 icon: Icon(
                   notificationsEnabled
                       ? Icons.notifications_active
                       : Icons.notifications_off,
                   size: 22,
-                  color: notificationsEnabled ? Colors.blue : Colors.grey,
+                  color: notificationsEnabled ? AppColors.primary : AppColors.gray300,
                 ),
                 onPressed: () async {
                   final shouldEnable = !notificationsEnabled;
@@ -151,9 +151,9 @@ class _MedicationCardState extends State<MedicationCard> {
 
               const SizedBox(width: 4),
 
-              // ✏️ Editar
+              // Editar
               IconButton(
-                icon: const Icon(Icons.edit, size: 22, color: Colors.grey),
+                icon: const Icon(Icons.edit, size: 22, color: AppColors.gray400),
                 onPressed: () async {
                   final result = await showDialog<(Medication, bool)>(
                     context: context,
@@ -182,9 +182,9 @@ class _MedicationCardState extends State<MedicationCard> {
 
               const SizedBox(width: 4),
 
-              // 🗑️ Eliminar
+              // Eliminar
               IconButton(
-                icon: const Icon(Icons.delete, size: 22, color: Colors.red),
+                icon: const Icon(Icons.delete, size: 22, color: AppColors.error),
                 onPressed: () async {
                   final bool? confirm = await showDialog<bool>(
                     context: context,
@@ -202,7 +202,7 @@ class _MedicationCardState extends State<MedicationCard> {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: AppColors.error,
                             ),
                             child: const Text(
                               "Eliminar",

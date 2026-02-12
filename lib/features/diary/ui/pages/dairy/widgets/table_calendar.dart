@@ -19,7 +19,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color:  AppColors.white,
 
       // Espaciado externo del calendario
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -95,11 +95,11 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
               daysOfWeekStyle: const DaysOfWeekStyle(
                 weekdayStyle: TextStyle(
-                  color: Colors.black,
+                  color:  AppColors.black,
                   fontWeight: FontWeight.w500,
                 ),
                 weekendStyle: TextStyle(
-                  color: Colors.black,
+                  color:  AppColors.black,
                   fontWeight: FontWeight.w500,
                 ),
 
@@ -113,7 +113,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                 // Altura mínima de cada celda
                 cellPadding: const EdgeInsets.symmetric(vertical: 6),
 
-                outsideTextStyle: const TextStyle(color: Colors.grey),
+                outsideTextStyle: const TextStyle(color: AppColors.gray400),
                 defaultTextStyle: const TextStyle(fontSize: 14),
                 weekendTextStyle: const TextStyle(fontSize: 14),
                 todayDecoration: const BoxDecoration(
@@ -132,7 +132,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
                   return _buildDayCell(
                     day: day,
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors.white,
                     hasCrisis: hasCrisis,
                     hasAE: hasAE,
                   );
@@ -183,14 +183,14 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: AppColors.gray300),
           ),
           alignment: Alignment.topLeft,
           padding: const EdgeInsets.all(6),
           child: Text(
             '${day.day}',
             style: const TextStyle(
-              color: Colors.black,
+              color: AppColors.black,
               fontSize: 14,
             ),
           ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/core/core.dart';
 
-
 class LetterNavButton extends StatelessWidget {
   final String letter;
   final VoidCallback onTap;
@@ -18,17 +17,10 @@ class LetterNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final textStyle = isDark
-        ? AppTypography.subtitleDark.copyWith(
-            fontSize: fontSize,
-            color: color,
-          )
-        : AppTypography.subtitleLight.copyWith(
-            fontSize: fontSize,
-            color: color,
-          );
+    final textStyle = AppTypography.subtitleLight.copyWith(
+      fontSize: fontSize,
+      color: color,
+    );
 
     return TextButton(
       onPressed: onTap,

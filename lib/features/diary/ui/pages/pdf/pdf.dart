@@ -324,14 +324,14 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.download, color: Colors.white),
+                            Icon(Icons.download, color: AppColors.white),
                             SizedBox(width: 8),
                             Text(
                               "Generar PDF",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                           ],
@@ -369,9 +369,9 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: AppColors.gray200,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: AppColors.gray200),
           ),
           child: DropdownButton<String>(
             value: value,

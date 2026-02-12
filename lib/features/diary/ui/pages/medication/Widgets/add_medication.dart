@@ -35,12 +35,12 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       notesController.text = med.notes ?? " ";
       selectedSchedules = List<Schedule>.from(med.schedules!);
 
-      /// 🔥 Aquí verificamos si ya hay notificaciones programadas
+      // Aquí verificaos si ya hay notificaciones programadas
       _loadNotificationStatus();
     }
   }
 
-  /// 🔥 Verifica si las notificaciones están programadas para este medicamento
+  // Veriica si las notificaciones estáan programadas para este medicimento
   Future<void> _loadNotificationStatus() async {
     if (selectedSchedules.isEmpty) return;
 
@@ -183,7 +183,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                 label: const Text("Añadir horario"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.white,
                 ),
               ),
             ],

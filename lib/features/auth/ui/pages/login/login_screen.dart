@@ -26,13 +26,19 @@ class _LoginPageState extends State<LoginPage> {
             if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message, style: AppTypography.captionDark),
+                  content: Text(
+                    state.message,
+                    style: AppTypography.captionDark,
+                  ),
                   backgroundColor: AppColors.error,
                 ),
               );
             }
 
             if (state is UserLoggedIn) {
+              usernameController.text = "";
+              passwordController.text = "";
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(

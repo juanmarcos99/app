@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
@@ -33,7 +34,7 @@ class _MedicationPageState extends State<MedicationPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Medicamento añadido correctamente"),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
 
@@ -48,7 +49,7 @@ class _MedicationPageState extends State<MedicationPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Medicamento actualizado"),
-              backgroundColor: Colors.blue,
+              backgroundColor: AppColors.primary,
             ),
           );
           final authState = context.read<AuthBloc>().state;
@@ -68,23 +69,23 @@ class _MedicationPageState extends State<MedicationPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Medicamento eliminado"),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
           );
         }
 
         if (state is MedicationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
           );
         }
       },
 
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F7F8),
+        backgroundColor: AppColors.white,
 
         floatingActionButton: FloatingActionButton(
-          backgroundColor: const Color(0xFF3381C1),
+          backgroundColor: AppColors.primary,
           elevation: 4,
           onPressed: () async {            
             final result = await showDialog<(Medication, bool)>(
@@ -103,7 +104,7 @@ class _MedicationPageState extends State<MedicationPage> {
               );
             }
           },
-          child: const Icon(Icons.add, color: Colors.white),
+          child: Icon(Icons.add, color: AppColors.white),
         ),
 
         body: SafeArea(
@@ -143,7 +144,7 @@ class _MedicationPageState extends State<MedicationPage> {
                       return Center(
                         child: Text(
                           state.message,
-                          style: const TextStyle(color: Colors.red),
+                          style: const TextStyle(color: AppColors.error),
                         ),
                       );
                     }

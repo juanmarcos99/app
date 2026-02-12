@@ -21,12 +21,12 @@ class PdfCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: AppColors.black.withValues(alpha:0.05),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -34,7 +34,7 @@ class PdfCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.picture_as_pdf, color: Colors.red, size: 32),
+          const Icon(Icons.picture_as_pdf, color: AppColors.error, size: 32),
 
           const SizedBox(width: 16),
 
@@ -50,14 +50,14 @@ class PdfCard extends StatelessWidget {
           ),
 
           PopupMenuButton<String>(
-            color: Colors.white,
+            color: AppColors.white,
             elevation: 8,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),
             offset: const Offset(0, 10),
-            surfaceTintColor: Colors.white,
-            shadowColor: Colors.black.withValues(alpha:0.1),
+            surfaceTintColor: AppColors.white,
+            shadowColor: AppColors.black.withValues(alpha:0.1),
             icon: const Icon(Icons.more_vert, color: AppColors.secondary),
             onSelected: (value) {
               if (value == 'abrir') onOpen();
@@ -105,13 +105,13 @@ class PdfCard extends StatelessWidget {
                 value: 'borrar',
                 child: Row(
                   children: const [
-                    Icon(Icons.delete, color: Colors.red, size: 20),
+                    Icon(Icons.delete, color: AppColors.error, size: 20),
                     SizedBox(width: 12),
                     Text(
                       "Borrar",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Colors.red,
+                        color: AppColors.error,
                       ),
                     ),
                   ],

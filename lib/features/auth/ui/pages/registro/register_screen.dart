@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/core/theme/style/colors.dart';
-import 'package:app/features/auth/auth.dart'; 
+import 'package:app/core/core.dart';
+import 'package:app/features/auth/auth.dart';
 
 class RegisterUserPage extends StatefulWidget {
   const RegisterUserPage({super.key});
@@ -39,8 +39,15 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
         listener: (context, state) {
           // si el usuario se registro completamente navega a otra pantalla
           if (state is UserFullyRegistrated) {
+            Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Bienvenido ${state.user.name}")),
+              SnackBar(
+                content: Text(
+                  "Bienvenido ${state.user.userName}",
+                  style: AppTypography.captionDark,
+                ),
+                backgroundColor: AppColors.success,
+              ),
             );
           }
 
@@ -91,7 +98,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey,
+                  color: AppColors.gray300,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -152,7 +159,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         value: "patient",
                         // ignore: deprecated_member_use
                         groupValue: selectedRole,
-                        activeColor: Colors.red.shade900,
+                        activeColor: AppColors.error,
                         // ignore: deprecated_member_use
                         onChanged: (val) => setState(() => selectedRole = val),
                       ),
@@ -169,13 +176,13 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         value: "doctor",
                         // ignore: deprecated_member_use
                         groupValue: selectedRole,
-                        activeColor: Colors.blue.shade900,
+                        activeColor: AppColors.secondary,
                         // ignore: deprecated_member_use
                         onChanged: (val) => setState(() => selectedRole = val),
                       ),
                       Text(
                         "Doctor",
-                        style: TextStyle(color: Colors.blue.shade900),
+                        style: TextStyle(color: AppColors.secondary),
                       ),
                     ],
                   ),

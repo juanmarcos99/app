@@ -26,7 +26,7 @@ class CrisisCard extends StatelessWidget {
           children: [
             // EDITAR
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue),
+              icon: const Icon(Icons.edit, color: AppColors.primary),
               onPressed: () async {
                 final result = await showDialog<Crisis>(
                   context: context,
@@ -41,7 +41,7 @@ class CrisisCard extends StatelessWidget {
 
             // ELIMINAR
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: AppColors.error),
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
@@ -58,7 +58,7 @@ class CrisisCard extends StatelessWidget {
                       TextButton(
                         child: const Text(
                           "Eliminar",
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color:  AppColors.error),
                         ),
                         onPressed: () => Navigator.pop(context, true),
                       ),

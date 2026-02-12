@@ -1,3 +1,4 @@
+import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 
 class MedicationActionButton extends StatelessWidget {
@@ -21,17 +22,17 @@ class MedicationActionButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF3381C1), width: 2),
+          border: Border.all(color: AppColors.primary, width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 20, color: const Color(0xFF3381C1)),
+            Icon(icon, size: 20, color: AppColors.primary),
             const SizedBox(width: 6),
             Text(
               label,
               style: const TextStyle(
-                color: Color(0xFF3381C1),
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),

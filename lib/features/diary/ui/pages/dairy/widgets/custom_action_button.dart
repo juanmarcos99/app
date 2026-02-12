@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/core/core.dart';
 
 class CustomActionButton extends StatelessWidget {
   final String text;
@@ -21,8 +22,8 @@ class CustomActionButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      icon: Icon(icon, color: Colors.white),
-      label: Text(text, style: const TextStyle(color: Colors.white)),
+      icon: Icon(icon, color:  AppColors.white),
+      label: Text(text, style: const TextStyle(color:  AppColors.white)),
       onPressed: onPressed,
     );
   }

@@ -37,10 +37,10 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         backgroundColor: AppColors.primary,
         title: Text(
           _titles[_index],
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: AppColors.white),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -60,9 +60,8 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     );
   }
 
-  // -------------------------------------------------------------
-  // 🔥 Menú flotante bonito, compacto y con botones del mismo tamaño
-  // -------------------------------------------------------------
+  // Menú flotante bonito, compacto y con botones del mismo tamaño
+
   void _showAddMenu(BuildContext context) {
     showDialog(
       context: context,
@@ -82,11 +81,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                       vertical: 18,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: AppColors.black,
                           blurRadius: 12,
                           offset: Offset(0, 6),
                         ),
@@ -96,19 +95,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // 🔥 Tamaño fijo para todos los botones
+                        // Tamaño fijo para todos los botones
                         SizedBox(
                           width: 220,
                           child: ElevatedButton.icon(
                             icon: const Icon(
                               Icons.warning_amber_rounded,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                             label: const Text(
                               "Agregar crisis",
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
@@ -160,13 +159,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                           child: ElevatedButton.icon(
                             icon: const Icon(
                               Icons.health_and_safety,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                             label: const Text(
                               "Agregar evento adverso",
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
@@ -216,13 +215,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                           child: ElevatedButton.icon(
                             icon: const Icon(
                               Icons.medication,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                             label: const Text(
                               "Agregar medicamento",
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(

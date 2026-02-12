@@ -8,19 +8,18 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const backgroundLight = Color(0xFFF6F7F8);
 
     return Scaffold(
-      backgroundColor: backgroundLight,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 480),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.06),
+                  color: AppColors.black.withValues(alpha:0.06),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -51,7 +50,7 @@ class SettingsPage extends StatelessWidget {
                                 color: AppColors.primaryLight,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha:0.15),
+                                    color: AppColors.black.withValues(alpha:0.15),
                                     blurRadius: 12,
                                     offset: const Offset(0, 6),
                                   ),
@@ -133,17 +132,17 @@ class SettingsPage extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 16),
                           decoration: BoxDecoration(
                             border: Border(
-                              top: BorderSide(color: Colors.grey.shade200),
+                              top: BorderSide(color: AppColors.gray100),
                             ),
                           ),
                           child: TextButton(
                             style: TextButton.styleFrom(
-                              foregroundColor: Colors.red.shade500,
+                              foregroundColor: AppColors.error,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              overlayColor: Colors.red.shade50.withValues(alpha:0.3),
+                              overlayColor: AppColors.gray100.withValues(alpha:0.3),
                             ),
                             onPressed: () {},
                             child: const Text(
@@ -184,7 +183,7 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = Colors.grey.shade50;
+    final bg = AppColors.gray100;
 
     return Material(
       color: bg,
@@ -225,14 +224,14 @@ class _SettingsTile extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: AppColors.gray500,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              Icon(Icons.chevron_right, color: Colors.grey.shade400),
+              Icon(Icons.chevron_right, color: AppColors.gray300),
             ],
           ),
         ),
