@@ -76,7 +76,10 @@ class _MedicationPageState extends State<MedicationPage> {
 
         if (state is MedicationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
+            SnackBar(
+              content: SelectableText(state.message), // 🔴 Copiable
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       },
@@ -104,7 +107,7 @@ class _MedicationPageState extends State<MedicationPage> {
               );
             }
           },
-          child: Icon(Icons.add, color: AppColors.white),
+          child: const Icon(Icons.add, color: AppColors.white),
         ),
 
         body: SafeArea(
@@ -142,7 +145,7 @@ class _MedicationPageState extends State<MedicationPage> {
 
                     if (state is MedicationError) {
                       return Center(
-                        child: Text(
+                        child: SelectableText( // Copiable también aquí
                           state.message,
                           style: const TextStyle(color: AppColors.error),
                         ),
