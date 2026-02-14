@@ -2,6 +2,7 @@ import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
 
+
 class AppRoutes {
   static const login = '/login';
   static const register = '/register';
@@ -12,6 +13,7 @@ class AppRoutes {
   static const settingsPage = '/settings';
   static const addPage = '/add';
   static const pdf = '/pdf';
+  static const changePassword = '/changePassword';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -33,6 +35,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const AddPage());
       case pdf:
         return MaterialPageRoute(builder: (_) => const ExportPdfPage());
+      case changePassword:
+        return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

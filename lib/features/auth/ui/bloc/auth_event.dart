@@ -20,3 +20,11 @@ class LoginUserEvent extends AuthEvent {
   final String password;
   LoginUserEvent(this.username, this.password);
 }
+
+//cambio de contraseña
+class ChangePasswordEvent extends AuthEvent {
+  final String username;
+  final String currentPassword;
+  final String newPassword;
+  ChangePasswordEvent(this.username, this.currentPassword, this.newPassword);
+}

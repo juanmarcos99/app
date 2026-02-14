@@ -23,4 +23,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<UserModel?> loginUser(String username, String password) async {
     return await localDataSource.autentcateUser(username, password);
   }
+  
+  @override
+  Future<void> changePassword(String username,String newPassword) async {
+    return await localDataSource.updatePassword(username, newPassword);
+  }
 }

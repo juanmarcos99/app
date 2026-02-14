@@ -66,6 +66,7 @@ class MainApp extends StatelessWidget {
           AppRoutes.settingsPage: (context) => const SettingsPage(),
           AppRoutes.addPage: (context) => const AddPage(),
           AppRoutes.pdf: (context) => const ExportPdfPage(),
+          AppRoutes.changePassword: (context) => const ChangePasswordScreen(),
         },
 
         // Configuración de localización e internacionalización

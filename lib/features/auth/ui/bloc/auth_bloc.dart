@@ -1,5 +1,3 @@
-import 'package:app/features/auth/domain/use_cases/login_user.dart';
-import 'package:app/features/auth/domain/use_cases/register_patient.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 
@@ -7,12 +5,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser; //caso de uso del registro de usuario
   final RegisterPatient registerPatient; //caso de uso del registro de paceinte
   final LoginUser loginUser; //caso de uso del login
+  final ChangePassword changePassword; //caso de uso de cambiar la contraseña
 
   int? _userId; // userId generado por la BD
   User? user; // usuario ya con id
 
-  AuthBloc(this.registerUser, this.loginUser, this.registerPatient)
-    : super(const AuthInitial()) {
+  AuthBloc(
+    this.registerUser,
+    this.loginUser,
+    this.registerPatient,
+    this.changePassword,
+  ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
@@ -70,10 +73,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (loggedUser != null) {
           emit(UserLoggedIn(loggedUser));
         } else {
-          emit(const AuthFailure('Credenciales inválidas.'));
+          emit(
+            const AuthFailure(
+              'Credenciales inválidas, por favor rectifiquelas',
+            ),
+          );
         }
       } catch (e) {
         emit(AuthFailure('Error al iniciar sesión: $e'));
+      }
+    });
+
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(const AuthLoading());
+      try {
+        //verificamos si la contraseña y el usuario estan bien
+        final loggedUser = await loginUser(
+          event.username,
+          event.currentPassword,
+        );
+        if (loggedUser == null) {
+          emit(AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
+        } else {
+          await changePassword(event.username, event.newPassword);
+          emit(const UserPasswordChanged());
+        }
+      } catch (e) {
+        emit(AuthFailure('Error al cambiar contraseña: $e'));
       }
     });
   }

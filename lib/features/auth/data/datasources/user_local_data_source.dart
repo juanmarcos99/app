@@ -59,12 +59,22 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
 
   @override
   Future<void> updatePassword(String username, String newPasswordHash) async {
-    await db.update(
-      'users',
-      {'passwordHash': newPasswordHash},
-      where: 'userName = ?',
-      whereArgs: [username],
-    );
+    try {
+      final rowsAffected = await db.update(
+        'users',
+        {'passwordHash': newPasswordHash},
+        where: 'userName = ?',
+        whereArgs: [username],
+      );
+      if (rowsAffected == 0) {
+        throw Exception(
+          "No se pudo actualizar la contraseña: usuario '$username' no existe",
+        );
+      }
+    } catch (e) {
+      // Captura cualquier otro error inesperado
+      throw Exception("Error al actualizar contraseña: $e");
+    }
   }
 
   @override

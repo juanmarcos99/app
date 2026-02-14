@@ -71,3 +71,8 @@ class AuthFailureLogin extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+//estados para cambio de contraseña 
+class UserPasswordChanged extends AuthState {
+  const UserPasswordChanged();
+}

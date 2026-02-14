@@ -113,7 +113,9 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 25),
                           LetterNavButton(
                             letter: "Cambiar contraseña",
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(context, AppRoutes.changePassword);
+                            },
                             fontSize: 13,
                             color: AppColors.error,
                           ),

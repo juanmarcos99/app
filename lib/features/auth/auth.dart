@@ -14,6 +14,9 @@ export 'package:app/features/auth/domain/entities/patient.dart';
 export 'package:app/features/auth/domain/repositories/user_repository.dart';
 export 'package:app/features/auth/domain/repositories/patient_repository.dart';
 export 'package:app/features/auth/domain/use_cases/register_user.dart';
+export 'package:app/features/auth/domain/use_cases/register_patient.dart';
+export 'package:app/features/auth/domain/use_cases/login_user.dart';
+export 'package:app/features/auth/domain/use_cases/change_password.dart';
 
 //ui
 export 'package:app/features/auth/ui/bloc/auth_bloc.dart';
@@ -21,6 +24,7 @@ export 'package:app/features/auth/ui/bloc/auth_event.dart';
 export 'package:app/features/auth/ui/bloc/auth_state.dart';
 export 'package:app/features/auth/ui/pages/registro/register_screen.dart';
 export 'package:app/features/auth/ui/pages/login/login_screen.dart';
+export 'package:app/features/auth/ui/pages/change_password/change_password_screen.dart';
 export 'package:app/features/auth/ui/pages/widgets/custom_text_field.dart';
 export 'package:app/features/auth/ui/pages/widgets/button.dart';
 export 'package:app/features/auth/ui/pages/login/widgets/letter_nav_buttom.dart';
