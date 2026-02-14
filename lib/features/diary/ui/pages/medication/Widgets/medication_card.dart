@@ -69,7 +69,7 @@ class _MedicationCardState extends State<MedicationCard> {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.gray200),
         boxShadow: const [
-          BoxShadow(color: AppColors.black, blurRadius: 4, offset: Offset(0, 1)),
+          BoxShadow(color: AppColors.shadowDark, blurRadius: 4, offset: Offset(0, 1)),
         ],
       ),
       child: Column(

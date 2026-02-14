@@ -75,11 +75,16 @@ class _MedicationPageState extends State<MedicationPage> {
         }
 
         if (state is MedicationError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: SelectableText(state.message), // 🔴 Copiable
-              backgroundColor: AppColors.error,
-            ),
+          showDialog(
+            context: context,
+            builder: (builder) {
+              return AlertDialog(
+                content: SelectableText(
+                  state.message,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
+            },
           );
         }
       },
@@ -90,7 +95,7 @@ class _MedicationPageState extends State<MedicationPage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.primary,
           elevation: 4,
-          onPressed: () async {            
+          onPressed: () async {
             final result = await showDialog<(Medication, bool)>(
               context: context,
               useRootNavigator: false,
@@ -145,7 +150,8 @@ class _MedicationPageState extends State<MedicationPage> {
 
                     if (state is MedicationError) {
                       return Center(
-                        child: SelectableText( // Copiable también aquí
+                        child: SelectableText(
+                          // Copiable también aquí
                           state.message,
                           style: const TextStyle(color: AppColors.error),
                         ),

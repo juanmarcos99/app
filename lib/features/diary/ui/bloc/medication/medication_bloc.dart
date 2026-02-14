@@ -26,7 +26,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
 
         emit(MedicationLoaded(meds));
       } catch (e) {
-        emit(MedicationError("Error al cargar medicaciones"));
+        emit(MedicationError("Error al cargar medicaciones: $e"));
       }
     });
 
@@ -57,7 +57,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
         emit(MedicationAdded(event.medication));
       } catch (e) {
         Logger.e("Error en MedicationBloc - AddMedicationEvent: $e", error: e);
-        emit(MedicationError("Error al añadir medicación"));
+        emit(MedicationError("Error al añadir medicación: $e"));
       }
     });
 
@@ -104,7 +104,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
         emit(MedicationLoaded(meds));
       } catch (e) {
         Logger.e("Error en MedicationBloc - updateMedicationEvent: $e", error: e);
-        emit(MedicationError("Error al actualizar medicación"));
+        emit(MedicationError("Error al actualizar medicación: $e"));
       }
     });
 
@@ -135,7 +135,7 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
         //  EMITIR ESTADO
         emit(MedicationDeleted(event.medicationId));
       } catch (e) {
-        emit(MedicationError("Error al eliminar medicación"));
+        emit(MedicationError("Error al eliminar medicación: $e"));
       }
     });
   }
