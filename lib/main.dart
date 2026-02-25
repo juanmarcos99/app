@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
-import 'package:app/core/services/notifications_services.dart';
 
 /// Punto de entrada principal de la aplicación
 Future<void> main() async {
@@ -29,9 +28,9 @@ Future<void> main() async {
   initAuthDependencies();
   initDiaryDependencies();
 
-  // Solicita permisos de notificaciones en runtime (Android 13+)
+ /*  // Solicita permisos de notificaciones en runtime (Android 13+)
   final notificationService = NotificationService();
-  await notificationService.requestNotificationPermission();
+  await notificationService.requestNotificationPermission(); */
 
   // Ejecuta la aplicación principal
   runApp(const MainApp());

@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 import 'data/repositories_impl/patient_repository_impl.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/core/services/storage_services.dart';
 
 final sl = GetIt.instance;
 
@@ -13,6 +14,9 @@ void initAuthDependencies() {
   sl.registerLazySingleton<PatientLocalDataSources>(
     () => PatientLocalDataSourcesImpl(sl<Database>()),
   );
+  sl.registerLazySingleton<RememberLocalDataSource>(
+    () => RememberLocalDataSourceImpl(sl<StorageService>()),
+  );
 
   // Repositorios
   sl.registerLazySingleton<UserRepository>(
@@ -20,6 +24,9 @@ void initAuthDependencies() {
   );
   sl.registerLazySingleton<PatientRepository>(
     () => PatientRepositoryImpl(sl<PatientLocalDataSources>()),
+  );
+  sl.registerLazySingleton<RememberRepository>(
+    () => RememberRepositoryImpl(sl<RememberLocalDataSource>()),
   );
 
   // Casos de uso
@@ -30,10 +37,35 @@ void initAuthDependencies() {
     () => RegisterPatient(sl<PatientRepository>()),
   );
   sl.registerLazySingleton<LoginUser>(() => LoginUser(sl<UserRepository>()));
-  sl.registerLazySingleton<ChangePassword>(() => ChangePassword(sl<UserRepository>()));
+  sl.registerLazySingleton<ChangePassword>(
+    () => ChangePassword(sl<UserRepository>()),
+  );
+
+  sl.registerLazySingleton<ClearRememberedUsers>(
+    () => ClearRememberedUsers(sl<RememberRepository>()),
+  );
+
+  sl.registerLazySingleton<SaveUser>(() => SaveUser(sl<RememberRepository>()));
+
+  sl.registerLazySingleton<DeleteUser>(
+    () => DeleteUser(sl<RememberRepository>()),
+  );
+
+  sl.registerLazySingleton<GetRememberedUsers>(
+    () => GetRememberedUsers(sl<RememberRepository>()),
+  );
+
+  sl.registerLazySingleton<GetPassword>(
+    () => GetPassword(sl<RememberRepository>()),
+  );
 
   // Bloc
   sl.registerLazySingleton<AuthBloc>(
-    () => AuthBloc(sl<RegisterUser>(), sl<LoginUser>(), sl<RegisterPatient>(), sl<ChangePassword>()),
+    () => AuthBloc(
+      sl<RegisterUser>(),
+      sl<LoginUser>(),
+      sl<RegisterPatient>(),
+      sl<ChangePassword>(),
+    ),
   );
 }

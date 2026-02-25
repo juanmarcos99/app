@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +89,27 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           const SizedBox(height: 10),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: rememberMe,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        rememberMe = value ?? false;
+                                      });
+                                    },
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  const Text(
+                                    "Recordarme",
+                                    style: AppTypography.captionLight,
+                                  ),
+                                ],
+                              ),
                               LetterNavButton(
                                 letter: "¿Olvidaste tu contraseña?",
                                 onTap: () {},
@@ -98,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 59),
                           PrimaryButton(
                             text: 'Entrar',
@@ -114,7 +135,10 @@ class _LoginPageState extends State<LoginPage> {
                           LetterNavButton(
                             letter: "Cambiar contraseña",
                             onTap: () {
-                              Navigator.pushNamed(context, AppRoutes.changePassword);
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.changePassword,
+                              );
                             },
                             fontSize: 13,
                             color: AppColors.error,
