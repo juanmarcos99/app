@@ -6,6 +6,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterPatient registerPatient; //caso de uso del registro de paceinte
   final LoginUser loginUser; //caso de uso del login
   final ChangePassword changePassword; //caso de uso de cambiar la contraseña
+  final SaveUser saveUser; //caso de uso de guardar usuario en local
+  final SavePassword savePassword; //caso de uso de guardar contraseña en local
+  final GetRememberedUsers getRememberedUsers; // obtener usuarios recordados
+  final GetPassword getPassword;
 
   int? _userId; // userId generado por la BD
   User? user; // usuario ya con id
@@ -15,6 +19,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.loginUser,
     this.registerPatient,
     this.changePassword,
+    this.saveUser,
+    this.savePassword,
+    this.getRememberedUsers, 
+    this.getPassword,
   ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
@@ -71,6 +79,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final loggedUser = await loginUser(event.username, event.password);
         if (loggedUser != null) {
+          if (event.rememberMe) {
+            await saveUser(event.username.toString());
+            await savePassword(
+              event.username.toString(),
+              event.password.toString(),
+            );
+          }
           emit(UserLoggedIn(loggedUser));
         } else {
           emit(
@@ -100,6 +115,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         emit(AuthFailure('Error al cambiar contraseña: $e'));
+      }
+    });
+
+    on<LoadRememberedUsersEvent>((event, emit) async {
+      emit(const AuthLoading());
+
+      try {
+        final users = await getRememberedUsers();
+        emit(RememberUsersLoaded(users));
+      } catch (e) {
+        emit(AuthFailure('Error al cargar usuarios recordados: $e'));
+      }
+    });
+
+    on<LoadPasswordEvent>((event, emit) async {
+      emit(const AuthLoading());
+
+      try {
+        // Aquí llamas a tu repositorio o servicio que obtiene la contraseña
+        final password = await getPassword(event.username);
+
+        emit(PasswordLoaded(password!));
+        
+      } catch (e) {
+        emit(AuthFailure('Error al cargar contraseña: $e'));
+        
       }
     });
   }

@@ -14,6 +14,23 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool rememberMe = false;
+  List<String> rememberedUsers = [];
+
+  // guardamos el controller del Autocomplete
+  TextEditingController? autocompleteController;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthBloc>().add(LoadRememberedUsersEvent());
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,34 +39,34 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listenWhen: (previous, current) =>
-              current is AuthFailure || current is UserLoggedIn,
+              current is AuthFailure ||
+              current is UserLoggedIn ||
+              current is RememberUsersLoaded ||
+              current is PasswordLoaded,
           listener: (context, state) {
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    state.message,
-                    style: AppTypography.captionDark,
-                  ),
-                  backgroundColor: AppColors.error,
-                ),
-              );
+              AppSnack.show(context, state.message, color: AppColors.error);
             }
-
             if (state is UserLoggedIn) {
-              usernameController.text = "";
-              passwordController.text = "";
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Bienvenido ${state.user.userName}",
-                    style: AppTypography.captionDark,
-                  ),
-                  backgroundColor: AppColors.success,
-                ),
+              usernameController.clear();
+              if (autocompleteController != null) {
+                autocompleteController!.clear();
+              }
+              passwordController.clear();
+              AppSnack.show(
+                context,
+                "Bienvenido ${state.user.userName}",
+                color: AppColors.success,
               );
               Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
+            }
+            if (state is RememberUsersLoaded) {
+              setState(() {
+                rememberedUsers = state.users;
+              });
+            }
+            if (state is PasswordLoaded) {
+              passwordController.text = state.password;
             }
           },
           builder: (context, state) {
@@ -73,13 +90,43 @@ class _LoginPageState extends State<LoginPage> {
                             width: 320,
                           ),
                           const SizedBox(height: 5),
-                          CustomTextField(
-                            label: 'Usuario',
-                            hint: '',
-                            icon: Icons.person_outline,
-                            controller: usernameController,
+
+                          Autocomplete<String>(
+                            optionsBuilder: (TextEditingValue value) {
+                              if (value.text.isEmpty) return rememberedUsers;
+                              return rememberedUsers.where(
+                                (u) => u.toLowerCase().contains(
+                                  value.text.toLowerCase(),
+                                ),
+                              );
+                            },
+                            onSelected: (username) {
+                              usernameController.text = username;
+                              context.read<AuthBloc>().add(
+                                LoadPasswordEvent(username),
+                              );
+                            },
+                            fieldViewBuilder:
+                                (
+                                  context,
+                                  controller,
+                                  focusNode,
+                                  onFieldSubmitted,
+                                ) {
+                                  // guardamos el controller del Autocomplete
+                                  autocompleteController = controller;
+                                  return CustomTextField(
+                                    label: 'Usuario',
+                                    icon: Icons.person_outline,
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    onFieldSubmitted: onFieldSubmitted,
+                                  );
+                                },
                           ),
+
                           const SizedBox(height: 20),
+
                           CustomTextField(
                             label: 'Contraseña',
                             hint: '',
@@ -88,6 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                             controller: passwordController,
                           ),
                           const SizedBox(height: 10),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -120,18 +168,25 @@ class _LoginPageState extends State<LoginPage> {
                           ),
 
                           const SizedBox(height: 59),
+
                           PrimaryButton(
                             text: 'Entrar',
                             onPressed: () {
+                              // sincronizamos el texto escrito en Autocomplete
+                              if (autocompleteController != null) {
+                                usernameController.text =
+                                    autocompleteController!.text.trim();
+                              }
                               final username = usernameController.text.trim();
                               final password = passwordController.text.trim();
-
                               context.read<AuthBloc>().add(
-                                LoginUserEvent(username, password),
+                                LoginUserEvent(username, password, rememberMe),
                               );
                             },
                           ),
+
                           const SizedBox(height: 25),
+
                           LetterNavButton(
                             letter: "Cambiar contraseña",
                             onTap: () {
@@ -143,12 +198,14 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 13,
                             color: AppColors.error,
                           ),
+
                           const SizedBox(height: 20),
                         ],
                       ),
                     ),
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(

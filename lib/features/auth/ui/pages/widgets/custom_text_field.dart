@@ -7,6 +7,8 @@ class CustomTextField extends StatefulWidget {
   final IconData icon;
   final bool obscure;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final VoidCallback? onFieldSubmitted;
 
   const CustomTextField({
     super.key,
@@ -15,6 +17,8 @@ class CustomTextField extends StatefulWidget {
     required this.icon,
     this.obscure = false,
     this.controller,
+    this.focusNode,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -34,7 +38,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      focusNode: widget.focusNode,
       obscureText: _obscureText,
+      onFieldSubmitted: (_) => widget.onFieldSubmitted?.call(),
       style: AppTypography.inputLight,
       decoration: InputDecoration(
         labelText: widget.label,

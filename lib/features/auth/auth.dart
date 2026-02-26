@@ -36,4 +36,5 @@ export 'package:app/features/auth/ui/pages/login/login_screen.dart';
 export 'package:app/features/auth/ui/pages/change_password/change_password_screen.dart';
 export 'package:app/features/auth/ui/pages/widgets/custom_text_field.dart';
 export 'package:app/features/auth/ui/pages/widgets/button.dart';
+export 'package:app/features/auth/ui/pages/widgets/app_snackbar.dart';
 export 'package:app/features/auth/ui/pages/login/widgets/letter_nav_buttom.dart';

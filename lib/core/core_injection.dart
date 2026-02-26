@@ -1,13 +1,14 @@
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
-import '../database/app_database.dart';
+import 'core.dart';
 
-final slCore = GetIt.instance;
+final sl = GetIt.instance;
 
 Future<void> initCoreDependencies() async {
   // Base de datos 
   final db = await AppDatabase.getDatabase();
-  slCore.registerLazySingleton<Database>(() => db);
-
+  sl.registerLazySingleton<Database>(() => db);
+  sl.registerLazySingleton<StorageService>(() => StorageService());
+  
   
 }

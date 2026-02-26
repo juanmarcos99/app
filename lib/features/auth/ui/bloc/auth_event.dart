@@ -14,11 +14,12 @@ class RegisterPatientEvent extends AuthEvent {
   RegisterPatientEvent(this.patient);
 }
 
-//eventos para el registro
+//eventos para el login
 class LoginUserEvent extends AuthEvent {
   final String username;
   final String password;
-  LoginUserEvent(this.username, this.password);
+  final bool rememberMe;
+  LoginUserEvent(this.username, this.password, this.rememberMe);
 }
 
 //cambio de contraseña
@@ -27,4 +28,12 @@ class ChangePasswordEvent extends AuthEvent {
   final String currentPassword;
   final String newPassword;
   ChangePasswordEvent(this.username, this.currentPassword, this.newPassword);
+}
+
+//evento para recordar credenciales
+class LoadRememberedUsersEvent extends AuthEvent {}
+
+class LoadPasswordEvent extends AuthEvent {
+  final String username;
+  LoadPasswordEvent(this.username);
 }

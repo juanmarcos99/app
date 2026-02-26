@@ -1,4 +1,4 @@
-import 'package:app/core/injection/injection.dart';
+import 'package:app/core/core_injection.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';

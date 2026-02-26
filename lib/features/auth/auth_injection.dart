@@ -7,6 +7,7 @@ import 'package:app/core/services/storage_services.dart';
 final sl = GetIt.instance;
 
 void initAuthDependencies() {
+
   // Datasources
   sl.registerLazySingleton<UserLocalDataSource>(
     () => UserLocalDataSourceImpl(sl<Database>()),
@@ -58,6 +59,11 @@ void initAuthDependencies() {
   sl.registerLazySingleton<GetPassword>(
     () => GetPassword(sl<RememberRepository>()),
   );
+  sl.registerLazySingleton<SavePassword>(
+    () => SavePassword(sl<RememberRepository>()),
+  );
+
+  
 
   // Bloc
   sl.registerLazySingleton<AuthBloc>(
@@ -66,6 +72,10 @@ void initAuthDependencies() {
       sl<LoginUser>(),
       sl<RegisterPatient>(),
       sl<ChangePassword>(),
+      sl<SaveUser>(),
+      sl<SavePassword>(),
+      sl<GetRememberedUsers>(),
+      sl<GetPassword>()
     ),
   );
 }
