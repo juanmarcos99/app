@@ -100,7 +100,9 @@ class SettingsPage extends StatelessWidget {
                               iconColor: AppColors.primary,
                               title: 'Datos del perfil',
                               subtitle: 'Gestiona tu información personal',
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(context, AppRoutes.profileData);
+                              },
                             ),
                             const SizedBox(height: 12),
 

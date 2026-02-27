@@ -49,6 +49,7 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (_) => GetIt.instance.get<DiaryBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<ReportBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<MedicationBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<ProfileBloc>()),
       ],
       child: MaterialApp(
         // Ruta inicial de la aplicación
@@ -66,6 +67,7 @@ class MainApp extends StatelessWidget {
           AppRoutes.addPage: (context) => const AddPage(),
           AppRoutes.pdf: (context) => const ExportPdfPage(),
           AppRoutes.changePassword: (context) => const ChangePasswordScreen(),
+          AppRoutes.profileData: (context) => const ProfileDataPage(),
         },
 
         // Configuración de localización e internacionalización

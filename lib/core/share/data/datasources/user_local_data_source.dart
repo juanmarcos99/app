@@ -8,6 +8,8 @@ abstract class UserLocalDataSource {
   Future<UserModel?> autentcateUser(String username, String password);
   Future<UserModel?> getUserByUsername(String username);
   Future<void> updatePassword(String username, String newPasswordHash);
+  Future<void> updateUser(UserModel user);
+  Future<void> deleteUser(int id);
 }
 
 // permite cambiar de DB sin q se afecte la app
@@ -85,4 +87,42 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
     }
     return null; // Credenciales inválidas
   }
+
+//metodo usado en el feature dairy (profile data)
+  @override
+  Future<void> updateUser(UserModel user) async {
+  try {
+    final rowsAffected = await db.update(
+      'users',
+      user.toMap(),
+      where: 'id = ?',
+      whereArgs: [user.id],
+    );
+
+    if (rowsAffected == 0) {
+      throw Exception("No se pudo actualizar: usuario con id ${user.id} no existe");
+    }
+  } catch (e) {
+    throw Exception("Error al actualizar usuario: $e");
+  }
+}
+
+@override
+Future<void> deleteUser(int id) async {
+  try {
+    final rowsAffected = await db.delete(
+      'users',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (rowsAffected == 0) {
+      throw Exception("No se pudo eliminar: usuario con id $id no existe");
+    }
+  } catch (e) {
+    throw Exception("Error al eliminar usuario: $e");
+  }
+}
+
+
 }

@@ -1,7 +1,7 @@
-import 'package:app/features/diary/domain/use_cases/update_adverse_event.dart';
+import 'package:app/features/diary/diary.dart';
+import 'package:app/features/auth/auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
-import 'diary.dart';
 
 final sldiary = GetIt.instance;
 
@@ -17,7 +17,7 @@ void initDiaryDependencies() {
     () => AdverseEventLocalDataSourceImpl(sldiary<Database>()),
   );
 
-  // 🔥 Medication datasource
+  // Medication datasource
   sldiary.registerLazySingleton<MedicationLocalDataSource>(
     () => MedicationLocalDataSourceImpl(sldiary<Database>()),
   );
@@ -44,7 +44,6 @@ void initDiaryDependencies() {
     () => PdfRepositoryImpl(sldiary<PdfGeneratorService>()),
   );
 
-  // 🔥 Medication repository
   sldiary.registerLazySingleton<MedicationRepository>(
     () => MedicationRepositoryImpl(sldiary<MedicationLocalDataSource>()),
   );
@@ -130,6 +129,22 @@ void initDiaryDependencies() {
   );
 
   // -------------------------------------------------------------
+  // USE CASES — profile data
+  // -------------------------------------------------------------
+  sldiary.registerLazySingleton<UpdateUser>(
+    () => UpdateUser(sldiary<UserRepository>()),
+  );
+  sldiary.registerLazySingleton<DeleteUser>(
+    () => DeleteUser(sldiary<UserRepository>()),
+  );
+  sldiary.registerLazySingleton<UpdatePatient>(
+    () => UpdatePatient(sldiary<PatientRepository>()),
+  );
+  sldiary.registerLazySingleton<GetPatientByUserId>(
+    () => GetPatientByUserId(sldiary<PatientRepository>()),
+  );
+
+  // -------------------------------------------------------------
   // BLOCS
   // -------------------------------------------------------------
   sldiary.registerFactory<DiaryBloc>(
@@ -165,6 +180,15 @@ void initDiaryDependencies() {
       getMedicationsByUser: sldiary<GetMedicationsByUser>(),
       getSchedulesWithNotificationIds:
           sldiary<GetSchedulesWithNotificationIdsUseCase>(),
+    ),
+  );
+  //  profileBloc
+  sldiary.registerFactory<ProfileBloc>(
+    () => ProfileBloc(
+      updateUser: sldiary<UpdateUser>(),
+      deleteUser: sldiary<DeleteUser>(),
+      updatePatient: sldiary<UpdatePatient>(),
+      getPatientByUserId: sldiary<GetPatientByUserId>(),
     ),
   );
 }

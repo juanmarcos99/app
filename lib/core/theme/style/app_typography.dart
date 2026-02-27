@@ -71,13 +71,13 @@ class AppTypography {
 
   // Texto pequeño
   static const TextStyle captionLight = TextStyle(
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
   static const TextStyle captionDark = TextStyle(
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.white,
   );

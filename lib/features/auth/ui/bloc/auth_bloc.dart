@@ -6,7 +6,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterPatient registerPatient; //caso de uso del registro de paceinte
   final LoginUser loginUser; //caso de uso del login
   final ChangePassword changePassword; //caso de uso de cambiar la contraseña
-  final SaveUser saveUser; //caso de uso de guardar usuario en local
+  final RememberUser saveUser; //caso de uso de guardar usuario en local
   final SavePassword savePassword; //caso de uso de guardar contraseña en local
   final GetRememberedUsers getRememberedUsers; // obtener usuarios recordados
   final GetPassword getPassword;

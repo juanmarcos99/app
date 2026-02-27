@@ -1,11 +1,11 @@
 import '../../../auth.dart';
 
-class DeleteUser {
+class RememberUser {
   final RememberRepository repository;
 
-  DeleteUser(this.repository);
+  RememberUser(this.repository);
 
   Future<void> call(String username) {
-    return repository.deleteUser(username);
+    return repository.saveUser(username);
   }
 }

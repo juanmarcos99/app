@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
-import 'data/repositories_impl/patient_repository_impl.dart';
+import '../../core/share/data/repositories_impl/patient_repository_impl.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/core/services/storage_services.dart';
 
@@ -46,10 +46,10 @@ void initAuthDependencies() {
     () => ClearRememberedUsers(sl<RememberRepository>()),
   );
 
-  sl.registerLazySingleton<SaveUser>(() => SaveUser(sl<RememberRepository>()));
+  sl.registerLazySingleton<RememberUser>(() => RememberUser(sl<RememberRepository>()));
 
-  sl.registerLazySingleton<DeleteUser>(
-    () => DeleteUser(sl<RememberRepository>()),
+  sl.registerLazySingleton<DeleteUserRemembered>(
+    () => DeleteUserRemembered(sl<RememberRepository>()),
   );
 
   sl.registerLazySingleton<GetRememberedUsers>(
@@ -72,7 +72,7 @@ void initAuthDependencies() {
       sl<LoginUser>(),
       sl<RegisterPatient>(),
       sl<ChangePassword>(),
-      sl<SaveUser>(),
+      sl<RememberUser>(),
       sl<SavePassword>(),
       sl<GetRememberedUsers>(),
       sl<GetPassword>()
