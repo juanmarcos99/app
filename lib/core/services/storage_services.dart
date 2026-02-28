@@ -6,9 +6,7 @@ class StorageService {
   // Almacenamiento seguro para datos sensibles
   final FlutterSecureStorage secure = const FlutterSecureStorage();
 
-  
   //--------------------- MÉTODOS PARA DATOS NORMALES---------------------------
-  
 
   // Guardar String
   Future<void> saveString(String key, String value) async {
@@ -58,9 +56,31 @@ class StorageService {
     return prefs.getStringList(key);
   }
 
-  
+  // Borrar un elemento de una lista de Strings
+  Future<void> removeFromStringList(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = prefs.getStringList(key) ?? [];
+    list.remove(value);
+    await prefs.setStringList(key, list);
+  }
+
+  // Actualizar un elemento dentro de una lista de Strings
+  Future<void> updateInStringList(
+    String key,
+    String oldValue,
+    String newValue,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = prefs.getStringList(key) ?? [];
+
+    final index = list.indexOf(oldValue);
+    if (index != -1) {
+      list[index] = newValue;
+      await prefs.setStringList(key, list);
+    }
+  }
+
   // -------------------MÉTODOS PARA JSON--------------------
-  
 
   // Guardar JSON como String
   Future<void> saveJson(String key, Map<String, dynamic> json) async {
@@ -76,9 +96,7 @@ class StorageService {
     return jsonDecode(jsonString);
   }
 
-  
   //---------------- MÉTODOS PARA DATOS SENSIBLES-----------------
-  
 
   // Guardar dato seguro
   Future<void> saveSecure(String key, String value) async {
@@ -95,7 +113,6 @@ class StorageService {
     await secure.delete(key: key);
   }
 
-  
   // Borrar SharedPreferences y SecureStorage
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();

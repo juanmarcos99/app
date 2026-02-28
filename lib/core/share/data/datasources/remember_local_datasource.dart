@@ -3,11 +3,13 @@ import 'package:app/core/core.dart';
 abstract class RememberLocalDataSource {
   Future<List<String>> getRememberedUsers();
   Future<void> saveRememberedUsers(List<String> users);
+  Future<void> deleteRememberedUser(String username);
 
   Future<void> savePassword(String username, String password);
   Future<String?> getPassword(String username);
 
   Future<void> deletePassword(String username);
+  Future<void> updateRememberedUser(String oldUsername, String newUsername);
 }
 
 class RememberLocalDataSourceImpl implements RememberLocalDataSource {
@@ -26,6 +28,11 @@ class RememberLocalDataSourceImpl implements RememberLocalDataSource {
   }
 
   @override
+  Future<void> deleteRememberedUser(String username) async {
+    await storage.removeFromStringList('remembered_users', username);
+  }
+
+  @override
   Future<void> savePassword(String username, String password) async {
     await storage.saveSecure('password_$username', password);
   }
@@ -39,5 +46,16 @@ class RememberLocalDataSourceImpl implements RememberLocalDataSource {
   Future<void> deletePassword(String username) async {
     await storage.deleteSecure('password_$username');
   }
-}
 
+  @override
+  Future<void> updateRememberedUser(
+    String oldUsername,
+    String newUsername,
+  ) async {
+    await storage.updateInStringList(
+      'remembered_users',
+      oldUsername,
+      newUsername,
+    );
+  }
+}

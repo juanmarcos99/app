@@ -1,4 +1,4 @@
-import '../../auth.dart';
+import '../../../../features/auth/auth.dart';
 
 class RememberRepositoryImpl implements RememberRepository {
   final RememberLocalDataSource local;
@@ -40,5 +40,10 @@ class RememberRepositoryImpl implements RememberRepository {
   @override
   Future<void> clearRememberedUsers() async {
     await local.saveRememberedUsers([]);
+  }
+
+  @override
+  Future<void> updateRememberedUser(String oldUsername, String newUsername) async {
+    await local.updateRememberedUser(oldUsername, newUsername);
   }
 }

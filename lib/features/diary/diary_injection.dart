@@ -1,3 +1,4 @@
+import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:get_it/get_it.dart';
@@ -143,6 +144,14 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetPatientByUserId>(
     () => GetPatientByUserId(sldiary<PatientRepository>()),
   );
+   sldiary.registerLazySingleton<CheckUserExistence>(
+    () => CheckUserExistence(sldiary<UserRepository>()),
+  );
+   sldiary.registerLazySingleton<UpdateUserRemembered>(
+    () => UpdateUserRemembered(sldiary<RememberRepository>()),
+  );
+
+ 
 
   // -------------------------------------------------------------
   // BLOCS
@@ -189,6 +198,9 @@ void initDiaryDependencies() {
       deleteUser: sldiary<DeleteUser>(),
       updatePatient: sldiary<UpdatePatient>(),
       getPatientByUserId: sldiary<GetPatientByUserId>(),
+      deleteUserRemembered: sldiary<DeleteUserRemembered>(),
+      checkUserExistence: sldiary<CheckUserExistence>(),
+      updateUserRemembered: sldiary<UpdateUserRemembered>()
     ),
   );
 }

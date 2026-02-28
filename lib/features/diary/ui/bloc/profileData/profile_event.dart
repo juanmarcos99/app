@@ -9,12 +9,13 @@ class LoadProfileData extends ProfileEvent {
 }
 
 class UpdateProfileData extends ProfileEvent {
-  final User updatedUser;
+  final User userBeforeUpdate;
+  final User userUpdated;
 
-  UpdateProfileData(this.updatedUser);
+  UpdateProfileData(this.userBeforeUpdate, this.userUpdated);
 }
 
 class DeleteProfile extends ProfileEvent {
-  final int userId;
-  DeleteProfile(this.userId);
+  final User user;
+  DeleteProfile(this.user);
 }

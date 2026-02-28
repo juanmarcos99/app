@@ -49,4 +49,9 @@ class UserRepositoryImpl implements UserRepository {
   Future<void> deleteUser(int id) async {
     await localDataSource.deleteUser(id);
   }
+
+  @override
+  Future<int?> checkUserExistence(String username) async {
+    return await localDataSource.checkUserExistence(username);
+  }
 }

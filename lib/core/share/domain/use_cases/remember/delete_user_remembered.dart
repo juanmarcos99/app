@@ -1,4 +1,4 @@
-import '../../../auth.dart';
+import '../../../../../features/auth/auth.dart';
 
 class DeleteUserRemembered {
   final RememberRepository repository;

@@ -249,7 +249,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                   }
                   //se valida q el codigo del doctor este bien escrito
                   if (selectedRole == "doctor" &&
-                      doctorCodeController.text != "DOCTOR2025") {
+                      doctorCodeController.text != "1234") {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Código de doctor inválido"),

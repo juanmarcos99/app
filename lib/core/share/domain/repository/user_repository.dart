@@ -7,4 +7,5 @@ abstract class UserRepository {
 //metodos usados en el feature dairy de profile data
   Future<void> updateUser(User user); 
   Future<void> deleteUser(int id);
+  Future<int?> checkUserExistence(String username);
 }

@@ -7,4 +7,5 @@ abstract class RememberRepository {
   Future<String?> getPassword(String username);
 
   Future<void> clearRememberedUsers();
+  Future<void> updateRememberedUser(String oldUsername, String newUsername);
 }

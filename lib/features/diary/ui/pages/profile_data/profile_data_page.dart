@@ -19,14 +19,14 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController caregiverEmailController = TextEditingController();
   TextEditingController caregiverPhoneController = TextEditingController();
-  User? userUpdate;
+  User? userBeforeUpdate;
 
   @override
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
     if (authState is UserLoggedIn) {
-      userUpdate = authState.user;
+      userBeforeUpdate = authState.user;
       context.read<ProfileBloc>().add(LoadProfileData(authState.user));
     }
   }
@@ -80,6 +80,9 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
             } else if (state is ProfileDeleted) {
               AppSnack.show(context, "Cuenta eliminada");
               Navigator.pop(context); // volvemos atrás tras eliminar
+              Navigator.pop(
+                context,
+              ); // volvemos más atrás para salir del perfil
             } else if (state is ProfileError) {
               AppSnack.show(context, state.message, color: AppColors.error);
             }
@@ -156,7 +159,9 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                           caregiverEmailController.text.isNotEmpty &&
                           caregiverPhoneController.text.isNotEmpty &&
                           userNameController.text.isNotEmpty) {
-                        userUpdate = userUpdate?.copyWith(
+
+                            
+                        User userUpdate = userBeforeUpdate!.copyWith(
                           name: nameController.text,
                           lastName: lastNameController.text,
                           email: emailController.text,
@@ -164,9 +169,9 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                           userName: userNameController.text,
                         );
 
-                        if (userUpdate != null) {
+                        if (userBeforeUpdate != null) {
                           context.read<ProfileBloc>().add(
-                            UpdateProfileData(userUpdate!),
+                            UpdateProfileData(userBeforeUpdate!, userUpdate),
                           );
                         }
                       } else {
@@ -185,10 +190,21 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                     text: "Eliminar Cuenta",
                     icon: Icons.delete_outline_outlined,
                     color: AppColors.error,
-                    onPressed: () {
-                      if (userUpdate != null) {
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => ConfirmationDialog(
+                          title: "Eliminar Perfil",
+                          message:
+                              "¿Seguro que deseas eliminar el perfil de \"${userBeforeUpdate!.name.toString()}\"?\nEsta acción no se puede deshacer.",
+                          confirmText: "Eliminar",
+                          confirmColor: Colors.red,
+                        ),
+                      );
+                      if (userBeforeUpdate != null && confirmed == true) {
                         context.read<ProfileBloc>().add(
-                          DeleteProfile(userUpdate!.id!),
+                          DeleteProfile(userBeforeUpdate!),
                         );
                       }
                     },
