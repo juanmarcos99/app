@@ -19,12 +19,14 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController caregiverEmailController = TextEditingController();
   TextEditingController caregiverPhoneController = TextEditingController();
+  User? userUpdate;
 
   @override
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
     if (authState is UserLoggedIn) {
+      userUpdate = authState.user;
       context.read<ProfileBloc>().add(LoadProfileData(authState.user));
     }
   }
@@ -37,6 +39,7 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
     emailController.dispose();
     caregiverEmailController.dispose();
     caregiverPhoneController.dispose();
+    userNameController.dispose();
     super.dispose();
   }
 
@@ -72,6 +75,13 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                 caregiverEmailController.clear();
                 caregiverPhoneController.clear();
               }
+            } else if (state is ProfileUpdated) {
+              AppSnack.show(context, "Perfil actualizado correctamente");
+            } else if (state is ProfileDeleted) {
+              AppSnack.show(context, "Cuenta eliminada");
+              Navigator.pop(context); // volvemos atrás tras eliminar
+            } else if (state is ProfileError) {
+              AppSnack.show(context, state.message, color: AppColors.error);
             }
           },
           child: SingleChildScrollView(
@@ -101,12 +111,6 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                 ),
                 const SizedBox(height: 35),
                 CustomTextField(
-                  label: "Usuario",
-                  icon: Icons.person_outline,
-                  controller: userNameController,
-                ),
-                const SizedBox(height: 35),
-                CustomTextField(
                   label: "Apellidos",
                   icon: Icons.badge_outlined,
                   controller: lastNameController,
@@ -122,6 +126,11 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                   label: "Correo",
                   icon: Icons.email_outlined,
                   controller: emailController,
+                ),
+                CustomTextField(
+                  label: "Usuario",
+                  icon: Icons.person_outline,
+                  controller: userNameController,
                 ),
                 const SizedBox(height: 35),
                 CustomTextField(
@@ -140,7 +149,33 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                   child: PrimaryButton(
                     text: "Guardar",
                     onPressed: () {
-                      // Aquí luego dispararemos UpdateProfileData
+                      if (nameController.text.isNotEmpty &&
+                          lastNameController.text.isNotEmpty &&
+                          phoneController.text.isNotEmpty &&
+                          emailController.text.isNotEmpty &&
+                          caregiverEmailController.text.isNotEmpty &&
+                          caregiverPhoneController.text.isNotEmpty &&
+                          userNameController.text.isNotEmpty) {
+                        userUpdate = userUpdate?.copyWith(
+                          name: nameController.text,
+                          lastName: lastNameController.text,
+                          email: emailController.text,
+                          phoneNumber: phoneController.text,
+                          userName: userNameController.text,
+                        );
+
+                        if (userUpdate != null) {
+                          context.read<ProfileBloc>().add(
+                            UpdateProfileData(userUpdate!),
+                          );
+                        }
+                      } else {
+                        AppSnack.show(
+                          context,
+                          "Todos los campos deben estar llenos",
+                          color: AppColors.error,
+                        );
+                      }
                     },
                   ),
                 ),
@@ -151,7 +186,11 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                     icon: Icons.delete_outline_outlined,
                     color: AppColors.error,
                     onPressed: () {
-                      // Aquí luego dispararemos DeleteProfile
+                      if (userUpdate != null) {
+                        context.read<ProfileBloc>().add(
+                          DeleteProfile(userUpdate!.id!),
+                        );
+                      }
                     },
                   ),
                 ),

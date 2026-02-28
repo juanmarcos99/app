@@ -13,8 +13,18 @@ class ProfileLoaded extends ProfileState {
   ProfileLoaded({required this.user, this.patient});
 }
 
+class ProfileUpdated extends ProfileState {
+  final User user;
+  final Patient? patient;
+
+  ProfileUpdated({required this.user, this.patient});
+}
+
 class ProfileError extends ProfileState {
   final String message;
 
   ProfileError(this.message);
 }
+
+class ProfileDeleted extends ProfileState {}
+

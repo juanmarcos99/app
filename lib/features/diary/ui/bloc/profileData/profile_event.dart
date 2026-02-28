@@ -13,3 +13,8 @@ class UpdateProfileData extends ProfileEvent {
 
   UpdateProfileData(this.updatedUser);
 }
+
+class DeleteProfile extends ProfileEvent {
+  final int userId;
+  DeleteProfile(this.userId);
+}
