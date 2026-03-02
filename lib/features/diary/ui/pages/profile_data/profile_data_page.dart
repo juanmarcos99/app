@@ -77,6 +77,10 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
               }
             } else if (state is ProfileUpdated) {
               AppSnack.show(context, "Perfil actualizado correctamente");
+              Navigator.pop(context); // volvemos atrás tras eliminar
+              Navigator.pop(
+                context,
+              ); // volvemos más atrás para salir del perfil
             } else if (state is ProfileDeleted) {
               AppSnack.show(context, "Cuenta eliminada");
               Navigator.pop(context); // volvemos atrás tras eliminar
@@ -156,11 +160,7 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                           lastNameController.text.isNotEmpty &&
                           phoneController.text.isNotEmpty &&
                           emailController.text.isNotEmpty &&
-                          caregiverEmailController.text.isNotEmpty &&
-                          caregiverPhoneController.text.isNotEmpty &&
                           userNameController.text.isNotEmpty) {
-
-                            
                         User userUpdate = userBeforeUpdate!.copyWith(
                           name: nameController.text,
                           lastName: lastNameController.text,
@@ -168,10 +168,15 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                           phoneNumber: phoneController.text,
                           userName: userNameController.text,
                         );
+                        Patient? patientUpdate;
+                        if (userUpdate.role == "patient") {
+                             patientUpdate= Patient(userId: userUpdate.id!, caregiverEmail: caregiverEmailController.text, caregiverNumber: caregiverPhoneController.text);
+                            debugPrint("es paceitne");
+                            }
 
                         if (userBeforeUpdate != null) {
                           context.read<ProfileBloc>().add(
-                            UpdateProfileData(userBeforeUpdate!, userUpdate),
+                            UpdateProfileData(userBeforeUpdate!, userUpdate, patientUpdate),
                           );
                         }
                       } else {

@@ -1,4 +1,5 @@
 import 'package:app/features/auth/data/models/patient_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class PatientLocalDataSources {
@@ -26,6 +27,7 @@ class PatientLocalDataSourcesImpl extends PatientLocalDataSources {
       whereArgs: [patient.userId],
     );
     if (rowsAffected == 0) {
+      debugPrint("No se pudo actualizar");
       throw Exception(
         "No se pudo actualizar: paciente con userId ${patient.userId} no existe",
       );

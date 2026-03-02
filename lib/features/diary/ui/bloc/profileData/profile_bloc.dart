@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
@@ -10,7 +11,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetPatientByUserId getPatientByUserId;
   final DeleteUserRemembered deleteUserRemembered;
   final CheckUserExistence checkUserExistence;
-  final UpdateUserRemembered updateUserRemembered ;
+  final UpdateUserRemembered updateUserRemembered;
 
   ProfileBloc({
     required this.updateUser,
@@ -33,8 +34,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileLoading());
     try {
       final patient = await getPatientByUserId(event.user.id!);
-      emit(ProfileLoaded(user: event.user, patient: patient));
+      if (patient != null) {
+        emit(ProfileLoaded(user: event.user, patient: patient));
+      } else {
+        emit(ProfileLoaded(user: event.user, patient: null));
+      }
     } catch (e) {
+      debugPrint("Error cargando perfil: $e");
       emit(ProfileError("Error cargando perfil: $e"));
     }
   }
@@ -46,24 +52,45 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileLoading());
     try {
       final existence = await checkUserExistence(event.userUpdated.userName);
-
       if (event.userBeforeUpdate.userName != event.userUpdated.userName &&
           existence == -1) {
         emit(ProfileError("El nombre de usuario ya existe"));
-      } else {
-        final patient = await getPatientByUserId(event.userUpdated.id!);
-
+      }
+      if (event.userBeforeUpdate.userName != event.userUpdated.userName &&
+          existence != -1) {
         // Actualizamos usuario
         await updateUser(event.userUpdated);
-        await updateUserRemembered(event.userBeforeUpdate.userName,event.userUpdated.userName);
+        await updateUserRemembered(
+          event.userBeforeUpdate.userName,
+          event.userUpdated.userName,
+        );
 
         // Si es paciente, actualizamos también
-        if (patient != null) {
-          await updatePatient(patient);
+        if (event.patientUpdated != null) {
+          await updatePatient(event.patientUpdated!);
         }
 
         // Emitimos estado actualizado
-        emit(ProfileUpdated(user: event.userUpdated, patient: patient));
+        emit(
+          ProfileUpdated(
+            user: event.userUpdated,
+            patient: event.patientUpdated,
+          ),
+        );
+      } else {
+        await updateUser(event.userUpdated);
+        // Si es paciente, actualizamos también
+        if (event.patientUpdated != null) {
+          await updatePatient(event.patientUpdated!);
+        }
+
+        // Emitimos estado actualizado
+        emit(
+          ProfileUpdated(
+            user: event.userUpdated,
+            patient: event.patientUpdated,
+          ),
+        );
       }
     } catch (e) {
       emit(ProfileError("Error actualizando usuario: $e"));

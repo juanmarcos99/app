@@ -29,10 +29,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text(
-                  state.message,
-                  style: AppTypography.captionDark,
-                ),
+                content: Text(state.message, style: AppTypography.captionDark),
                 backgroundColor: AppColors.error,
               ),
             );
@@ -53,14 +50,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.white,
-          appBar: AppBar(title: const Text("Cambiar contraseña")),
+          appBar: AppBar(),
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 29),
+                  Center(
+                    child: Text(
+                      "Cambiar Contraseña",
+                      style: AppTypography.headline2Light,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 39),
                   Text(
                     "Ingresa tu usuario y actualiza tu contraseña.",
                     style: AppTypography.bodyLight,
@@ -72,7 +77,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     icon: Icons.person,
                     controller: _userController,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 35),
 
                   CustomTextField(
                     label: "Contraseña actual",
@@ -80,7 +85,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     obscure: true,
                     controller: _passwordController,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 35),
 
                   CustomTextField(
                     label: "Nueva contraseña",
@@ -88,7 +93,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     obscure: true,
                     controller: _newPasswordController,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 35),
 
                   CustomTextField(
                     label: "Confirmar nueva contraseña",
@@ -96,7 +101,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     obscure: true,
                     controller: _confirmPasswordController,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 65),
 
                   Center(
                     child: PrimaryButton(

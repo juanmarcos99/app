@@ -53,7 +53,7 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp(
         // Ruta inicial de la aplicación
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.medicalAppointment,
 
         // Definición de rutas de navegación
         routes: {
@@ -68,6 +68,7 @@ class MainApp extends StatelessWidget {
           AppRoutes.pdf: (context) => const ExportPdfPage(),
           AppRoutes.changePassword: (context) => const ChangePasswordScreen(),
           AppRoutes.profileData: (context) => const ProfileDataPage(),
+          AppRoutes.medicalAppointment: (context) => const MedicalAppointmentPage(),
         },
 
         // Configuración de localización e internacionalización

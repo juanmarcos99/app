@@ -11,8 +11,9 @@ class LoadProfileData extends ProfileEvent {
 class UpdateProfileData extends ProfileEvent {
   final User userBeforeUpdate;
   final User userUpdated;
+  final Patient? patientUpdated;
 
-  UpdateProfileData(this.userBeforeUpdate, this.userUpdated);
+  UpdateProfileData(this.userBeforeUpdate, this.userUpdated, this.patientUpdated);
 }
 
 class DeleteProfile extends ProfileEvent {

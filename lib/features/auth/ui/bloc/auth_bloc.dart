@@ -111,6 +111,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
         } else {
           await changePassword(event.username, event.newPassword);
+          await savePassword(event.username.toString(), event.newPassword.toString());
           emit(const UserPasswordChanged());
         }
       } catch (e) {

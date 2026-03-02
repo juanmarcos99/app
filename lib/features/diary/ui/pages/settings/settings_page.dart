@@ -111,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                               iconColor: AppColors.primary,
                               title: 'Notificaciones',
                               subtitle: 'Personaliza tus alertas',
-                              onTap: () {},
+                              onTap: () {Navigator.pushNamed(context, AppRoutes.medicalAppointment);},
                             ),
                             const SizedBox(height: 12),
 
@@ -146,7 +146,7 @@ class SettingsPage extends StatelessWidget {
                               ),
                               overlayColor: AppColors.gray100.withValues(alpha:0.3),
                             ),
-                            onPressed: () {},
+                            onPressed: () { Navigator.pop(context);},
                             child: const Text(
                               'Cerrar sesión',
                               style: TextStyle(fontWeight: FontWeight.w600),

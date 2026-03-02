@@ -45,5 +45,7 @@ class RememberRepositoryImpl implements RememberRepository {
   @override
   Future<void> updateRememberedUser(String oldUsername, String newUsername) async {
     await local.updateRememberedUser(oldUsername, newUsername);
+    await local.savePassword(newUsername, await local.getPassword(oldUsername) ?? '');
+    await local.deletePassword(oldUsername);
   }
 }
