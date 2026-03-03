@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:app/core/core.dart';
+import 'package:app/features/diary/diary.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppointmentCard extends StatelessWidget {
-  final DateTime date;
+  final Appointment? appointment;
 
-  const AppointmentCard({super.key, required this.date});
+  const AppointmentCard({super.key, this.appointment});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -24,7 +24,11 @@ class AppointmentCard extends StatelessWidget {
                 color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.event, color: AppColors.primary, size: 28),
+              child: const Icon(
+                Icons.event,
+                color: AppColors.primary,
+                size: 28,
+              ),
             ),
             const SizedBox(width: 16),
 
@@ -42,7 +46,7 @@ class AppointmentCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${date.day}/${date.month}/${date.year}",
+                    "${appointment!.time!.day}/${appointment!.time!.month}/${appointment!.time!.year}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -53,11 +57,12 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
 
-            // Icono de basura (sin lógica aún)
             IconButton(
               icon: const Icon(Icons.delete, color: AppColors.error),
               onPressed: () {
-                // Aquí luego integras la lógica de borrado
+                context.read<AppointmentBloc>().add(
+                      DeleteAppointmentEvent(appointment!),
+                    );
               },
             ),
           ],

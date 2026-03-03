@@ -22,6 +22,10 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<MedicationLocalDataSource>(
     () => MedicationLocalDataSourceImpl(sldiary<Database>()),
   );
+  // appointment datasource
+  sldiary.registerLazySingleton<AppointmentLocalDataSource>(
+    () => AppointmentLocalDataSourceImpl(sldiary<Database>()),
+  );
 
   // -------------------------------------------------------------
   // SERVICES
@@ -47,6 +51,10 @@ void initDiaryDependencies() {
 
   sldiary.registerLazySingleton<MedicationRepository>(
     () => MedicationRepositoryImpl(sldiary<MedicationLocalDataSource>()),
+  );
+
+  sldiary.registerLazySingleton<AppointmentRepository>(
+    () => AppointmentRepositoryImpl(sldiary<AppointmentLocalDataSource>()),
   );
 
   // -------------------------------------------------------------
@@ -151,6 +159,22 @@ void initDiaryDependencies() {
     () => UpdateUserRemembered(sldiary<RememberRepository>()),
   );
 
+  // -------------------------------------------------------------
+  // USE CASES — profile data
+  // -------------------------------------------------------------
+  sldiary.registerLazySingleton<AddAppointment>(
+    () => AddAppointment(sldiary<AppointmentRepository>()),
+  );
+   sldiary.registerLazySingleton<DeleteAppointment>(
+    () => DeleteAppointment(sldiary<AppointmentRepository>()),
+  );
+  sldiary.registerLazySingleton<GetAppointmentById>(
+    () => GetAppointmentById(sldiary<AppointmentRepository>()),
+  );
+  sldiary.registerLazySingleton<GetAppointmentsByUser>(
+    () => GetAppointmentsByUser(sldiary<AppointmentRepository>()),
+  );
+
  
 
   // -------------------------------------------------------------
@@ -201,6 +225,15 @@ void initDiaryDependencies() {
       deleteUserRemembered: sldiary<DeleteUserRemembered>(),
       checkUserExistence: sldiary<CheckUserExistence>(),
       updateUserRemembered: sldiary<UpdateUserRemembered>()
+    ),
+  );
+  //  apointmentBloc
+  sldiary.registerFactory<AppointmentBloc>(
+    () => AppointmentBloc(
+    addAppointment: sldiary<AddAppointment>(),
+    deleteAppointment: sldiary<DeleteAppointment>(),
+    getAppointmentById: sldiary<GetAppointmentById>(),
+    getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
     ),
   );
 }

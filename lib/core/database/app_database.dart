@@ -11,7 +11,6 @@ class AppDatabase {
       join(await getDatabasesPath(), 'app.db'),
       version: 1,
       onCreate: (db, version) async {
-      
         await db.execute('''
           CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +24,6 @@ class AppDatabase {
           )
         ''');
 
-        
         await db.execute('''
           CREATE TABLE patients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,6 +78,17 @@ class AppDatabase {
             FOREIGN KEY (medicationId) REFERENCES medications(id) ON DELETE CASCADE
           )
         ''');
+
+        await db.execute('''
+  CREATE TABLE appointments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NOT NULL,
+    information TEXT,
+    time TEXT NOT NULL,
+    notificationId INTEGER,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+  )
+''');
       },
     );
 

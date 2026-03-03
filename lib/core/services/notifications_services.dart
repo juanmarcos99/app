@@ -92,6 +92,43 @@ class NotificationService {
     );
   }
 
+  Future<void> scheduleOneTimeAlert({
+  required int notificationId,
+  required DateTime scheduledDate,
+  required String title,
+  required String body,
+}) async {
+  await _initialized;
+
+  final androidDetails = const AndroidNotificationDetails(
+    'one_time_channel_id',
+    'One-Time Notifications',
+    channelDescription: 'Notificaciones únicas programadas',
+    importance: Importance.max,
+    priority: Priority.high,
+  );
+
+  const iosDetails = DarwinNotificationDetails();
+
+  final details = NotificationDetails(
+    android: androidDetails,
+    iOS: iosDetails,
+  );
+
+  await _notificationsPlugin.zonedSchedule(
+    notificationId,
+    title,
+    body,
+    tz.TZDateTime.from(scheduledDate, tz.local),
+    details,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+    
+  );
+}
+
+
   Future<void> cancelAlert(int notificationId) async {
     await _initialized;
     await _notificationsPlugin.cancel(notificationId);

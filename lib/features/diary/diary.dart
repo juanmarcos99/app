@@ -30,6 +30,12 @@ export 'package:app/features/diary/domain/use_cases/medications/delete_medicatio
 export 'package:app/features/diary/domain/use_cases/medications/get_medication_by_user.dart';
 export 'package:app/features/diary/domain/use_cases/medications/get_medication_by_is.dart';
 export 'package:app/features/diary/domain/use_cases/medications/update_medication.dart';
+export 'package:app/features/diary/domain/entities/appointment.dart';
+export 'package:app/features/diary/domain/repositories/appointment_repository.dart';
+export 'package:app/features/diary/domain/use_cases/appointment/add_appointment.dart';
+export 'package:app/features/diary/domain/use_cases/appointment/delete_appointment.dart';
+export 'package:app/features/diary/domain/use_cases/appointment/get_appointment_by_id.dart';
+export 'package:app/features/diary/domain/use_cases/appointment/get_appointments_by_user.dart';
 
 
 
@@ -46,6 +52,9 @@ export 'data/repositories_impl/adverse_event_repository_impl.dart';
 export 'data/repositories_impl/pdf_repository_impl.dart';
 export 'data/services/pdf_generator_service.dart';
 export 'data/repositories_impl/medication_repository_impl.dart';
+export 'data/models/appointment_model.dart';
+export 'data/datasources/appointment_local_data_source.dart';
+export 'data/repositories_impl/appointment_repository_impl.dart';
 
 //ui
 export 'ui/pages/dairy/dairy_screen.dart';
@@ -62,7 +71,7 @@ export 'ui/pages/pdf/pdf.dart';
 export 'ui/pages/profile_data/profile_data_page.dart';
 export 'ui/pages/pdf/widgets/pdf_card.dart';
 export 'ui/pages/profile_data/widgets/custom_option_button.dart';
-export 'ui/pages/appointment/appointment.dart';
+export 'ui/pages/appointment/appointment_screen.dart';
 export 'ui/pages/appointment/widgets/appointment_card.dart';
 export 'ui/pages/appointment/widgets/appiontment_dialog.dart';
 export 'ui/pages/dairy/widgets/table_calendar.dart';
@@ -84,6 +93,9 @@ export 'ui/bloc/medication/medication_state.dart';
 export 'ui/bloc/profileData/profile_bloc.dart';
 export 'ui/bloc/profileData/profile_event.dart';
 export 'ui/bloc/profileData/profile_state.dart';
+export 'ui/bloc/appointment/appointment_event.dart';
+export 'ui/bloc/appointment/appointment_state.dart';
+export 'ui/bloc/appointment/appointment_bloc.dart';
 
 //injection
 export 'diary_injection.dart';
