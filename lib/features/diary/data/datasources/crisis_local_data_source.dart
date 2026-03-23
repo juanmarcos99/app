@@ -13,6 +13,7 @@ abstract class CrisisLocalDataSource {
     int year,
     int userId,
   );
+   Future<DateTime?> getLastCrisisDayByUser(int userId);
 }
 
 // permite cambiar de DB sin que se afecte la app
@@ -112,4 +113,18 @@ class CrisisLocalDataSourceImpl implements CrisisLocalDataSource {
     );
     return result.map((map) => CrisisModel.fromMap(map)).toList();
   }
+
+    @override
+  Future<DateTime?> getLastCrisisDayByUser(int userId) async {
+    final result = await db.rawQuery(
+      'SELECT MAX(crisisDate) as lastDate FROM crisis WHERE userId = ?',
+      [userId],
+    );
+
+    if (result.isNotEmpty && result.first['lastDate'] != null) {
+      return DateTime.parse(result.first['lastDate'] as String);
+    }
+    return null; // si no hay crisis registradas
+  }
+
 }

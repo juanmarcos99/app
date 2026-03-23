@@ -51,6 +51,7 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (_) => GetIt.instance.get<MedicationBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<ProfileBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<AppointmentBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<HomeBloc>()),
       ],
       child: MaterialApp(
         // Ruta inicial de la aplicación

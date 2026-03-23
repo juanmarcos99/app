@@ -99,7 +99,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
               );
             }
           },
-          child: const Text("Aceptar"),
+          child: const Text("Aceptar", style: TextStyle(color: AppColors.white)),
         ),
       ],
     );

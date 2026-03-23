@@ -66,5 +66,9 @@ class CrisisRepositoryImpl implements CrisisRepository {
     return result;
   }
 
-  
+  // obtener el último día con crisis
+  @override
+  Future<DateTime?> getLastCrisisDayByUser(int userId) async {
+    return await localDataSource.getLastCrisisDayByUser(userId);
+  }
 }

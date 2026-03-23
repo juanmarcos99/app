@@ -75,6 +75,9 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<UpdateCrisis>(
     () => UpdateCrisis(sldiary<CrisisRepository>()),
   );
+  sldiary.registerLazySingleton<GetLastCrisisDayByUser>(
+    () => GetLastCrisisDayByUser(sldiary<CrisisRepository>()),
+  );
 
   // -------------------------------------------------------------
   // USE CASES — ADVERSE EVENTS
@@ -152,10 +155,10 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetPatientByUserId>(
     () => GetPatientByUserId(sldiary<PatientRepository>()),
   );
-   sldiary.registerLazySingleton<CheckUserExistence>(
+  sldiary.registerLazySingleton<CheckUserExistence>(
     () => CheckUserExistence(sldiary<UserRepository>()),
   );
-   sldiary.registerLazySingleton<UpdateUserRemembered>(
+  sldiary.registerLazySingleton<UpdateUserRemembered>(
     () => UpdateUserRemembered(sldiary<RememberRepository>()),
   );
 
@@ -165,7 +168,7 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<AddAppointment>(
     () => AddAppointment(sldiary<AppointmentRepository>()),
   );
-   sldiary.registerLazySingleton<DeleteAppointment>(
+  sldiary.registerLazySingleton<DeleteAppointment>(
     () => DeleteAppointment(sldiary<AppointmentRepository>()),
   );
   sldiary.registerLazySingleton<GetAppointmentById>(
@@ -174,8 +177,6 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetAppointmentsByUser>(
     () => GetAppointmentsByUser(sldiary<AppointmentRepository>()),
   );
-
- 
 
   // -------------------------------------------------------------
   // BLOCS
@@ -224,16 +225,27 @@ void initDiaryDependencies() {
       getPatientByUserId: sldiary<GetPatientByUserId>(),
       deleteUserRemembered: sldiary<DeleteUserRemembered>(),
       checkUserExistence: sldiary<CheckUserExistence>(),
-      updateUserRemembered: sldiary<UpdateUserRemembered>()
+      updateUserRemembered: sldiary<UpdateUserRemembered>(),
     ),
   );
   //  apointmentBloc
   sldiary.registerFactory<AppointmentBloc>(
     () => AppointmentBloc(
-    addAppointment: sldiary<AddAppointment>(),
-    deleteAppointment: sldiary<DeleteAppointment>(),
-    getAppointmentById: sldiary<GetAppointmentById>(),
-    getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
+      addAppointment: sldiary<AddAppointment>(),
+      deleteAppointment: sldiary<DeleteAppointment>(),
+      getAppointmentById: sldiary<GetAppointmentById>(),
+      getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
+    ),
+  );
+
+  // -------------------------------------------------------------
+  // BLOCS — HOME
+  // -------------------------------------------------------------
+  sldiary.registerFactory<HomeBloc>(
+    () => HomeBloc(
+      getLastCrisisDayByUser: sldiary<GetLastCrisisDayByUser>(),
+      getMedicationsByUser: sldiary<GetMedicationsByUser>(),
+      getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
     ),
   );
 }

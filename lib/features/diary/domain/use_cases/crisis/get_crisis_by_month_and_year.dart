@@ -1,4 +1,4 @@
-import '../../diary.dart';
+import '../../../diary.dart';
 class GetCrisesByMonthAndYearUseCase {
   final CrisisRepository repository;
 

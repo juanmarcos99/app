@@ -1,4 +1,4 @@
-import '../../diary.dart';
+import '../../../diary.dart';
 class DeleteCrisis {
   final CrisisRepository repository;
 
