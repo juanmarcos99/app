@@ -8,5 +8,6 @@ export 'logging/logger.dart';
 export 'share/ui/widgets/confirmation_dialog.dart';
 export 'share/domain/use_cases/user/check_user_existence.dart';
 export 'share/domain/use_cases/remember/update_remembered_user.dart';
+export 'utils/password_hasher.dart';
 
 

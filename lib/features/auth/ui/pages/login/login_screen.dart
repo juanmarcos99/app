@@ -2,6 +2,7 @@ import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,12 +11,11 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with RouteAware {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool rememberMe = false;
   List<String> rememberedUsers = [];
-
   TextEditingController? autocompleteController;
 
   @override
@@ -25,10 +25,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    context.read<AuthBloc>().add(LoadRememberedUsersEvent());
   }
 
   @override
@@ -38,10 +50,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: () {
-            // Quita el foco de cualquier campo activo
-            FocusScope.of(context).unfocus();
-          },
+          onTap: () => FocusScope.of(context).unfocus(),
           child: BlocConsumer<AuthBloc, AuthState>(
             listenWhen: (previous, current) =>
                 current is AuthFailure ||
@@ -93,7 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                               width: 320,
                             ),
                             const SizedBox(height: 5),
-
                             Autocomplete<String>(
                               optionsBuilder: (TextEditingValue value) {
                                 if (value.text.isEmpty) return rememberedUsers;
@@ -125,9 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                               },
                             ),
-
                             const SizedBox(height: 20),
-
                             CustomTextField(
                               label: 'Contraseña',
                               hint: '',
@@ -136,7 +142,6 @@ class _LoginPageState extends State<LoginPage> {
                               controller: passwordController,
                             ),
                             const SizedBox(height: 10),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -167,9 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 59),
-
                             PrimaryButton(
                               text: 'Entrar',
                               onPressed: () {
@@ -186,9 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                               },
                             ),
-
                             const SizedBox(height: 25),
-
                             LetterNavButton(
                               letter: "Cambiar contraseña",
                               onTap: () {
@@ -200,7 +201,6 @@ class _LoginPageState extends State<LoginPage> {
                               fontSize: 13,
                               color: AppColors.error,
                             ),
-
                             const SizedBox(height: 20),
                           ],
                         ),

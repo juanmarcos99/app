@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/theme/style/colors.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/features/diary/diary.dart';
-
+import 'package:app/main.dart'; // donde está routeObserver
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,14 +12,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with RouteAware {
   int? userId;
 
   @override
   void initState() {
     super.initState();
+    _loadNotifications();
+  }
 
-    // Obtener userId desde AuthBloc
+  void _loadNotifications() {
     final authState = context.read<AuthBloc>().state;
     if (authState is UserLoggedIn) {
       userId = authState.user.id!;
@@ -28,8 +30,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Se ejecuta cuando vuelves a HomePage
+    _loadNotifications();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return BlocListener<DiaryBloc, DiaryState>(
+      listener: (context, state) {
+        if (state is CrisisAdded ||
+            state is CrisisUpdated ||
+            state is CrisisDeleted||
+            state is MedicationAdded|| 
+            state is MedicationDeleted|| 
+            state is MedicationLoaded ) {
+          _loadNotifications();
+        }
+      },
+      child: Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: BlocBuilder<HomeBloc, HomeState>(
@@ -87,6 +118,6 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-    );
+     ));
   }
 }

@@ -4,16 +4,15 @@ import 'package:app/core/core.dart';
 
 class AppointmentDialog extends StatefulWidget {
   const AppointmentDialog({super.key});
-  
 
   @override
   State<AppointmentDialog> createState() => _AppointmentDialogState();
 }
 
 class _AppointmentDialogState extends State<AppointmentDialog> {
+  final _formKey = GlobalKey<FormState>();
   DateTime? selectedDate;
   final TextEditingController descriptionController = TextEditingController();
-  
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
@@ -30,6 +29,20 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     }
   }
 
+  void _onSave() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) return;
+
+    final appointment = Appointment(
+      id: null,
+      userId: null, // ajusta según tu lógica de usuario
+      information: descriptionController.text.trim(),
+      time: selectedDate,
+      notificationId: DateTime.now().millisecondsSinceEpoch % 2147483647,
+    );
+    Navigator.pop(context, appointment);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -38,35 +51,54 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       title: const Text("Nueva cita médica"),
       content: SizedBox(
         width: double.maxFinite,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Expanded(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      selectedDate == null
+                          ? "No has elegido fecha"
+                          : "Fecha: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                      style: const TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today, color: AppColors.primary),
+                    onPressed: _pickDate,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Ej. Consulta con el Dr. Pérez",
+                  labelText: "Descripción",
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "La descripción es requerida";
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              // Validación de fecha seleccionada
+              if (selectedDate == null)
+                const Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    selectedDate == null
-                        ? "No has elegido fecha"
-                        : "Fecha: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    "Debe elegir una fecha",
+                    style: TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today, color: AppColors.primary),
-                  onPressed: _pickDate,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Ej. Consulta con el Dr. Pérez",
-                labelText: "Descripción",
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
@@ -81,24 +113,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          onPressed: () {
-            if (selectedDate != null && descriptionController.text.isNotEmpty) {
-              final appointment = Appointment(
-                id: null,
-                userId: null, // ajusta según tu lógica de usuario
-                information: descriptionController.text.trim(),
-                time: selectedDate,
-                notificationId: DateTime.now().millisecondsSinceEpoch % 2147483647,
-              );
-              Navigator.pop(context, appointment); // devuelve el objeto
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Debes elegir fecha y escribir descripción"),
-                ),
-              );
-            }
-          },
+          onPressed: _onSave,
           child: const Text("Aceptar", style: TextStyle(color: AppColors.white)),
         ),
       ],

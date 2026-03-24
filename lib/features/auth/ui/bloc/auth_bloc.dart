@@ -1,18 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/core/utils/password_hasher.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final RegisterUser registerUser; //caso de uso del registro de usuario
-  final RegisterPatient registerPatient; //caso de uso del registro de paceinte
-  final LoginUser loginUser; //caso de uso del login
-  final ChangePassword changePassword; //caso de uso de cambiar la contraseña
-  final RememberUser saveUser; //caso de uso de guardar usuario en local
-  final SavePassword savePassword; //caso de uso de guardar contraseña en local
-  final GetRememberedUsers getRememberedUsers; // obtener usuarios recordados
+  final RegisterUser registerUser;
+  final RegisterPatient registerPatient;
+  final LoginUser loginUser;
+  final ChangePassword changePassword;
+  final RememberUser saveUser;
+  final SavePassword savePassword;
+  final GetRememberedUsers getRememberedUsers;
   final GetPassword getPassword;
 
-  int? _userId; // userId generado por la BD
-  User? user; // usuario ya con id
+  int? _userId;
+  User? user;
 
   AuthBloc(
     this.registerUser,
@@ -24,32 +25,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.getRememberedUsers, 
     this.getPassword,
   ) : super(const AuthInitial()) {
+
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
-        _userId = await registerUser(
-          event.user,
-        ); //Se registra el usuario y devuleve un entero
+        // Hashear contraseña antes de registrar en BD
+        final hashedUser = event.user.copyWith(
+          passwordHash: PasswordHasher.hash(event.user.passwordHash),
+        );
+
+        _userId = await registerUser(hashedUser);
+
         if (_userId == -2) {
-          // Si el entero devuelto es -2 el usuario existe
-          emit(
-            const UserNameExist(),
-          ); // En ese caso se emite el estado de existe user
+          emit(const UserNameExist());
         } else {
-          // si el usuario es paciente se emite usuario registrado sino usuario completamente registrado
-          user = event.user.copyWith(
-            id: _userId,
-          ); // se transcribe el user con el id asignado a la BD
+          user = hashedUser.copyWith(id: _userId);
           if (user!.role == 'patient') {
-            emit(
-              UserRegistrated(user!),
-            ); // el UserRegistrated es un estado intermedio
+            emit(UserRegistrated(user!));
           } else {
-            emit(
-              UserFullyRegistrated(
-                user!,
-              ), // si se registra completamente el usuario significa q puede navegar a la siguiente pantalla
-            ); // flujo completo para no-paciente
+            emit(UserFullyRegistrated(user!));
           }
         }
       } catch (e) {
@@ -59,9 +53,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<RegisterPatientEvent>((event, emit) async {
       if (_userId == null) {
-        emit(
-          const AuthFailure('Aún no hay userId para registrar el paciente.'),
-        );
+        emit(const AuthFailure('Aún no hay userId para registrar el paciente.'));
         return;
       }
       emit(const AuthLoading());
@@ -77,22 +69,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginUserEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
-        final loggedUser = await loginUser(event.username, event.password);
+        // Hashear contraseña para comparar con BD
+        final hashedPassword = PasswordHasher.hash(event.password);
+
+        final loggedUser = await loginUser(event.username, hashedPassword);
         if (loggedUser != null) {
           if (event.rememberMe) {
-            await saveUser(event.username.toString());
-            await savePassword(
-              event.username.toString(),
-              event.password.toString(),
-            );
+            await saveUser(event.username);
+            await savePassword(event.username, event.password); // texto plano
           }
           emit(UserLoggedIn(loggedUser));
         } else {
-          emit(
-            const AuthFailure(
-              'Credenciales inválidas, por favor rectifiquelas',
-            ),
-          );
+          emit(const AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
         }
       } catch (e) {
         emit(AuthFailure('Error al iniciar sesión: $e'));
@@ -102,16 +90,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ChangePasswordEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
-        //verificamos si la contraseña y el usuario estan bien
-        final loggedUser = await loginUser(
-          event.username,
-          event.currentPassword,
-        );
+        // Hashear contraseña actual y nueva para BD
+        final currentHashed = PasswordHasher.hash(event.currentPassword);
+        final newHashed = PasswordHasher.hash(event.newPassword);
+
+        final loggedUser = await loginUser(event.username, currentHashed);
         if (loggedUser == null) {
-          emit(AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
+          emit(const AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
         } else {
-          await changePassword(event.username, event.newPassword);
-          await savePassword(event.username.toString(), event.newPassword.toString());
+          await changePassword(event.username, newHashed);
+          await savePassword(event.username, event.newPassword); // texto plano
           emit(const UserPasswordChanged());
         }
       } catch (e) {
@@ -121,7 +109,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<LoadRememberedUsersEvent>((event, emit) async {
       emit(const AuthLoading());
-
       try {
         final users = await getRememberedUsers();
         emit(RememberUsersLoaded(users));
@@ -132,16 +119,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<LoadPasswordEvent>((event, emit) async {
       emit(const AuthLoading());
-
       try {
-        // Aquí llamas a tu repositorio o servicio que obtiene la contraseña
+        // Recuperar contraseña recordada en texto plano
         final password = await getPassword(event.username);
-
         emit(PasswordLoaded(password!));
-        
       } catch (e) {
         emit(AuthFailure('Error al cargar contraseña: $e'));
-        
       }
     });
   }
