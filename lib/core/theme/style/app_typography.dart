@@ -14,7 +14,7 @@ class AppTypography {
   static const TextStyle headline1Dark = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
-    color: AppColors.darkTextPrimary,
+    color: AppColors.gray400,
   );
 
   // Titulares medianos
@@ -79,7 +79,7 @@ class AppTypography {
   static const TextStyle captionDark = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w400,
-    color: AppColors.white,
+    color: AppColors.gray400,
   );
 
   // Botones

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/core.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,153 +7,147 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Usamos el color del tema para el fondo
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 480),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha:0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
             child: Column(
               children: [
-                // Contenido scrollable
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
+                      horizontal: 24,
+                      vertical: 32,
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Encabezado del perfil
+                        // --- HEADER EDITORIAL ---
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Avatar con icono Flutter
-                            Container(
-                              height: 112,
-                              width: 112,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.primaryLight,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withValues(alpha:0.15),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                                border: Border.all(
-                                  color: AppColors.white,
-                                  width: 4,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 70,
-                                color: AppColors.primary,
+                            Text(
+                              "BIENVENIDO",
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: colorScheme.primary,
+                                letterSpacing: 2.0,
+                                fontSize: 12,
                               ),
                             ),
-
-                            const SizedBox(height: 12),
-
+                            const SizedBox(height: 4),
                             Builder(
                               builder: (context) {
-                                String user = "";
-                                final authState = context.read<AuthBloc>().state;
+                                String userName = "Invitado";
+                                final authState = context
+                                    .watch<AuthBloc>()
+                                    .state;
                                 if (authState is UserLoggedIn) {
-                                  user = authState.user.name;
+                                  userName = authState.user.name;
                                 }
                                 return Text(
-                                  user.isNotEmpty ? user : "Invitado",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.secondary,
+                                  userName,
+                                  style: theme.textTheme.displayLarge?.copyWith(
+                                    fontSize: 36,
+                                    height: 1.1,
                                   ),
                                 );
                               },
                             ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Lista de opciones
-                        Column(
-                          children: [
-                            _SettingsTile(
-                              icon: Icons.person,
-                              iconColor: AppColors.primary,
-                              title: 'Datos del perfil',
-                              subtitle: 'Gestiona tu información personal',
-                              onTap: () {
-                                Navigator.pushNamed(context, AppRoutes.profileData);
-                              },
-                            ),
-                            const SizedBox(height: 12),
-
-                            _SettingsTile(
-                              icon: Icons.notifications,
-                              iconColor: AppColors.primary,
-                              title: 'Notificaciones',
-                              subtitle: 'Personaliza tus alertas',
-                              onTap: () {Navigator.pushNamed(context, AppRoutes.medicalAppointment);},
-                            ),
-                            const SizedBox(height: 12),
-
-                            _SettingsTile(
-                              icon: Icons.description,
-                              iconColor: AppColors.primary,
-                              title: 'Exportar reporte (PDF)',
-                              subtitle: 'Descargar resumen de salud',
-                              onTap: () {
-                                Navigator.pushNamed(context, AppRoutes.pdf);
-                              },
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Botón cerrar sesión
-                        Container(
-                          padding: const EdgeInsets.only(top: 16),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: AppColors.gray100),
-                            ),
-                          ),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppColors.error,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                            const SizedBox(height: 16),
+                            Container(
+                              height: 4,
+                              width: 48,
+                              decoration: BoxDecoration(
+                                color: colorScheme.primary,
+                                borderRadius: BorderRadius.circular(
+                                  double.infinity,
+                                ),
                               ),
-                              overlayColor: AppColors.gray100.withValues(alpha:0.3),
                             ),
-                            onPressed: () { Navigator.pop(context);},
-                            child: const Text(
+                          ],
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // --- LISTA DE OPCIONES (Tonal Layering) ---
+                        _SettingsTile(
+                          icon: Icons.person,
+                          title: 'Datos del perfil',
+                          subtitle: 'Gestiona tu información personal',
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            AppRoutes.profileData,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _SettingsTile(
+                          icon: Icons.notifications,
+                          title: 'Notificaciones',
+                          subtitle: 'Configura tus alertas y avisos',
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            AppRoutes.medicalAppointment,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _SettingsTile(
+                          icon: Icons.picture_as_pdf,
+                          title: 'Exportar reporte (PDF)',
+                          subtitle: 'Descarga tus datos clínicos',
+                          onTap: () =>
+                              Navigator.pushNamed(context, AppRoutes.pdf),
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // --- DANGER ZONE (Log Out) ---
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton.icon(
+                            style: TextButton.styleFrom(
+                              backgroundColor: colorScheme.error.withOpacity(
+                                0.08,
+                              ),
+                              foregroundColor: colorScheme.error,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                side: BorderSide(
+                                  color: colorScheme.error.withOpacity(0.1),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              // Aquí podrías agregar la lógica de logout de tu AuthBloc
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.logout, size: 20),
+                            label: const Text(
                               'Cerrar sesión',
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 32),
+
+                        // Versión
+                        Center(
+                          child: Text(
+                            "Versión 2.4.0 • Clinical Intelligence",
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant.withOpacity(
+                                0.6,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -170,14 +163,12 @@ class SettingsPage extends StatelessWidget {
 
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
   const _SettingsTile({
     required this.icon,
-    required this.iconColor,
     required this.title,
     required this.subtitle,
     required this.onTap,
@@ -185,56 +176,54 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = AppColors.gray100;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(14),
-      elevation: 1,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha:0.1),
-                  borderRadius: BorderRadius.circular(10),
+    return Container(
+      decoration: BoxDecoration(
+        // Usamos surfaceContainerHighest definido en tu AppTheme
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Material(
+        color: colorScheme.surfaceContainerHigh,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                // Icon Container
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: colorScheme.primary, size: 24),
                 ),
-                child: Icon(icon, color: iconColor),
-              ),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 16),
+                // Text content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          fontSize: 18,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.gray500,
-                      ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(subtitle, style: theme.textTheme.bodyMedium),
+                    ],
+                  ),
                 ),
-              ),
-
-              Icon(Icons.chevron_right, color: AppColors.gray300),
-            ],
+                Icon(Icons.chevron_right, color: colorScheme.outlineVariant),
+              ],
+            ),
           ),
         ),
       ),

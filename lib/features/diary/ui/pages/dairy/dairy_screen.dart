@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/core/theme/style/colors.dart';
+import 'package:app/core/core.dart';
 import 'package:app/features/auth/auth.dart';
 import '../../../diary.dart';
 
@@ -37,7 +37,10 @@ class _DiaryPageState extends State<DiaryPage> {
 
     final userId = authState.user.id!;
     context.read<DiaryBloc>().add(
-      LoadTarjetasEvent(userId: userId, date: context.read<DiaryBloc>().daySelected),
+      LoadTarjetasEvent(
+        userId: userId,
+        date: context.read<DiaryBloc>().daySelected,
+      ),
     );
   }
 
@@ -51,6 +54,9 @@ class _DiaryPageState extends State<DiaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+
     return BlocListener<DiaryBloc, DiaryState>(
       listener: (context, state) {
         if (state is CrisisAdded ||
@@ -64,35 +70,32 @@ class _DiaryPageState extends State<DiaryPage> {
         }
       },
       child: Scaffold(
+        backgroundColor: cs.surface,
         body: SafeArea(
-          child: Column(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
             children: [
-              // Calendario con altura controlada
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: 320,
-                      maxHeight: constraints.maxHeight * 0.55,
-                    ),
-                    child: const DiaryCalendar(),
-                  );
-                },
+              // ---------------------------------------------------------
+              // CALENDARIO PREMIUM
+              // ---------------------------------------------------------
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 320),
+                child: const DiaryCalendar(),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: _buildActionButtons(context),
-              ),
+              // ---------------------------------------------------------
+              // BOTONES PREMIUM
+              // ---------------------------------------------------------
+              _buildActionButtons(context),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
 
-              // Scroll SOLO para las tarjetas
-              Expanded(
-                child: _buildScrollableContent(context),
-              ),
+              // ---------------------------------------------------------
+              // TARJETAS (CRISIS + EVENTOS)
+              // ---------------------------------------------------------
+              _buildScrollableContent(context),
             ],
           ),
         ),
@@ -100,6 +103,9 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
+  // ---------------------------------------------------------
+  // BOTONES PREMIUM
+  // ---------------------------------------------------------
   Widget _buildActionButtons(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -118,7 +124,7 @@ class _DiaryPageState extends State<DiaryPage> {
               CustomActionButton(
                 text: "Añadir Efecto",
                 icon: Icons.add,
-                backgroundColor: AppColors.secondary,
+                backgroundColor: AppColors.errorlight,
                 onPressed: () => _handleAddAdverseEvent(context),
               ),
             ],
@@ -130,7 +136,7 @@ class _DiaryPageState extends State<DiaryPage> {
             Expanded(
               child: CustomActionButton(
                 text: "Añadir crisis",
-                icon: Icons.add,
+                icon: Icons.monitor_heart_outlined,
                 backgroundColor: AppColors.primary,
                 onPressed: () => _handleAddCrisis(context),
               ),
@@ -140,7 +146,7 @@ class _DiaryPageState extends State<DiaryPage> {
               child: CustomActionButton(
                 text: "Añadir Efecto",
                 icon: Icons.add,
-                backgroundColor: AppColors.secondary,
+                backgroundColor: AppColors.errorlight,
                 onPressed: () => _handleAddAdverseEvent(context),
               ),
             ),
@@ -150,7 +156,13 @@ class _DiaryPageState extends State<DiaryPage> {
     );
   }
 
+  // ---------------------------------------------------------
+  // CONTENIDO SCROLLEABLE (CRISIS + EVENTOS)
+  // ---------------------------------------------------------
   Widget _buildScrollableContent(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+
     return BlocBuilder<DiaryBloc, DiaryState>(
       buildWhen: (previous, current) =>
           current is TarjetasLoaded ||
@@ -166,10 +178,10 @@ class _DiaryPageState extends State<DiaryPage> {
           final eventos = state.ae;
 
           if (crises.isEmpty && eventos.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                "No hay crisis ni efectos registrados en este día",
-                style: TextStyle(fontSize: 16),
+                "No hay crisis ni efectos registrados",
+                style: Theme.of(context).textTheme.bodySmall!,
                 textAlign: TextAlign.center,
               ),
             );
@@ -177,19 +189,43 @@ class _DiaryPageState extends State<DiaryPage> {
 
           final items = <Widget>[];
 
+          // ---------------------------------------------------------
+          // SECCIÓN CRISIS
+          // ---------------------------------------------------------
           if (crises.isNotEmpty) {
-            items.add(_buildSectionHeader("Crisis", crises.length));
+            items.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Text(
+                  "Crisis",
+                  style: text.titleMedium!,
+                ),
+              ),
+            );
+
             items.addAll(crises.map((c) => CrisisCard(crisis: c)));
-            items.add(const SizedBox(height: 16));
+            items.add(const SizedBox(height: 20));
           }
 
+          // ---------------------------------------------------------
+          // SECCIÓN EVENTOS ADVERSOS (SIN CONTADOR)
+          // ---------------------------------------------------------
           if (eventos.isNotEmpty) {
-            items.add(_buildSectionHeader("Eventos Adversos", eventos.length));
+            items.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Text(
+                  "Eventos Adversos",
+                  style: text.titleMedium!,
+                ),
+              ),
+            );
+
             items.addAll(eventos.map((e) => AdverseEventCard(adverseEvent: e)));
           }
 
-          return ListView(
-            padding: const EdgeInsets.only(bottom: 16),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: items,
           );
         }
@@ -198,43 +234,19 @@ class _DiaryPageState extends State<DiaryPage> {
           return Center(child: Text("Error: ${state.message}"));
         }
 
-        return const Center(
-          child: Text("Selecciona un día para ver los registros"),
+        return Center(
+          child: Text(
+            "Selecciona un día para ver los registros",
+            style: text.bodyLarge,
+          ),
         );
       },
     );
   }
 
-  Widget _buildSectionHeader(String title, int count) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha:0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  // ---------------------------------------------------------
+  // LÓGICA PARA AÑADIR CRISIS
+  // ---------------------------------------------------------
   Future<void> _handleAddCrisis(BuildContext context) async {
     final result = await showDialog<Crisis>(
       context: context,
@@ -263,6 +275,9 @@ class _DiaryPageState extends State<DiaryPage> {
     }
   }
 
+  // ---------------------------------------------------------
+  // LÓGICA PARA AÑADIR EVENTO ADVERSO
+  // ---------------------------------------------------------
   Future<void> _handleAddAdverseEvent(BuildContext context) async {
     final result = await showDialog<AdverseEvent>(
       context: context,

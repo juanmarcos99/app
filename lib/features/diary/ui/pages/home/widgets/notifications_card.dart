@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/theme/style/colors.dart';
 
 class NotificationCard extends StatelessWidget {
   final String text;
@@ -8,34 +7,55 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el esquema de colores y textos del tema actual
+    final cs = Theme.of(context).colorScheme;
+    final textStyle = Theme.of(context).textTheme;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      // Alineamos los márgenes a los de CrisisCard (12 horizontal, 8 vertical)
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(18),
+        color: cs.surface, // Mismo fondo que CrisisCard
+        borderRadius: BorderRadius.circular(16), // Mismo radio
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.4),
-          width: 1.2,
+          color: cs.surfaceContainerHighest, // Mismo color de borde
+          width: 1.0, 
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.notifications_active_outlined,
-            color: AppColors.primary,
-            size: 28,
+          // Contenedor de icono estilo "Premium" (igual al de CrisisCard)
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: cs.primary.withOpacity(0.10),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.notifications_active_outlined,
+              color: cs.primary,
+              size: 26, // Ajustado para equilibrio visual
+            ),
           ),
-          const SizedBox(width: 12),
+          
+          const SizedBox(width: 16),
+          
           Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.black,
-                height: 1.35,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: textStyle.bodyLarge?.copyWith(
+                    color: cs.onSurface,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -1,4 +1,3 @@
-import 'package:app/core/core_injection.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
@@ -7,16 +6,16 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
+import 'package:app/core/core.dart';
 
 // RouteObserver global para detectar navegación
-final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await initializeDateFormatting('es_ES', null);
 
@@ -43,6 +42,10 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (_) => GetIt.instance.get<HomeBloc>()),
       ],
       child: MaterialApp(
+        theme: AppTheme.lightTheme, // Tema claro
+        darkTheme: AppTheme.darkTheme, // Tema oscuro
+        themeMode: ThemeMode.system, // Cambia automáticamente según el teléfono
+
         initialRoute: AppRoutes.login,
         routes: {
           AppRoutes.login: (context) => const LoginPage(),
@@ -56,7 +59,8 @@ class MainApp extends StatelessWidget {
           AppRoutes.pdf: (context) => const ExportPdfPage(),
           AppRoutes.changePassword: (context) => const ChangePasswordScreen(),
           AppRoutes.profileData: (context) => const ProfileDataPage(),
-          AppRoutes.medicalAppointment: (context) => const MedicalAppointmentPage(),
+          AppRoutes.medicalAppointment: (context) =>
+              const MedicalAppointmentPage(),
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

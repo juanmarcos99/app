@@ -45,193 +45,227 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: BlocConsumer<AuthBloc, AuthState>(
-            listenWhen: (previous, current) =>
-                current is AuthFailure ||
-                current is UserLoggedIn ||
-                current is RememberUsersLoaded ||
-                current is PasswordLoaded,
-            listener: (context, state) {
-              if (state is AuthFailure) {
-                AppSnack.show(context, state.message, color: AppColors.error);
-              }
-              if (state is UserLoggedIn) {
-                usernameController.clear();
-                autocompleteController?.clear();
-                passwordController.clear();
-                AppSnack.show(
-                  context,
-                  "Bienvenido ${state.user.userName}",
-                  color: AppColors.success,
-                );
-                Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
-              }
-              if (state is RememberUsersLoaded) {
-                setState(() {
-                  rememberedUsers = state.users;
-                });
-              }
-              if (state is PasswordLoaded) {
-                passwordController.text = state.password;
-              }
-            },
-            builder: (context, state) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Iniciar Sesión",
-                              style: AppTypography.headline1Light,
+      backgroundColor: theme.colorScheme.surface,
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listenWhen: (previous, current) =>
+            current is AuthFailure ||
+            current is UserLoggedIn ||
+            current is RememberUsersLoaded ||
+            current is PasswordLoaded,
+        listener: (context, state) {
+          if (state is AuthFailure) {
+            AppSnack.show(context, state.message, color: AppColors.error);
+          }
+          if (state is UserLoggedIn) {
+            usernameController.clear();
+            autocompleteController?.clear();
+            passwordController.clear();
+            AppSnack.show(
+              context,
+              "Bienvenido ${state.user.userName}",
+              color: AppColors.success,
+            );
+            Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
+          }
+          if (state is RememberUsersLoaded) {
+            setState(() => rememberedUsers = state.users);
+          }
+          if (state is PasswordLoaded) {
+            passwordController.text = state.password;
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // ---------------- HERO SIN SAFEAREA ----------------
+                SizedBox(
+                  height: 300,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Image.asset(
+                          'assets/images/login_hero1.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                const Color.fromARGB(69, 0, 0, 0),
+                                theme.colorScheme.surface,
+                              ],
                             ),
-                            const SizedBox(height: 30),
-                            Image.asset(
-                              'assets/images/login.png',
-                              height: 240,
-                              width: 320,
-                            ),
-                            const SizedBox(height: 5),
-                            Autocomplete<String>(
-                              optionsBuilder: (TextEditingValue value) {
-                                if (value.text.isEmpty) return rememberedUsers;
-                                return rememberedUsers.where(
-                                  (u) => u.toLowerCase().contains(
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ---------------- CONTENIDO CON SAFEAREA ----------------
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30),
+
+                        Text(
+                          "Iniciar Sesión",
+                          style: theme.textTheme.displayLarge,
+                        ),
+                        const SizedBox(height: 8),
+
+                        Text(
+                          "Acceda a su diario de crisis introduciendo sus credenciales.",
+                          style: theme.textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        Autocomplete<String>(
+                          optionsBuilder: (TextEditingValue value) {
+                            if (value.text.isEmpty) return rememberedUsers;
+                            return rememberedUsers.where(
+                              (u) => u.toLowerCase().contains(
                                     value.text.toLowerCase(),
                                   ),
-                                );
-                              },
-                              onSelected: (username) {
-                                usernameController.text = username;
-                                context.read<AuthBloc>().add(
-                                  LoadPasswordEvent(username),
-                                );
-                              },
-                              fieldViewBuilder: (
-                                context,
-                                controller,
-                                focusNode,
-                                onFieldSubmitted,
-                              ) {
-                                autocompleteController = controller;
-                                return CustomTextField(
-                                  label: 'Usuario',
-                                  icon: Icons.person_outline,
-                                  controller: controller,
-                                  focusNode: focusNode,
-                                  onFieldSubmitted: onFieldSubmitted,
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              label: 'Contraseña',
-                              hint: '',
-                              icon: Icons.lock_outline,
-                              obscure: true,
-                              controller: passwordController,
-                            ),
-                            const SizedBox(height: 10),
+                            );
+                          },
+                          onSelected: (username) {
+                            usernameController.text = username;
+                            context
+                                .read<AuthBloc>()
+                                .add(LoadPasswordEvent(username));
+                          },
+                          fieldViewBuilder: (
+                            context,
+                            controller,
+                            focusNode,
+                            onFieldSubmitted,
+                          ) {
+                            autocompleteController = controller;
+                            return CustomTextField(
+                              label: 'Usuario',
+                              icon: Icons.person_outline,
+                              controller: controller,
+                              focusNode: focusNode,
+                              onFieldSubmitted: onFieldSubmitted,
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        CustomTextField(
+                          label: 'Contraseña',
+                          hint: '',
+                          icon: Icons.lock_outline,
+                          obscure: true,
+                          controller: passwordController,
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: rememberMe,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          rememberMe = value ?? false;
-                                        });
-                                      },
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                    const Text(
-                                      "Recordarme",
-                                      style: AppTypography.captionLight,
-                                    ),
-                                  ],
+                                Checkbox(
+                                  value: rememberMe,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      rememberMe = value ?? false;
+                                    });
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: VisualDensity.compact,
                                 ),
-                                LetterNavButton(
-                                  letter: "¿Olvidaste tu contraseña?",
-                                  onTap: () {},
-                                  fontSize: 13,
-                                  color: AppColors.textSecondary,
+                                Text(
+                                  "Recordarme",
+                                  style: theme.textTheme.bodySmall,
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 59),
-                            PrimaryButton(
-                              text: 'Entrar',
-                              onPressed: () {
-                                if (autocompleteController != null) {
-                                  usernameController.text =
-                                      autocompleteController!.text.trim();
-                                }
-                                final username =
-                                    usernameController.text.trim();
-                                final password =
-                                    passwordController.text.trim();
-                                context.read<AuthBloc>().add(
-                                  LoginUserEvent(username, password, rememberMe),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 25),
-                            LetterNavButton(
-                              letter: "Cambiar contraseña",
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.changePassword,
-                                );
-                              },
-                              fontSize: 13,
-                              color: AppColors.error,
-                            ),
-                            const SizedBox(height: 20),
+                           
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "¿Aún no tienes cuenta?",
-                          style: AppTypography.captionLight,
-                        ),
-                        LetterNavButton(
-                          letter: "Registrarse",
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.register);
+
+                        const SizedBox(height: 30),
+
+                        PrimaryButton(
+                          text: 'Entrar',
+                          onPressed: () {
+                            if (autocompleteController != null) {
+                              usernameController.text =
+                                  autocompleteController!.text.trim();
+                            }
+                            final username = usernameController.text.trim();
+                            final password = passwordController.text.trim();
+                            context.read<AuthBloc>().add(
+                                  LoginUserEvent(
+                                      username, password, rememberMe),
+                                );
                           },
-                          fontSize: 16,
-                          color: AppColors.primary,
                         ),
+
+                        const SizedBox(height: 25),
+
+                        LetterNavButton(
+                          letter: "Cambiar contraseña",
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.changePassword,
+                            );
+                          },
+                          fontSize: 13,
+                          color: theme.colorScheme.primary,
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "¿Aún no tienes cuenta?",
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            LetterNavButton(
+                              letter: "Registrarse",
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.register);
+                              },
+                              fontSize: 16,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
-                ],
-              );
-            },
-          ),
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

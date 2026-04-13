@@ -18,18 +18,13 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Container(
-      color:  AppColors.white,
-
-      // Espaciado externo del calendario
+      color: cs.surface,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-
       child: ConstrainedBox(
-        // Altura mínima para evitar que el calendario se aplaste
-        constraints: const BoxConstraints(
-          minHeight: 380,
-        ),
-
+        constraints: const BoxConstraints(minHeight: 380),
         child: BlocBuilder<DiaryBloc, DiaryState>(
           buildWhen: (prev, curr) =>
               curr is CalendarLoaded || curr is CalendarError,
@@ -48,7 +43,13 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
               lastDay: DateTime.now(),
               focusedDay: focusedDay,
               selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-              daysOfWeekHeight: 32,
+
+              onPageChanged: (newFocusedDay) {
+                setState(() {
+                  focusedDay = newFocusedDay;
+                });
+              },
+
               onDaySelected: (day, newFocusedDay) {
                 if (day.isAfter(DateTime.now())) return;
                 final normalized = DateUtils.dateOnly(day);
@@ -78,89 +79,74 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
               calendarFormat: CalendarFormat.month,
               startingDayOfWeek: StartingDayOfWeek.monday,
 
-              headerStyle: const HeaderStyle(
+              headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
                 titleTextStyle: TextStyle(
-                  color: Colors.black,
+                  color: cs.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.black),
-                rightChevronIcon: Icon(Icons.chevron_right, color: Colors.black),
-
-                // Espaciado inferior del header
-                headerMargin: EdgeInsets.only(bottom: 12),
+                leftChevronIcon:
+                    Icon(Icons.chevron_left, color: cs.onSurface),
+                rightChevronIcon:
+                    Icon(Icons.chevron_right, color: cs.onSurface),
+                headerMargin: const EdgeInsets.only(bottom: 12),
               ),
 
-              daysOfWeekStyle: const DaysOfWeekStyle(
+              daysOfWeekStyle: DaysOfWeekStyle(
                 weekdayStyle: TextStyle(
-                  color:  AppColors.black,
+                  color: cs.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
                 weekendStyle: TextStyle(
-                  color:  AppColors.black,
+                  color: cs.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
-
-                // Espaciado entre días de semana y celdas
-                decoration: BoxDecoration(),
               ),
 
               calendarStyle: CalendarStyle(
                 cellMargin: const EdgeInsets.all(4),
-
-                // Altura mínima de cada celda
-                cellPadding: const EdgeInsets.symmetric(vertical: 6),
-
-                outsideTextStyle: const TextStyle(color: AppColors.gray400),
-                defaultTextStyle: const TextStyle(fontSize: 14),
-                weekendTextStyle: const TextStyle(fontSize: 14),
-                todayDecoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                ),
-                selectedDecoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                ),
+                cellPadding: EdgeInsets.zero,
+                outsideTextStyle:
+                    TextStyle(color: cs.onSurface.withOpacity(0.40)),
+                defaultTextStyle:
+                    TextStyle(color: cs.onSurface, fontSize: 14),
+                weekendTextStyle:
+                    TextStyle(color: cs.onSurface, fontSize: 14),
+                todayDecoration: const BoxDecoration(),
+                selectedDecoration: const BoxDecoration(),
               ),
 
               calendarBuilders: CalendarBuilders(
-                defaultBuilder: (context, day, focusedDay) {
+                defaultBuilder: (context, day, _) {
                   final normalized = DateUtils.dateOnly(day);
-                  final hasCrisis = crisisDays.contains(normalized);
-                  final hasAE = aeDays.contains(normalized);
-
                   return _buildDayCell(
+                    cs: cs,
                     day: day,
-                    backgroundColor: AppColors.white,
-                    hasCrisis: hasCrisis,
-                    hasAE: hasAE,
+                    isSelected: false,
+                    hasCrisis: crisisDays.contains(normalized),
+                    hasAE: aeDays.contains(normalized),
                   );
                 },
-
-                todayBuilder: (context, day, focusedDay) {
+                todayBuilder: (context, day, _) {
                   final normalized = DateUtils.dateOnly(day);
-                  final hasCrisis = crisisDays.contains(normalized);
-                  final hasAE = aeDays.contains(normalized);
-
                   return _buildDayCell(
+                    cs: cs,
                     day: day,
-                    backgroundColor: AppColors.surfaceSoft,
-                    hasCrisis: hasCrisis,
-                    hasAE: hasAE,
+                    isSelected: false,
+                    hasCrisis: crisisDays.contains(normalized),
+                    hasAE: aeDays.contains(normalized),
                   );
                 },
-
-                selectedBuilder: (context, day, focusedDay) {
+                selectedBuilder: (context, day, _) {
                   final normalized = DateUtils.dateOnly(day);
-                  final hasCrisis = crisisDays.contains(normalized);
-                  final hasAE = aeDays.contains(normalized);
-
                   return _buildDayCell(
+                    cs: cs,
                     day: day,
-                    backgroundColor: AppColors.primaryLight,
-                    hasCrisis: hasCrisis,
-                    hasAE: hasAE,
+                    isSelected: true,
+                    hasCrisis: crisisDays.contains(normalized),
+                    hasAE: aeDays.contains(normalized),
                   );
                 },
               ),
@@ -172,62 +158,70 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
   }
 
   Widget _buildDayCell({
+    required ColorScheme cs,
     required DateTime day,
-    required Color backgroundColor,
+    required bool isSelected,
     required bool hasCrisis,
     required bool hasAE,
   }) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: AppColors.gray300),
-          ),
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.all(6),
-          child: Text(
-            '${day.day}',
-            style: const TextStyle(
-              color: AppColors.black,
-              fontSize: 14,
-            ),
-          ),
+    final bool isDisabled = day.isAfter(DateTime.now());
+
+    final Color textColor = isDisabled
+        ? cs.onSurface.withOpacity(0.20)
+        : isSelected
+            ? cs.primary
+            : cs.onSurface;
+
+    final Color bgColor =
+        isSelected ? cs.primary.withOpacity(0.20) : Colors.transparent;
+
+    return Center(
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: BoxDecoration(
+          color: bgColor,
+          shape: BoxShape.circle,
         ),
-
-        if (hasCrisis)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: FractionallySizedBox(
-              widthFactor: 0.7,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${day.day}',
+              style: TextStyle(
+                color: textColor,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-
-        if (hasAE)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: FractionallySizedBox(
-              widthFactor: 0.7,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 2),
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+            if (hasCrisis || hasAE)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (hasCrisis)
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: cs.primary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  if (hasAE)
+                    Container(
+                      width: 7,
+                      height: 7,
+                      margin: const EdgeInsets.only(left: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.errorlight,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }

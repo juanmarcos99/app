@@ -3,7 +3,7 @@ import '../../../../diary.dart';
 import '../../../../../../core/core.dart';
 
 class RegisterMedicationDialog extends StatefulWidget {
-  final Medication? initialMedication; // null = registrar, no null = editar
+  final Medication? initialMedication; 
 
   const RegisterMedicationDialog({super.key, this.initialMedication});
 
@@ -95,101 +95,92 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return AlertDialog(
-      backgroundColor: AppColors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      title: Text(isEditing ? "Editar Medicación" : "Registrar Medicación"),
+      backgroundColor: cs.surface,
+      surfaceTintColor: cs.surfaceTint,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        isEditing ? "Editar Medicación" : "Registrar Medicación",
+        style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.60,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Nombre del medicamento", style: TextStyle(fontSize: 16)),
+                _buildLabel("Nombre del medicamento", cs),
                 TextFormField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Ej: Paracetamol",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "El nombre es requerido";
-                    }
-                    return null;
-                  },
+                  decoration: _inputDecoration("Ej: Paracetamol", cs),
+                  style: TextStyle(color: cs.onSurface),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? "Requerido" : null,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                const Text("Dosis", style: TextStyle(fontSize: 16)),
+                _buildLabel("Dosis", cs),
                 TextFormField(
                   controller: dosageController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Ej: 500 mg",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "La dosis es requerida";
-                    }
-                    return null;
-                  },
+                  decoration: _inputDecoration("Ej: 500 mg", cs),
+                  style: TextStyle(color: cs.onSurface),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? "Requerido" : null,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                const Text("Notas (opcional)", style: TextStyle(fontSize: 16)),
+                _buildLabel("Notas (opcional)", cs),
                 TextFormField(
                   controller: notesController,
                   maxLines: 2,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Ej: Tomar con comida",
+                  decoration: _inputDecoration("Ej: Tomar con comida", cs),
+                  style: TextStyle(color: cs.onSurface),
+                ),
+                const SizedBox(height: 16),
+
+                // Switch de notificaciones con estilo
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SwitchListTile(
+                    title: Text("Programar notificaciones", style: textTheme.bodyMedium),
+                    value: shouldScheduleNotifications,
+                    activeColor: cs.primary,
+                    onChanged: (v) => setState(() => shouldScheduleNotifications = v),
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                Row(
-                  children: [
-                    Switch(
-                      value: shouldScheduleNotifications,
-                      onChanged: (v) {
-                        setState(() => shouldScheduleNotifications = v);
-                      },
-                    ),
-                    const Text("Programar notificaciones", style: TextStyle(fontSize: 16)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                const Text("Horarios", style: TextStyle(fontSize: 16)),
-                const SizedBox(height: 8),
+                _buildLabel("Horarios", cs),
                 Wrap(
                   spacing: 8,
-                  children: selectedSchedules.map((schedule) {
-                    final formatted = schedule.time?.format(context);
-                    return Chip(
-                      label: Text(formatted!),
-                      deleteIcon: const Icon(Icons.close),
-                      onDeleted: () {
-                        setState(() {
-                          selectedSchedules.remove(schedule);
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: _addSchedule,
-                  icon: const Icon(Icons.add),
-                  label: const Text("Añadir horario"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                  ),
+                  runSpacing: 4,
+                  children: [
+                    ...selectedSchedules.map((schedule) {
+                      final formatted = schedule.time?.format(context);
+                      return Chip(
+                        label: Text(formatted!, style: TextStyle(color: cs.onSecondaryContainer)),
+                        backgroundColor: cs.secondaryContainer,
+                        deleteIcon: Icon(Icons.close, size: 16, color: cs.onSecondaryContainer),
+                        onDeleted: () => setState(() => selectedSchedules.remove(schedule)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      );
+                    }),
+                    ActionChip(
+                      avatar: Icon(Icons.add, size: 18, color: cs.onPrimary),
+                      label: Text("Añadir", style: TextStyle(color: cs.onPrimary)),
+                      backgroundColor: cs.primary,
+                      onPressed: _addSchedule,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -199,18 +190,51 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text("Cancelar"),
+          child: Text("Cancelar", style: TextStyle(color: cs.primary)),
         ),
-        ElevatedButton.icon(
+        ElevatedButton(
           onPressed: _onSave,
-          icon: const Icon(Icons.save, color: AppColors.white),
-          label: Text(
-            isEditing ? "Guardar cambios" : "Guardar",
-            style: const TextStyle(color: AppColors.white),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: cs.primary,
+            foregroundColor: AppColors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+          child: Text(isEditing ? "Guardar cambios" : "Guardar"),
         ),
       ],
+    );
+  }
+
+  Widget _buildLabel(String text, ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6, left: 4),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint, ColorScheme cs) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: cs.onSurfaceVariant.withOpacity(0.5)),
+      filled: true,
+      fillColor: cs.surfaceContainerHighest.withOpacity(0.3),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: cs.outlineVariant),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: cs.outlineVariant.withOpacity(0.5)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: cs.primary, width: 2),
+      ),
     );
   }
 }

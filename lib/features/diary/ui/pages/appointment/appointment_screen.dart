@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/theme/style/colors.dart';
 import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +17,6 @@ class _MedicalAppointmentPageState extends State<MedicalAppointmentPage> {
   @override
   void initState() {
     super.initState();
-
-    // Obtener userId desde AuthBloc
     final authState = context.read<AuthBloc>().state;
     if (authState is UserLoggedIn) {
       userId = authState.user.id!;
@@ -29,25 +26,18 @@ class _MedicalAppointmentPageState extends State<MedicalAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return BlocListener<AppointmentBloc, AppointmentState>(
       listener: (context, state) {
         if (state is AppointmentAdded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Cita añadida correctamente"),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          AppSnack.show(context, "Cita añadida correctamente");
           context.read<AppointmentBloc>().add(LoadAppointmentsEvent(userId!));
         }
 
         if (state is AppointmentDeleted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Cita eliminada"),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          AppSnack.show(context, "Cita eliminada", color: AppColors.error);
           context.read<AppointmentBloc>().add(LoadAppointmentsEvent(userId!));
         }
 
@@ -55,116 +45,164 @@ class _MedicalAppointmentPageState extends State<MedicalAppointmentPage> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
+              backgroundColor: theme.dialogBackgroundColor,
               content: SelectableText(
                 state.message,
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
               ),
             ),
           );
         }
       },
-
       child: Scaffold(
-        backgroundColor: AppColors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Título
-              const Text(
-                "Selecciona el día de tu\nturno médico",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              const Text(
-                "Elige una fecha disponible para tu consulta",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
-              ),
-              const SizedBox(height: 32),
-
-              // Botón agendar turno
-              Center(
-                child: PrimaryButton(
-                  text: "Agendar",
-                  onPressed: () async {
-                    final result = await showDialog<Appointment>(
-                      context: context,
-                      useRootNavigator: false,
-                      builder: (_) => const AppointmentDialog(),
-                    );
-
-                    if (result != null && userId != null) {
-                      final appointmentWithUser = result.copyWith(userId: userId);
-                      context.read<AppointmentBloc>().add(
-                        AddAppointmentEvent(appointmentWithUser),
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Lista de citas
-              Expanded(
-                child: BlocBuilder<AppointmentBloc, AppointmentState>(
-                  builder: (context, state) {
-                    if (state is AppointmentLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (state is AppointmentLoaded) {
-                      if (state.appointments.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "No hay citas registradas",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        );
-                      }
-
-                      return ListView.builder(
-                        itemCount: state.appointments.length,
-                        itemBuilder: (context, index) {
-                          final appointment = state.appointments[index];
-                          return AppointmentCard(appointment: appointment);
-                        },
-                      );
-                    }
-
-                    if (state is AppointmentError) {
-                      return Center(
-                        child: SelectableText(
-                          state.message,
-                          style: const TextStyle(color: AppColors.error),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: Column(
+          children: [
+            // --- SECCIÓN HERO CON IMAGEN ---
+            SizedBox(
+              height: 300,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(
+                      'assets/images/appointment.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Degradado para integrar con el fondo
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            theme.scaffoldBackgroundColor,
+                          ],
                         ),
-                      );
-                    }
+                      ),
+                    ),
+                  ),
+                  // Botón de atrás
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 10,
+                    left: 16,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  // Títulos sobre la imagen
+                  Positioned(
+                    left: 32,
+                    right: 32,
+                    bottom: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Turno médico",
+                          style: theme.textTheme.displayLarge!.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Selecciona el día de tu consulta",
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-                    return const SizedBox.shrink();
-                  },
+            // --- CONTENIDO INFERIOR ---
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    PrimaryButton(
+                      text: "Agendar",
+                      onPressed: () async {
+                        final result = await showDialog<Appointment>(
+                          context: context,
+                          useRootNavigator: false,
+                          builder: (_) => const AppointmentDialog(),
+                        );
+
+                        if (result != null && userId != null) {
+                          final appointmentWithUser = result.copyWith(
+                            userId: userId,
+                          );
+                          context.read<AppointmentBloc>().add(
+                            AddAppointmentEvent(appointmentWithUser),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Lista de citas
+                    Expanded(
+                      child: BlocBuilder<AppointmentBloc, AppointmentState>(
+                        builder: (context, state) {
+                          if (state is AppointmentLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (state is AppointmentLoaded) {
+                            if (state.appointments.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  "No hay citas registradas",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              itemCount: state.appointments.length,
+                              itemBuilder: (context, index) {
+                                return AppointmentCard(
+                                  appointment: state.appointments[index],
+                                );
+                              },
+                            );
+                          }
+
+                          if (state is AppointmentError) {
+                            return Center(
+                              child: SelectableText(
+                                state.message,
+                                style: TextStyle(color: colorScheme.error),
+                              ),
+                            );
+                          }
+
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

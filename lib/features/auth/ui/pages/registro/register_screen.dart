@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/core/core.dart';
 import 'package:app/features/auth/auth.dart';
 
 class RegisterUserPage extends StatefulWidget {
@@ -11,47 +10,46 @@ class RegisterUserPage extends StatefulWidget {
 }
 
 class _RegisterUserPageState extends State<RegisterUserPage> {
-  // Controladores de texto
+  // Controladores
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  //controles para los campos adicionales
+
   final caregiverEmailController = TextEditingController();
   final caregiverPhoneController = TextEditingController();
   final doctorCodeController = TextEditingController();
 
-  String? selectedRole; // paciente o doctor
+  String selectedRole = "patient"; // default
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Imagen dinámica según rol
+    final heroImage = selectedRole == "doctor"
+        ? "assets/images/doctor_register.png"
+        : "assets/images/patient_register.png";
+
     return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        automaticallyImplyLeading: true, // muestra la flechita
-      ),
-      //listener q esta a la escucha de los estados y raciona a ellos
+      backgroundColor: theme.colorScheme.surface,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          // si el usuario se registro completamente navega a otra pantalla
           if (state is UserFullyRegistrated) {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
                   "Bienvenido ${state.user.userName}",
-                  style: AppTypography.captionDark,
+                  style: theme.textTheme.bodyMedium,
                 ),
-                backgroundColor: AppColors.success,
+                backgroundColor: theme.colorScheme.primary,
               ),
             );
           }
 
-          //si el nombre de usuario existe envia un aviso
           if (state is UserNameExist) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -60,19 +58,15 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
             );
           }
 
-          // si se registro el usuario pero es un paciente se registra el los datos del paciente tambien
-          if (state is UserRegistrated) {
-            if (state.user.role == 'patient') {
-              final patient = Patient(
-                userId: state.user.id!,
-                caregiverNumber: caregiverPhoneController.text,
-                caregiverEmail: caregiverEmailController.text,
-              );
-              context.read<AuthBloc>().add(RegisterPatientEvent(patient));
-            }
+          if (state is UserRegistrated && state.user.role == 'patient') {
+            final patient = Patient(
+              userId: state.user.id!,
+              caregiverNumber: caregiverPhoneController.text,
+              caregiverEmail: caregiverEmailController.text,
+            );
+            context.read<AuthBloc>().add(RegisterPatientEvent(patient));
           }
 
-          //si ocurre un error se envia un aviso
           if (state is AuthFailure) {
             ScaffoldMessenger.of(
               context,
@@ -80,200 +74,317 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
           }
         },
 
-        //------------------------parte visual-----------------------------------------
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 29, vertical: 16),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: const Text(
-                  "Crear Cuenta",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 3),
-              const Text(
-                "Rellena los campos y créate una cuenta",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.gray300,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const SizedBox(height: 57),
-
-              // Campos principales
-              CustomTextField(
-                label: 'Nombre',
-                hint: '',
-                icon: Icons.person_outline,
-                controller: nameController,
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Apellidos',
-                hint: '',
-                icon: Icons.badge_outlined,
-                controller: lastNameController,
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Teléfono',
-                hint: '',
-                icon: Icons.phone_outlined,
-                controller: phoneController,
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Correo',
-                hint: '',
-                icon: Icons.email_outlined,
-                controller: emailController,
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Usuario',
-                hint: '',
-                icon: Icons.person_2_outlined,
-                controller: usernameController,
-              ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Contraseña',
-                hint: '',
-                icon: Icons.lock_outline,
-                obscure: true,
-                controller: passwordController,
-              ),
-              const SizedBox(height: 30),
-
-              // Radios para rol
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Radio<String>(
-                        value: "patient",
-                        // ignore: deprecated_member_use
-                        groupValue: selectedRole,
-                        activeColor: AppColors.error,
-                        // ignore: deprecated_member_use
-                        onChanged: (val) => setState(() => selectedRole = val),
-                      ),
-                      Text(
-                        "Paciente",
-                        style: TextStyle(color: Colors.red.shade900),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 40),
-                  Row(
-                    children: [
-                      Radio<String>(
-                        value: "doctor",
-                        // ignore: deprecated_member_use
-                        groupValue: selectedRole,
-                        activeColor: AppColors.secondary,
-                        // ignore: deprecated_member_use
-                        onChanged: (val) => setState(() => selectedRole = val),
-                      ),
-                      Text(
-                        "Doctor",
-                        style: TextStyle(color: AppColors.secondary),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Campos condicionales
-              if (selectedRole == "doctor") ...[
-                CustomTextField(
-                  label: 'Código',
-                  hint: '',
-                  icon: Icons.vpn_key_outlined,
-                  controller: doctorCodeController,
-                ),
-              ] else if (selectedRole == "patient") ...[
-                CustomTextField(
-                  label: 'Teléfono del cuidador',
-                  hint: '',
-                  icon: Icons.phone_forwarded_outlined,
-                  controller: caregiverPhoneController,
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  label: 'Correo del cuidador',
-                  hint: '',
-                  icon: Icons.alternate_email_outlined,
-                  controller: caregiverEmailController,
-                ),
-              ],
-
-              const SizedBox(height: 30),
-
-              // Botón de registro
-              PrimaryButton(
-                text: 'Registrarse',
-                onPressed: () {
-                  //se validan q los campos esten llenos
-                  if (nameController.text.isEmpty ||
-                      lastNameController.text.isEmpty ||
-                      emailController.text.isEmpty ||
-                      usernameController.text.isEmpty ||
-                      passwordController.text.isEmpty ||
-                      selectedRole == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Por favor, rellena todos los campos"),
-                      ),
-                    );
-                    return;
-                  }
-                  //se valida q haya al menos un telefono
-                  if (phoneController.text == "" &&
-                      caregiverPhoneController.text == "" &&
-                      selectedRole == "patient") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Por favor, ingresa al menos un teléfono",
+              // ---------------- HERO ----------------
+              SizedBox(
+                height: 300,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(heroImage, fit: BoxFit.cover),
+                    ),
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              const Color.fromARGB(61, 0, 0, 0),
+                              theme.colorScheme.surface,
+                            ],
+                          ),
                         ),
                       ),
-                    );
-                    return;
-                  }
-                  //se valida q el codigo del doctor este bien escrito
-                  if (selectedRole == "doctor" &&
-                      doctorCodeController.text != "1234") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Código de doctor inválido"),
+                    ),
+                    // Flechita de retroceso arriba a la izquierda
+                    Positioned(
+                      top: 16,
+                      left: 16,
+
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+
+                        color: Colors.white, // flecha blanca sobre la imagen
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    );
-                    return;
-                  }
-                  //se crea el usuer para enviarselo al bloc
-                  final user = User(
-                    id: null,
-                    name: nameController.text,
-                    lastName: lastNameController.text,
-                    email: emailController.text,
-                    phoneNumber: phoneController.text,
-                    userName: usernameController.text,
-                    passwordHash: passwordController.text,
-                    role: selectedRole ?? '',
-                  );
-                  context.read<AuthBloc>().add(RegisterUserEvent(user));
-                },
+                    ),
+                    Positioned(
+                      left: 20,
+                      bottom: 40,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Crear Cuenta",
+                            style: theme.textTheme.displayLarge!.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Rellena los campos para comenzar tu proceso de atención.",
+                            style: theme.textTheme.bodyMedium!.copyWith(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 30),
+
+              // ---------------- FORM CONTAINER ----------------
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 30,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    // ---------------- ROLE TILES ----------------
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _RoleTile(
+                            title: "Paciente",
+                            icon: Icons.person,
+                            selected: selectedRole == "patient",
+                            onTap: () =>
+                                setState(() => selectedRole = "patient"),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _RoleTile(
+                            title: "Doctor",
+                            icon: Icons.medical_services,
+                            selected: selectedRole == "doctor",
+                            onTap: () =>
+                                setState(() => selectedRole = "doctor"),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // ---------------- INPUTS ----------------
+                    CustomTextField(
+                      label: 'Nombre',
+                      icon: Icons.person_outline,
+                      controller: nameController,
+                    ),
+                    const SizedBox(height: 20),
+
+                    CustomTextField(
+                      label: 'Apellidos',
+                      icon: Icons.badge_outlined,
+                      controller: lastNameController,
+                    ),
+                    const SizedBox(height: 20),
+
+                    CustomTextField(
+                      label: 'Teléfono',
+                      icon: Icons.phone_outlined,
+                      controller: phoneController,
+                    ),
+                    const SizedBox(height: 20),
+
+                    CustomTextField(
+                      label: 'Correo',
+                      icon: Icons.email_outlined,
+                      controller: emailController,
+                    ),
+                    const SizedBox(height: 20),
+
+                    CustomTextField(
+                      label: 'Usuario',
+                      icon: Icons.person_2_outlined,
+                      controller: usernameController,
+                    ),
+                    const SizedBox(height: 20),
+
+                    CustomTextField(
+                      label: 'Contraseña',
+                      icon: Icons.lock_outline,
+                      obscure: true,
+                      controller: passwordController,
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // ---------------- CONDITIONAL FIELDS ----------------
+                    if (selectedRole == "doctor") ...[
+                      CustomTextField(
+                        label: 'Código de Doctor',
+                        icon: Icons.verified,
+                        controller: doctorCodeController,
+                      ),
+                    ],
+
+                    if (selectedRole == "patient") ...[
+                      CustomTextField(
+                        label: 'Teléfono del cuidador',
+                        icon: Icons.contact_phone,
+                        controller: caregiverPhoneController,
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextField(
+                        label: 'Correo del cuidador',
+                        icon: Icons.contact_mail,
+                        controller: caregiverEmailController,
+                      ),
+                    ],
+
+                    const SizedBox(height: 30),
+
+                    // ---------------- REGISTER BUTTON ----------------
+                    PrimaryButton(
+                      text: "Registrarse",
+                      onPressed: () => _submit(context),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // ---------------- FOOTER ----------------
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "¿Ya tienes una cuenta?",
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        LetterNavButton(
+                          letter: "Inicia Sesión",
+                          onTap: () => Navigator.pop(context),
+                          fontSize: 14,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------- SUBMIT LOGIC (NO CAMBIADA) ----------------
+  void _submit(BuildContext context) {
+    if (nameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        usernameController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        selectedRole.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Por favor, rellena todos los campos")),
+      );
+      return;
+    }
+
+    if (phoneController.text.isEmpty &&
+        caregiverPhoneController.text.isEmpty &&
+        selectedRole == "patient") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Por favor, ingresa al menos un teléfono"),
+        ),
+      );
+      return;
+    }
+
+    if (selectedRole == "doctor" && doctorCodeController.text != "1234") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Código de doctor inválido")),
+      );
+      return;
+    }
+
+    final user = User(
+      id: null,
+      name: nameController.text,
+      lastName: lastNameController.text,
+      email: emailController.text,
+      phoneNumber: phoneController.text,
+      userName: usernameController.text,
+      passwordHash: passwordController.text,
+      role: selectedRole,
+    );
+
+    context.read<AuthBloc>().add(RegisterUserEvent(user));
+  }
+}
+
+// ---------------- ROLE TILE WIDGET ----------------
+class _RoleTile extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _RoleTile({
+    required this.title,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: selected
+              ? theme.colorScheme.primary.withOpacity(0.1)
+              : theme.colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outlineVariant,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: selected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium!.copyWith(
+                color: selected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

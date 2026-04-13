@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../diary.dart';
 
-
 class MedicationCard extends StatefulWidget {
   final Medication medication;
 
@@ -22,11 +21,10 @@ class _MedicationCardState extends State<MedicationCard> {
     _loadNotificationStatus();
   }
 
-  //Cosulta REAL del estado de notificaciones
   Future<void> _loadNotificationStatus() async {
     final service = NotificationService();
-
     final schedules = widget.medication.schedules;
+    
     if (schedules == null || schedules.isEmpty) {
       if (!mounted) return;
       setState(() => notificationsEnabled = false);
@@ -34,15 +32,13 @@ class _MedicationCardState extends State<MedicationCard> {
     }
 
     final first = schedules.first;
-
     if (first.notificationId == null) {
       if (!mounted) return;
       setState(() => notificationsEnabled = false);
       return;
     }
 
-    final isScheduled =
-        await service.isNotificationScheduled(first.notificationId!);
+    final isScheduled = await service.isNotificationScheduled(first.notificationId!);
 
     if (!mounted) return;
     setState(() => notificationsEnabled = isScheduled);
@@ -51,6 +47,8 @@ class _MedicationCardState extends State<MedicationCard> {
   @override
   Widget build(BuildContext context) {
     final medication = widget.medication;
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     final String frequency = _formatFrequency(
       context,
@@ -62,117 +60,141 @@ class _MedicationCardState extends State<MedicationCard> {
         : medication.notes!.trim();
 
     return Container(
+      // Alineado con CrisisCard y NotificationCard
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.gray200),
-        boxShadow: const [
-          BoxShadow(color: AppColors.shadowDark, blurRadius: 4, offset: Offset(0, 1)),
-        ],
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cs.surfaceContainerHighest),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Nombre
-          Text(
-            medication.name!,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.black,
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Frecuencia
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.schedule, size: 18, color: AppColors.gray500),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  "Frecuencia: $frequency",
-                  style: TextStyle(color: AppColors.gray500, fontSize: 14),
+              // ---------------------------------------------------------
+              // ÍCONO PREMIUM (Mismo estilo que CrisisCard)
+              // ---------------------------------------------------------
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: cs.primary.withOpacity(0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.medication_outlined,
+                  color: cs.primary,
+                  size: 28,
                 ),
               ),
-            ],
-          ),
 
-          const SizedBox(height: 6),
+              const SizedBox(width: 16),
 
-          // Notas
-          Row(
-            children: [
-              Icon(Icons.notes, size: 18, color: AppColors.gray500),
-              const SizedBox(width: 6),
+              // ---------------------------------------------------------
+              // INFORMACIÓN
+              // ---------------------------------------------------------
               Expanded(
-                child: Text(
-                  "Notas: $notes",
-                  style: TextStyle(color: AppColors.gray500, fontSize: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Nombre
+                    Text(
+                      medication.name!,
+                      style: textTheme.titleMedium!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: cs.onSurface,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Frecuencia
+                    Row(
+                      children: [
+                        Icon(Icons.schedule, size: 16, color: cs.onSurfaceVariant),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            frequency,
+                            style: textTheme.bodySmall!.copyWith(
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    // Notas
+                    Row(
+                      children: [
+                        Icon(Icons.notes, size: 16, color: cs.onSurfaceVariant),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            notes,
+                            style: textTheme.bodySmall!.copyWith(
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
 
           const SizedBox(height: 12),
+          Divider(color: cs.surfaceContainerHighest, height: 1),
+          const SizedBox(height: 4),
 
-          // Footer
+          // ---------------------------------------------------------
+          // ACCIONES
+          // ---------------------------------------------------------
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // notificaciones
-              IconButton(
-                icon: Icon(
-                  notificationsEnabled
-                      ? Icons.notifications_active
-                      : Icons.notifications_off,
-                  size: 22,
-                  color: notificationsEnabled ? AppColors.primary : AppColors.gray300,
-                ),
+              // Notificaciones
+              _ActionIcon(
+                icon: notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+                color: notificationsEnabled ? cs.primary : cs.onSurfaceVariant.withOpacity(0.5),
                 onPressed: () async {
                   final shouldEnable = !notificationsEnabled;
-
                   context.read<MedicationBloc>().add(
                         UpdateMedicationEvent(
                           medication,
                           shouldScheduleNotifications: shouldEnable,
                         ),
                       );
-
-                  // Esperar a que el BLoC actualice BD y notificaciones
                   await Future.delayed(const Duration(milliseconds: 300));
-
                   if (!mounted) return;
                   _loadNotificationStatus();
                 },
               ),
 
-              const SizedBox(width: 4),
-
               // Editar
-              IconButton(
-                icon: const Icon(Icons.edit, size: 22, color: AppColors.gray400),
+              _ActionIcon(
+                icon: Icons.edit,
+                color: cs.primary,
                 onPressed: () async {
                   final result = await showDialog<(Medication, bool)>(
                     context: context,
                     useRootNavigator: false,
-                    builder: (_) =>
-                        RegisterMedicationDialog(initialMedication: medication),
+                    builder: (_) => RegisterMedicationDialog(initialMedication: medication),
                   );
 
                   if (result != null) {
-                    final updatedMedication = result.$1;
-                    final shouldSchedule = result.$2;
-
                     context.read<MedicationBloc>().add(
-                      UpdateMedicationEvent(
-                        updatedMedication,
-                        shouldScheduleNotifications: shouldSchedule,
-                      ),
-                    );
-
+                          UpdateMedicationEvent(
+                            result.$1,
+                            shouldScheduleNotifications: result.$2,
+                          ),
+                        );
                     await Future.delayed(const Duration(milliseconds: 300));
                     if (!mounted) return;
                     _loadNotificationStatus();
@@ -180,34 +202,25 @@ class _MedicationCardState extends State<MedicationCard> {
                 },
               ),
 
-              const SizedBox(width: 4),
-
               // Eliminar
-              IconButton(
-                icon: const Icon(Icons.delete, size: 22, color: AppColors.error),
+              _ActionIcon(
+                icon: Icons.delete,
+                color: cs.error,
                 onPressed: () async {
                   final bool? confirm = await showDialog<bool>(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
+                        backgroundColor: cs.surface,
                         title: const Text("Eliminar medicamento"),
-                        content: Text(
-                          "¿Seguro que deseas eliminar \"${medication.name}\"?\n"
-                          "Esta acción no se puede deshacer.",
-                        ),
+                        content: Text("¿Seguro que deseas eliminar \"${medication.name}\"?"),
                         actions: [
                           TextButton(
                             child: const Text("Cancelar"),
                             onPressed: () => Navigator.pop(context, false),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.error,
-                            ),
-                            child: const Text(
-                              "Eliminar",
-                              style: TextStyle(color: AppColors.white),
-                            ),
+                          TextButton(
+                            child: Text("Eliminar", style: TextStyle(color: cs.error)),
                             onPressed: () => Navigator.pop(context, true),
                           ),
                         ],
@@ -216,9 +229,7 @@ class _MedicationCardState extends State<MedicationCard> {
                   );
 
                   if (confirm == true) {
-                    context.read<MedicationBloc>().add(
-                      DeleteMedicationEvent(medication.id!),
-                    );
+                    context.read<MedicationBloc>().add(DeleteMedicationEvent(medication.id!));
                   }
                 },
               ),
@@ -229,11 +240,25 @@ class _MedicationCardState extends State<MedicationCard> {
     );
   }
 
-  /// Formatear horarios
   String _formatFrequency(BuildContext context, List<Schedule> schedules) {
     if (schedules.isEmpty) return "Sin horarios";
-    return schedules
-        .map((s) => s.time!.format(context))
-        .join(", ");
+    return schedules.map((s) => s.time!.format(context)).join(", ");
+  }
+}
+
+class _ActionIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onPressed;
+
+  const _ActionIcon({required this.icon, required this.color, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      visualDensity: VisualDensity.compact,
+      icon: Icon(icon, size: 22, color: color),
+      onPressed: onPressed,
+    );
   }
 }

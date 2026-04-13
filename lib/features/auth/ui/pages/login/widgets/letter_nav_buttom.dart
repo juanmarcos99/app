@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/core.dart';
+
 
 class LetterNavButton extends StatelessWidget {
   final String letter;
   final VoidCallback onTap;
-  final Color color;
+  final Color? color;
   final double fontSize;
 
   const LetterNavButton({
     super.key,
     required this.letter,
     required this.onTap,
-    this.color = AppColors.primary,
+    this.color,
     this.fontSize = 20,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = AppTypography.subtitleLight.copyWith(
-      fontSize: fontSize,
-      color: color,
-    );
+    final theme = Theme.of(context);
 
     return TextButton(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        foregroundColor: color,
+        foregroundColor: color ?? theme.colorScheme.primary,
       ),
-      child: Text(letter, style: textStyle),
+      child: Text(
+        letter,
+        style: theme.textTheme.labelLarge!.copyWith(
+          fontSize: fontSize,
+          color: color ?? theme.colorScheme.primary,
+        ),
+      ),
     );
   }
 }

@@ -33,9 +33,14 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
+    if (selectedDate == null) {
+      setState(() {}); 
+      return;
+    }
+
     final appointment = Appointment(
       id: null,
-      userId: null, // ajusta según tu lógica de usuario
+      userId: null, 
       information: descriptionController.text.trim(),
       time: selectedDate,
       notificationId: DateTime.now().millisecondsSinceEpoch % 2147483647,
@@ -45,10 +50,17 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AlertDialog(
-      backgroundColor: AppColors.white,
+      // Se adapta al fondo del tema (oscuro o claro)
+      backgroundColor: theme.dialogBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text("Nueva cita médica"),
+      title: Text(
+        "Nueva cita médica",
+        style: TextStyle(color: colorScheme.onSurface),
+      ),
       content: SizedBox(
         width: double.maxFinite,
         child: Form(
@@ -63,22 +75,42 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                       selectedDate == null
                           ? "No has elegido fecha"
                           : "Fecha: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.calendar_today, color: AppColors.primary),
+                    // Usa el color primario del tema
+                    icon: Icon(Icons.calendar_today, color: colorScheme.primary),
                     onPressed: _pickDate,
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+              if (selectedDate == null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Debe elegir una fecha",
+                    style: TextStyle(color: colorScheme.error, fontSize: 12),
+                  ),
+                ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: descriptionController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                // Estilo de texto que se adapta al fondo
+                style: TextStyle(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   hintText: "Ej. Consulta con el Dr. Pérez",
+                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
                   labelText: "Descripción",
+                  labelStyle: TextStyle(color: colorScheme.primary),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorScheme.outline),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -87,16 +119,6 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              // Validación de fecha seleccionada
-              if (selectedDate == null)
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Debe elegir una fecha",
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
             ],
           ),
         ),
@@ -104,17 +126,21 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text("Cancelar"),
+          child: Text(
+            "Cancelar",
+            style: TextStyle(color: colorScheme.primary),
+          ),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary, // Texto en contraste con el botón
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
           onPressed: _onSave,
-          child: const Text("Aceptar", style: TextStyle(color: AppColors.white)),
+          child: const Text("Aceptar", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );

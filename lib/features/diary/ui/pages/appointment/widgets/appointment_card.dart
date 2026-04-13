@@ -10,23 +10,29 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Card(
-      elevation: 6,
+      elevation: isDark ? 2 : 4, // Menos elevación en dark para evitar que se vea gris muy claro
+      color: isDark ? colorScheme.surfaceContainer : theme.cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            // Icono de calendario
+            // Icono de calendario con contenedor tonal adaptativo
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                // En Dark mode subimos la opacidad para que el color primario se note
+                color: colorScheme.primary.withOpacity(isDark ? 0.2 : 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.event,
-                color: AppColors.primary,
+                color: isDark ? colorScheme.primary : AppColors.primary,
                 size: 28,
               ),
             ),
@@ -37,20 +43,21 @@ class AppointmentCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Fecha confirmada",
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textSecondary,
+                      // Usamos onSurfaceVariant para el texto secundario
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
                     "${appointment!.time!.day}/${appointment!.time!.month}/${appointment!.time!.year}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -58,7 +65,7 @@ class AppointmentCard extends StatelessWidget {
             ),
 
             IconButton(
-              icon: const Icon(Icons.delete, color: AppColors.error),
+              icon: Icon(Icons.delete, color: colorScheme.error),
               onPressed: () {
                 context.read<AppointmentBloc>().add(
                       DeleteAppointmentEvent(appointment!),

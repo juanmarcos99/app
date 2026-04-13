@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/core.dart';
 
 class CustomTextField extends StatefulWidget {
   final String label;
@@ -36,34 +35,48 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
       obscureText: _obscureText,
       onFieldSubmitted: (_) => widget.onFieldSubmitted?.call(),
-      style: AppTypography.inputLight,
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
-        labelStyle: AppTypography.captionLight,
-        hintStyle: AppTypography.captionLight.copyWith(
-          color: AppColors.textDisabled,
+        labelStyle: theme.textTheme.bodySmall,
+        hintStyle: theme.textTheme.bodySmall!.copyWith(
+          color: theme.disabledColor,
         ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.gray300, width: 1),
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
-        ),
-        border: const UnderlineInputBorder(),
         filled: true,
-        fillColor: AppColors.white,
-        prefixIcon: Icon(widget.icon, color: AppColors.primary),
+        fillColor: theme.colorScheme.surface.withValues(alpha:0.3),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withOpacity(0.5),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: theme.colorScheme.primary,
+            width: 2,
+          ),
+        ),
+        prefixIcon: Icon(widget.icon, color: theme.colorScheme.outline),
         suffixIcon: widget.obscure
             ? IconButton(
                 icon: Icon(
                   _obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: AppColors.gray300,
+                  color: theme.colorScheme.outline,
                 ),
                 onPressed: () {
                   setState(() {

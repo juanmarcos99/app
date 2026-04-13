@@ -1,5 +1,6 @@
 export 'theme/style/colors.dart';
 export 'theme/style/app_typography.dart';
+export 'theme/style/app_theme.dart';
 export 'database/app_database.dart';
 export 'core_injection.dart';
 export 'services/notifications_services.dart';

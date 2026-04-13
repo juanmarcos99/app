@@ -10,69 +10,148 @@ class CrisisCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: ListTile(
-        leading: const Icon(Icons.warning, color: AppColors.primary),
-        title: Text(
-          crisis.type!,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text("${crisis.timeRange} • Cantidad: ${crisis.quantity}"),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // EDITAR
-            IconButton(
-              icon: const Icon(Icons.edit, color: AppColors.primary),
-              onPressed: () async {
-                final result = await showDialog<Crisis>(
-                  context: context,
-                  useRootNavigator: false,
-                  builder: (_) => RegisterCrisisDialog(initialCrisis: crisis),
-                );
-                if (result != null) {
-                  context.read<DiaryBloc>().add(UpdateCrisisEvent(result));
-                }
-              },
-            ),
+    final cs = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
 
-            // ELIMINAR
-            IconButton(
-              icon: const Icon(Icons.delete, color: AppColors.error),
-              onPressed: () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Eliminar crisis"),
-                    content: const Text(
-                      "¿Estás seguro de que deseas eliminar esta crisis?",
-                    ),
-                    actions: [
-                      TextButton(
-                        child: const Text("Cancelar"),
-                        onPressed: () => Navigator.pop(context, false),
-                      ),
-                      TextButton(
-                        child: const Text(
-                          "Eliminar",
-                          style: TextStyle(color:  AppColors.error),
-                        ),
-                        onPressed: () => Navigator.pop(context, true),
-                      ),
-                    ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cs.surfaceContainerHighest),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ---------------------------------------------------------
+          // ÍCONO PREMIUM
+          // ---------------------------------------------------------
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: cs.primary.withOpacity(0.10),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.bolt,
+              color: cs.primary,
+              size: 28,
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // ---------------------------------------------------------
+          // INFORMACIÓN DE LA CRISIS
+          // ---------------------------------------------------------
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Título
+                Text(
+                  crisis.type ?? "Crisis",
+                  style: text.titleMedium!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: cs.onSurface,
                   ),
-                );
+                ),
 
-                if (confirm == true) {
-                  context.read<DiaryBloc>().add(DeleteCrisisEvent(crisis.id!));
-                }
-              },
+                const SizedBox(height: 6),
+
+                // Horario
+                Row(
+                  children: [
+                    Icon(Icons.schedule,
+                        size: 16, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Text(
+                      crisis.timeRange ?? "",
+                      style: text.bodySmall!.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+
+                // Cantidad (debajo del horario)
+                Row(
+                  children: [
+                    Icon(Icons.numbers,
+                        size: 16, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Cantidad: ${crisis.quantity}",
+                      style: text.bodySmall!.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // ---------------------------------------------------------
+          // ACCIONES (EDITAR / ELIMINAR)
+          // ---------------------------------------------------------
+          Row(
+            children: [
+              // EDITAR
+              IconButton(
+                icon: Icon(Icons.edit, color: cs.primary, size: 22),
+                onPressed: () async {
+                  final result = await showDialog<Crisis>(
+                    context: context,
+                    useRootNavigator: false,
+                    builder: (_) =>
+                        RegisterCrisisDialog(initialCrisis: crisis),
+                  );
+                  if (result != null) {
+                    context.read<DiaryBloc>().add(UpdateCrisisEvent(result));
+                  }
+                },
+              ),
+
+              // ELIMINAR
+              IconButton(
+                icon: Icon(Icons.delete, color: cs.error, size: 22),
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Eliminar crisis"),
+                      content: const Text(
+                        "¿Estás seguro de que deseas eliminar esta crisis?",
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text("Cancelar"),
+                          onPressed: () => Navigator.pop(context, false),
+                        ),
+                        TextButton(
+                          child: Text(
+                            "Eliminar",
+                            style: TextStyle(color: cs.error),
+                          ),
+                          onPressed: () => Navigator.pop(context, true),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true) {
+                    context.read<DiaryBloc>().add(DeleteCrisisEvent(crisis.id!));
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

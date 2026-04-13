@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:app/features/auth/auth.dart';
@@ -19,7 +19,6 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   String? selectedMonth;
   String? selectedYear;
   final TextEditingController pdfNameController = TextEditingController();
-
   List<FileSystemEntity> generatedPdfs = [];
 
   final List<String> months = const [
@@ -49,301 +48,236 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
   Future<void> loadGeneratedPdfs() async {
     final dir = Directory('/storage/emulated/0/Download');
-    final files = dir.listSync().where((f) => f.path.endsWith(".pdf")).toList();
-
-    setState(() => generatedPdfs = files);
+    if (await dir.exists()) {
+      final files = dir
+          .listSync()
+          .where((f) => f.path.endsWith(".pdf"))
+          .toList();
+      setState(() => generatedPdfs = files);
+    }
   }
 
   Future<String> savePdfToDownloads(List<int> bytes, String fileName) async {
     await Permission.storage.request();
-
     Directory directory = Directory('/storage/emulated/0/Download');
     final file = File('${directory.path}/$fileName.pdf');
     await file.writeAsBytes(bytes);
-
     return file.path;
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return BlocListener<ReportBloc, ReportState>(
       listener: (context, state) async {
         if (state is ReportLoading) {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (_) => const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+            builder: (_) => Center(
+              child: CircularProgressIndicator(color: colorScheme.primary),
             ),
           );
         }
 
         if (state is ReportPdfGenerated) {
           Navigator.pop(context);
-
           final savedPath = await savePdfToDownloads(
             state.pdfBytes,
             pdfNameController.text.trim(),
           );
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("PDF guardado en: $savedPath")),
-          );
-
+          AppSnack.show(context, "PDF guardado en: $savedPath");
           await loadGeneratedPdfs();
           await OpenFilex.open(savedPath);
         }
 
         if (state is ReportError) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          AppSnack.show(context, state.message, color: AppColors.error);
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F7F8),
-        body: SafeArea(
-          child: Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 480),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // ENCABEZADO
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.9),
-                      border: const Border(
-                        bottom: BorderSide(color: Color(0xFFE2E8F0)),
+        backgroundColor: colorScheme.surface,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 300,
+                width: double.infinity,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(
+                        'assets/images/pdf.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          borderRadius: BorderRadius.circular(999),
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            height: 42,
-                            width: 42,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey.shade100,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.black87,
-                            ),
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              const Color.fromARGB(69, 0, 0, 0),
+                              colorScheme.surface,
+                            ],
                           ),
                         ),
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              "Exportar reporte",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 42),
-                      ],
+                      ),
                     ),
-                  ),
-
-                  // CONTENIDO
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
+                    Positioned(
+                      top: MediaQuery.of(context).padding.top + 10,
+                      left: 10,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 20,
+                      left: 24,
+                      right: 24,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Exportar reporte en PDF",
-                            style: TextStyle(
-                              fontSize: 28,
+                          Text(
+                            "Exportar reporte",
+                            style: theme.textTheme.displayLarge!.copyWith(
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.secondary,
                             ),
                           ),
-
-                          const SizedBox(height: 32),
-
-                          // FORMULARIO
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildDropdownField(
-                                  label: "Mes",
-                                  value: selectedMonth,
-                                  items: months,
-                                  onChanged: (v) =>
-                                      setState(() => selectedMonth = v),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: _buildDropdownField(
-                                  label: "Año",
-                                  value: selectedYear,
-                                  items: years,
-                                  onChanged: (v) =>
-                                      setState(() => selectedYear = v),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          const Text(
-                            "Nombre del archivo PDF",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.secondary,
+                          const SizedBox(height: 8),
+                          Text(
+                            "Genera un documento PDF con tu historial médico mensual.",
+                            style: theme.textTheme.bodyMedium!.copyWith(
+                              color: const Color.fromARGB(255, 255, 255, 255),
                             ),
                           ),
-
-                          const SizedBox(height: 6),
-
-                          TextField(
-                            controller: pdfNameController,
-                            decoration: InputDecoration(
-                              hintText: "Escribe el nombre del archivo",
-                              filled: true,
-                              fillColor: Colors.grey.shade100,
-                              prefixIcon: const Icon(Icons.description),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 40),
-
-                          // LISTA DE PDFs GENERADOS
-                          const Text(
-                            "PDFs generados",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.secondary,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          ...generatedPdfs.map((file) {
-                            final name = file.path.split('/').last;
-                            return PdfCard(
-                              fileName: name,
-                              onOpen: () => OpenFilex.open(file.path),
-                              onShare: () async {
-                                await SharePlus.instance.share(
-                                  ShareParams(
-                                    files: [XFile(file.path)],
-                                    text: 'Aquí tienes tu reporte en PDF',
-                                  ),
-                                );
-                              },
-                              onDelete: () {
-                                File(file.path).deleteSync();
-                                loadGeneratedPdfs();
-                              },
-                            );
-                          }),
                         ],
                       ),
                     ),
-                  ),
-
-                  // BOTÓN GENERAR PDF
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (selectedMonth == null || selectedYear == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Selecciona mes y año"),
-                              ),
-                            );
-                            return;
-                          }
-
-                          if (pdfNameController.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Ingresa un nombre"),
-                              ),
-                            );
-                            return;
-                          }
-
-                          final monthIndex = months.indexOf(selectedMonth!) + 1;
-                          final yearInt = int.parse(selectedYear!);
-
-                          int userId = -1;
-                          final authState = context.read<AuthBloc>().state;
-                          if (authState is UserLoggedIn) {
-                            userId = authState.user.id!;
-                          }
-
-                          context.read<ReportBloc>().add(
-                            GenerateMonthlyReportEvent(
-                              month: monthIndex,
-                              year: yearInt,
-                              userId: userId,
-                              fileName: pdfNameController.text.trim(),
+                  ],
+                ),
+              ),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdownField(
+                              label: "Mes",
+                              value: selectedMonth,
+                              items: months,
+                              onChanged: (v) =>
+                                  setState(() => selectedMonth = v),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildDropdownField(
+                              label: "Año",
+                              value: selectedYear,
+                              items: years,
+                              onChanged: (v) =>
+                                  setState(() => selectedYear = v),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      CustomTextField(
+                        label: 'Nombre del archivo PDF',
+                        hint: 'Ej. Reporte_Abril_2026',
+                        icon: Icons.description_outlined,
+                        obscure: false,
+                        controller: pdfNameController,
+                      ),
+                      const SizedBox(height: 30),
+                      PrimaryButton(
+                        text: "Generar reporte ahora",
+                        onPressed: _onGeneratePdf,
+                      ),
+                      const SizedBox(height: 40),
+                      if (generatedPdfs.isNotEmpty) ...[
+                        Text(
+                          "Documentos generados",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
                           ),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.download, color: AppColors.white),
-                            SizedBox(width: 8),
-                            Text(
-                              "Generar PDF",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        const SizedBox(height: 16),
+                        ...generatedPdfs.map((file) {
+                          final name = file.path.split('/').last;
+                          return PdfCard(
+                            fileName: name,
+                            onOpen: () => OpenFilex.open(file.path),
+                            onShare: () async {
+                              await Share.shareXFiles([
+                                XFile(file.path),
+                              ], text: 'Aquí tienes tu reporte médico');
+                            },
+                            onDelete: () {
+                              File(file.path).deleteSync();
+                              loadGeneratedPdfs();
+                            },
+                          );
+                        }),
+                      ],
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _onGeneratePdf() {
+    if (selectedMonth == null ||
+        selectedYear == null ||
+        pdfNameController.text.trim().isEmpty) {
+      AppSnack.show(
+        context,
+        "Completa todos los campos",
+        color: AppColors.error,
+      );
+      return;
+    }
+
+    final monthIndex = months.indexOf(selectedMonth!) + 1;
+    final yearInt = int.parse(selectedYear!);
+    int userId = -1;
+
+    final authState = context.read<AuthBloc>().state;
+    if (authState is UserLoggedIn) {
+      userId = authState.user.id!;
+    }
+
+    context.read<ReportBloc>().add(
+      GenerateMonthlyReportEvent(
+        month: monthIndex,
+        year: yearInt,
+        userId: userId,
+        fileName: pdfNameController.text.trim(),
       ),
     );
   }
@@ -354,31 +288,29 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
     required List<String> items,
     required Function(String?) onChanged,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: AppColors.secondary,
-          ),
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppColors.gray200,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gray200),
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outlineVariant),
           ),
           child: DropdownButton<String>(
             value: value,
             hint: const Text("Seleccionar"),
             isExpanded: true,
             underline: const SizedBox(),
-            icon: const Icon(Icons.expand_more),
+            icon: Icon(Icons.keyboard_arrow_down, color: colorScheme.primary),
             items: items
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),

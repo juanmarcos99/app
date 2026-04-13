@@ -14,8 +14,8 @@ class AppColors {
   static const Color textDisabled = Color(0xFF9CA3AF);
 
   // Texto modo oscuro
-  static const Color darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFFB3B3B3);
+  static const Color darkTextPrimary = Color.fromARGB(255, 224, 224, 224);
+  static const Color darkTextSecondary = Color(0xFF6B7280);
   static const Color darkTextDisabled = Color(0xFF6B7280);
 
   // Neutros
@@ -38,7 +38,7 @@ class AppColors {
 
   // Superficies modo claro
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceSoft = Color(0xFFF6F6F6);
+  static const Color surfaceSoft = Color.fromARGB(255, 180, 180, 180);
   static const Color surfaceSelected = Color(0xFFF1F1F1);
 
   // Fondos modo oscuro
@@ -47,13 +47,14 @@ class AppColors {
 
   // Superficies modo oscuro
   static const Color darkSurface = Color(0xFF161B22);
-  static const Color darkSurfaceSoft = Color(0xFF1E242C);
+  static const Color darkSurfaceSoft = Color.fromARGB(255, 91, 106, 126);
   static const Color darkSurfaceSelected = Color(0xFF2A313C);
 
   // Estados y feedback
   static const Color success = Color(0xFF16A34A);
   static const Color successSoft = Color(0xFFD1FAE5);
-  static const Color error = Color(0xFFDC2626);
+  static const Color error = Color.fromARGB(255, 255, 53, 53);
+  static const Color errorlight = Color.fromARGB(255, 255, 91, 91);
   static const Color errorSoft = Color(0xFFFEE2E2);
   static const Color warning = Color.fromARGB(255, 255, 152, 0);
   static const Color warningSoft = Color(0xFFFFF3E0);

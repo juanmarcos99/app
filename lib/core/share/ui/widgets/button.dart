@@ -4,27 +4,29 @@ import 'package:app/core/core.dart';
 class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color color;
+  final Color? color;
 
   const PrimaryButton({
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = AppColors.primary,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
     return Container(
-      width: 250,
+      width: double.infinity,
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(45),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
+            color: theme.brightness == Brightness.dark
+                ? AppColors.shadowDark
+                : AppColors.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 5),
           ),
@@ -33,7 +35,8 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: color ?? theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(45),
           ),
@@ -41,7 +44,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           text.toUpperCase(),
-          style: isDark ? AppTypography.buttonDark : AppTypography.buttonLight,
+          style: theme.textTheme.labelLarge,
         ),
       ),
     );
