@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.notifications_none_rounded, 
-                             size: 64, color: cs.onSurfaceVariant.withOpacity(0.4)),
+                             size: 64, color: cs.onSurfaceVariant.withValues(alpha:0.4)),
                         const SizedBox(height: 16),
                         Text(
                           "No hay notificaciones disponibles",

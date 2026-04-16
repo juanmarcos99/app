@@ -30,11 +30,11 @@ class PdfCard extends StatelessWidget {
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.outlineVariant.withOpacity(0.2),
+          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(theme.brightness == Brightness.light ? 0.05 : 0.2),
+            color: Colors.black.withValues(alpha:theme.brightness == Brightness.light ? 0.05 : 0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -46,7 +46,7 @@ class PdfCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: colorScheme.error.withOpacity(0.1),
+              color: colorScheme.error.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(Icons.picture_as_pdf, color: colorScheme.error, size: 28),

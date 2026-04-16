@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/core/core.dart';
 
 class CustomActionButton extends StatelessWidget {
   final String text;
@@ -19,8 +18,9 @@ class CustomActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    // Convertimos a Color puro para evitar errores
-    final Color base = Color(backgroundColor.value);
+
+   final Color base = backgroundColor;
+
 
     return InkWell(
       onTap: onPressed,
@@ -33,7 +33,7 @@ class CustomActionButton extends StatelessWidget {
           horizontal: 16, // antes 22 → ahora compacto
         ),
         decoration: BoxDecoration(
-          color: base.withOpacity(0.10),
+          color: base.withValues(alpha:0.10),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: base,

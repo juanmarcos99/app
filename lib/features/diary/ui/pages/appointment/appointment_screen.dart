@@ -45,7 +45,7 @@ class _MedicalAppointmentPageState extends State<MedicalAppointmentPage> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: theme.dialogBackgroundColor,
+              backgroundColor: theme.dialogTheme.backgroundColor,
               content: SelectableText(
                 state.message,
                 style: TextStyle(fontSize: 16, color: colorScheme.onSurface),

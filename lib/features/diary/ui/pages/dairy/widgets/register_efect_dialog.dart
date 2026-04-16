@@ -59,7 +59,7 @@ class _RegistroEfectDialogState extends State<RegistroEfectDialog> {
                   style: text.titleMedium?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: cs.onSurface.withOpacity(0.7),
+                    color: cs.onSurface.withValues(alpha:0.7),
                   ),
                 ),
               ),
@@ -70,15 +70,15 @@ class _RegistroEfectDialogState extends State<RegistroEfectDialog> {
                 decoration: InputDecoration(
                   hintText: "Escribe aquí lo ocurrido...",
                   filled: true,
-                  fillColor: cs.surfaceContainerHighest.withOpacity(0.3),
+                  fillColor: cs.surfaceContainerHighest.withValues(alpha:0.3),
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.outline.withOpacity(0.5)),
+                    borderSide: BorderSide(color: cs.outline.withValues(alpha:0.5)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
+                    borderSide: BorderSide(color: cs.outline.withValues(alpha:0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),

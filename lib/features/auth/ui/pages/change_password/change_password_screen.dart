@@ -27,25 +27,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           current is AuthFailure || current is UserPasswordChanged,
       listener: (context, state) {
         if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.message, style: theme.textTheme.bodyMedium),
-                backgroundColor: theme.colorScheme.error,
-              ),
-            );
+          AppSnack.show(context, state.message, color: AppColors.error);
         }
 
         if (state is UserPasswordChanged) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: Text("Contraseña cambiada correctamente"),
-                backgroundColor: AppColors.success,
-              ),
-            );
+        
+          AppSnack.show(context, "Contraseña cambiada correctamente", color: AppColors.success);
+
           Navigator.pop(context);
         }
       },
@@ -105,7 +93,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Ingresa tu usuario y actualiza tu contraseña.",
+                              "Ingresa tu usuario y actualice su contraseña.",
                               style: theme.textTheme.bodyMedium,
                             ),
                           ],

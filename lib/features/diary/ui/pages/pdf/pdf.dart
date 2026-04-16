@@ -208,7 +208,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                       ),
                       const SizedBox(height: 30),
                       PrimaryButton(
-                        text: "Generar reporte ahora",
+                        text: "Generar PDF",
                         onPressed: _onGeneratePdf,
                       ),
                       const SizedBox(height: 40),
@@ -228,6 +228,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                             fileName: name,
                             onOpen: () => OpenFilex.open(file.path),
                             onShare: () async {
+                              // ignore: deprecated_member_use
                               await Share.shareXFiles([
                                 XFile(file.path),
                               ], text: 'Aquí tienes tu reporte médico');

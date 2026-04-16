@@ -80,7 +80,7 @@ class _MedicationCardState extends State<MedicationCard> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: cs.primary.withOpacity(0.10),
+                  color: cs.primary.withValues(alpha:0.10),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -162,7 +162,7 @@ class _MedicationCardState extends State<MedicationCard> {
               // Notificaciones
               _ActionIcon(
                 icon: notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
-                color: notificationsEnabled ? cs.primary : cs.onSurfaceVariant.withOpacity(0.5),
+                color: notificationsEnabled ? cs.primary : cs.onSurfaceVariant.withValues(alpha:0.5),
                 onPressed: () async {
                   final shouldEnable = !notificationsEnabled;
                   context.read<MedicationBloc>().add(

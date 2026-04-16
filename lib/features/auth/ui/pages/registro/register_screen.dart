@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/core/core.dart';
 
 class RegisterUserPage extends StatefulWidget {
   const RegisterUserPage({super.key});
@@ -38,23 +39,19 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is UserFullyRegistrated) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "Bienvenido ${state.user.userName}",
-                  style: theme.textTheme.bodyMedium,
-                ),
-                backgroundColor: theme.colorScheme.primary,
-              ),
+            AppSnack.show(
+              context,
+              "Bienvenido ${state.user.userName}",
+              color: AppColors.success,
             );
+            Navigator.pop(context);
           }
 
           if (state is UserNameExist) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("El nombre de usuario ya está registrado"),
-              ),
+            AppSnack.show(
+              context,
+              "El nombre de usuario ya está registrado",
+              color: AppColors.error,
             );
           }
 
@@ -68,9 +65,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
           }
 
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnack.show(context, state.message, color: AppColors.error);
           }
         },
 
@@ -126,7 +121,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "Rellena los campos para comenzar tu proceso de atención.",
+                            "Rellena los siguientes campos para crearse una nueva cuenta.",
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: const Color.fromARGB(255, 255, 255, 255),
                             ),
@@ -355,7 +350,8 @@ class _RoleTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: selected
-              ? theme.colorScheme.primary.withOpacity(0.1)
+              ? theme.colorScheme.primary.withValues(alpha: 0.1)
+              // ignore: deprecated_member_use
               : theme.colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(

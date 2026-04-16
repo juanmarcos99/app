@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                const Color.fromARGB(69, 0, 0, 0),
+                                Color.fromARGB(0, 0, 0, 0),
                                 theme.colorScheme.surface,
                               ],
                             ),
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
                         const SizedBox(height: 8),
 
                         Text(
-                          "Acceda a su diario de crisis introduciendo sus credenciales.",
+                          "Acceda a su cuenta ingresando su usuario y contraseña :) .",
                           style: theme.textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),

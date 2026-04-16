@@ -146,13 +146,13 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: cs.primary.withOpacity(0.05),
+                    color: cs.primary.withValues(alpha:0.05),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: SwitchListTile(
                     title: Text("Programar notificaciones", style: textTheme.bodyMedium),
                     value: shouldScheduleNotifications,
-                    activeColor: cs.primary,
+                    activeThumbColor: cs.primary,
                     onChanged: (v) => setState(() => shouldScheduleNotifications = v),
                   ),
                 ),
@@ -175,7 +175,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                     }),
                     ActionChip(
                       avatar: Icon(Icons.add, size: 18, color: cs.onPrimary),
-                      label: Text("Añadir", style: TextStyle(color: cs.onPrimary)),
+                      label: Text("Añadir", style: TextStyle(color: AppColors.white)),
                       backgroundColor: cs.primary,
                       onPressed: _addSchedule,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -219,9 +219,9 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
   InputDecoration _inputDecoration(String hint, ColorScheme cs) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: cs.onSurfaceVariant.withOpacity(0.5)),
+      hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha:0.5)),
       filled: true,
-      fillColor: cs.surfaceContainerHighest.withOpacity(0.3),
+      fillColor: cs.surfaceContainerHighest.withValues(alpha:0.3),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -229,7 +229,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: cs.outlineVariant.withOpacity(0.5)),
+        borderSide: BorderSide(color: cs.outlineVariant.withValues(alpha:0.5)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

@@ -109,7 +109,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                 cellMargin: const EdgeInsets.all(4),
                 cellPadding: EdgeInsets.zero,
                 outsideTextStyle:
-                    TextStyle(color: cs.onSurface.withOpacity(0.40)),
+                    TextStyle(color: cs.onSurface.withValues(alpha:0.40)),
                 defaultTextStyle:
                     TextStyle(color: cs.onSurface, fontSize: 14),
                 weekendTextStyle:
@@ -167,13 +167,13 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
     final bool isDisabled = day.isAfter(DateTime.now());
 
     final Color textColor = isDisabled
-        ? cs.onSurface.withOpacity(0.20)
+        ? cs.onSurface.withValues(alpha:0.20)
         : isSelected
             ? cs.primary
             : cs.onSurface;
 
     final Color bgColor =
-        isSelected ? cs.primary.withOpacity(0.20) : Colors.transparent;
+        isSelected ? cs.primary.withValues(alpha:0.20) : Colors.transparent;
 
     return Center(
       child: Container(

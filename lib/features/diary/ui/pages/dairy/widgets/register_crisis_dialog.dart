@@ -115,7 +115,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               children: [
                 _buildLabel("Horario del episodio", text, cs),
                 DropdownButtonFormField<String>(
-                  value: horario,
+                  initialValue: horario,
                   dropdownColor: cs.surface,
                   style: text.bodyLarge,
                   items: horarios
@@ -129,7 +129,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                 
                 _buildLabel("Tipo de crisis", text, cs),
                 DropdownButtonFormField<String>(
-                  value: tipoSeleccionado,
+                  initialValue: tipoSeleccionado,
                   dropdownColor: cs.surface,
                   style: text.bodyLarge,
                   items: tiposCrisis
@@ -204,7 +204,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
         style: text.titleMedium?.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: cs.onSurface.withOpacity(0.8),
+          color: cs.onSurface.withValues(alpha:0.8),
         ),
       ),
     );
@@ -215,15 +215,15 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: cs.surfaceContainerHighest.withOpacity(0.3),
+      fillColor: cs.surfaceContainerHighest.withValues(alpha:0.3),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: cs.outline.withOpacity(0.5)),
+        borderSide: BorderSide(color: cs.outline.withValues(alpha:0.5)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
+        borderSide: BorderSide(color: cs.outline.withValues(alpha:0.3)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

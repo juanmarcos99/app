@@ -1,3 +1,4 @@
+import 'package:app/features/diary/ui/pages/dairy/widgets/adverse_event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/core.dart';
@@ -55,6 +56,7 @@ class _DiaryPageState extends State<DiaryPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    // ignore: unused_local_variable
     final text = Theme.of(context).textTheme;
 
     return BlocListener<DiaryBloc, DiaryState>(
@@ -160,7 +162,7 @@ class _DiaryPageState extends State<DiaryPage> {
   // CONTENIDO SCROLLEABLE (CRISIS + EVENTOS)
   // ---------------------------------------------------------
   Widget _buildScrollableContent(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    
     final text = Theme.of(context).textTheme;
 
     return BlocBuilder<DiaryBloc, DiaryState>(

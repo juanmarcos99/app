@@ -1,3 +1,4 @@
+import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../diary.dart';
@@ -32,7 +33,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -40,9 +41,9 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         title: Text(
           _titles[_index],
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: cs.onSurface,
-                fontWeight: FontWeight.bold,
-              ),
+            color: cs.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: cs.onSurface),
@@ -71,14 +72,16 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
     showDialog(
       context: context,
-      barrierColor: Colors.black54, // Un poco más oscuro para dar foco al menú
+      barrierColor: Colors.black54,
       builder: (context) {
         return Stack(
           children: [
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 100), // Ajustado para que no tape la barra
+                padding: const EdgeInsets.only(
+                  bottom: 100,
+                ), // Ajustado para que no tape la barra
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -88,13 +91,15 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                       borderRadius: BorderRadius.circular(24),
                       // BORDE DINÁMICO SEGÚN EL TEMA
                       border: Border.all(
-                        color: isDark 
-                            ? Colors.white.withOpacity(0.12) 
-                            : Colors.black.withOpacity(0.08),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.black.withValues(alpha: 0.08),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.4 : 0.15),
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.4 : 0.15,
+                          ),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -108,13 +113,17 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                           icon: Icons.warning_amber_rounded,
                           label: "Agregar crisis",
                           onTap: () async {
-                            Navigator.pop(context); // Cerrar menú antes de abrir diálogo
+                            Navigator.pop(
+                              context,
+                            ); // Cerrar menú antes de abrir diálogo
                             final result = await showDialog<Crisis>(
                               context: context,
                               useRootNavigator: false,
                               builder: (_) => const RegisterCrisisDialog(),
                             );
-                            if (result != null) _handleCrisisAdd(context, result);
+                            if (result != null) {
+                              _handleCrisisAdd(context, result);
+                            }
                           },
                         ),
                         const SizedBox(height: 12),
@@ -129,7 +138,9 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                               useRootNavigator: false,
                               builder: (_) => const RegistroEfectDialog(),
                             );
-                            if (result != null) _handleAdverseEventAdd(context, result);
+                            if (result != null) {
+                              _handleAdverseEventAdd(context, result);
+                            }
                           },
                         ),
                         const SizedBox(height: 12),
@@ -144,7 +155,9 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                               useRootNavigator: false,
                               builder: (_) => const RegisterMedicationDialog(),
                             );
-                            if (result != null) _handleMedicationAdd(context, result);
+                            if (result != null) {
+                              _handleMedicationAdd(context, result);
+                            }
                           },
                         ),
                       ],
@@ -160,26 +173,33 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   // Widget auxiliar para mantener el menú limpio y responsivo al tema
-  Widget _buildMenuButton(BuildContext context, {
-    required IconData icon, 
-    required String label, 
-    required VoidCallback onTap
+  Widget _buildMenuButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
   }) {
     final cs = Theme.of(context).colorScheme;
-    
+
     return SizedBox(
       width: 240,
       child: ElevatedButton.icon(
-        icon: Icon(icon, color: cs.onPrimary, size: 20),
+        icon: Icon(icon, color: AppColors.white, size: 20),
         label: Text(
           label,
-          style: TextStyle(color: cs.onPrimary, fontSize: 15, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: cs.primary,
           padding: const EdgeInsets.symmetric(vertical: 14),
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         onPressed: onTap,
       ),
@@ -192,7 +212,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final authState = context.read<AuthBloc>().state;
     if (authState is! UserLoggedIn) return;
     final userId = authState.user.id!;
-    
+
     final crisis = CrisisModel(
       registeredDate: DateTime.now(),
       crisisDate: DateTime.now(),
@@ -225,7 +245,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   void _handleMedicationAdd(BuildContext context, (Medication, bool) result) {
     final authState = context.read<AuthBloc>().state;
     if (authState is! UserLoggedIn) return;
-    
+
     final (medication, shouldSchedule) = result;
     final medWithUser = medication.copyWith(userId: authState.user.id!);
 

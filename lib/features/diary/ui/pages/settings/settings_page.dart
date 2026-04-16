@@ -111,15 +111,15 @@ class SettingsPage extends StatelessWidget {
                           width: double.infinity,
                           child: TextButton.icon(
                             style: TextButton.styleFrom(
-                              backgroundColor: colorScheme.error.withOpacity(
-                                0.08,
+                              backgroundColor: colorScheme.error.withValues(
+                                alpha: 0.08,
                               ),
                               foregroundColor: colorScheme.error,
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
-                                  color: colorScheme.error.withOpacity(0.1),
+                                  color: colorScheme.error.withValues(alpha:0.1),
                                 ),
                               ),
                             ),
@@ -142,7 +142,7 @@ class SettingsPage extends StatelessWidget {
                           child: Text(
                             "Versión 2.4.0 • Clinical Intelligence",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant.withOpacity(
+                              color: colorScheme.onSurfaceVariant.withValues(alpha:
                                 0.6,
                               ),
                             ),
@@ -198,7 +198,7 @@ class _SettingsTile extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.1),
+                    color: colorScheme.primary.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: colorScheme.primary, size: 24),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/core/theme/style/colors.dart';
 import '../../../../diary.dart';
 
 class CrisisCard extends StatelessWidget {
@@ -22,30 +21,22 @@ class CrisisCard extends StatelessWidget {
         border: Border.all(color: cs.surfaceContainerHighest),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ---------------------------------------------------------
-          // ÍCONO PREMIUM
-          // ---------------------------------------------------------
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: cs.primary.withOpacity(0.10),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.bolt,
-              color: cs.primary,
-              size: 28,
+          Center(
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: cs.primary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.bolt, color: cs.primary, size: 28),
             ),
           ),
 
           const SizedBox(width: 16),
 
-          // ---------------------------------------------------------
-          // INFORMACIÓN DE LA CRISIS
-          // ---------------------------------------------------------
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,8 +55,7 @@ class CrisisCard extends StatelessWidget {
                 // Horario
                 Row(
                   children: [
-                    Icon(Icons.schedule,
-                        size: 16, color: cs.onSurfaceVariant),
+                    Icon(Icons.schedule, size: 16, color: cs.onSurfaceVariant),
                     const SizedBox(width: 4),
                     Text(
                       crisis.timeRange ?? "",
@@ -81,8 +71,7 @@ class CrisisCard extends StatelessWidget {
                 // Cantidad (debajo del horario)
                 Row(
                   children: [
-                    Icon(Icons.numbers,
-                        size: 16, color: cs.onSurfaceVariant),
+                    Icon(Icons.numbers, size: 16, color: cs.onSurfaceVariant),
                     const SizedBox(width: 4),
                     Text(
                       "Cantidad: ${crisis.quantity}",
@@ -108,8 +97,7 @@ class CrisisCard extends StatelessWidget {
                   final result = await showDialog<Crisis>(
                     context: context,
                     useRootNavigator: false,
-                    builder: (_) =>
-                        RegisterCrisisDialog(initialCrisis: crisis),
+                    builder: (_) => RegisterCrisisDialog(initialCrisis: crisis),
                   );
                   if (result != null) {
                     context.read<DiaryBloc>().add(UpdateCrisisEvent(result));
@@ -145,7 +133,9 @@ class CrisisCard extends StatelessWidget {
                   );
 
                   if (confirm == true) {
-                    context.read<DiaryBloc>().add(DeleteCrisisEvent(crisis.id!));
+                    context.read<DiaryBloc>().add(
+                      DeleteCrisisEvent(crisis.id!),
+                    );
                   }
                 },
               ),

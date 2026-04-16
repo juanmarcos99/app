@@ -82,7 +82,6 @@ export 'ui/pages/dairy/widgets/register_crisis_dialog.dart';
 export 'ui/pages/dairy/widgets/register_efect_dialog.dart';
 export 'ui/pages/dairy/widgets/crisis_cards_by_day.dart';
 export 'ui/pages/widgets/custom_bottom_nav_bar.dart';
-export 'ui/pages/dairy/widgets/adverse_event_card.dart';
 export 'ui/bloc/diary/diary_event.dart';
 export 'ui/bloc/diary/diary_state.dart';
 export 'ui/bloc/diary/diary_bloc.dart';

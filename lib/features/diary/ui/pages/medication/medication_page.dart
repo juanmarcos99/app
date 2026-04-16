@@ -34,11 +34,10 @@ class _MedicationPageState extends State<MedicationPage> {
     return BlocListener<MedicationBloc, MedicationState>(
       listener: (context, state) {
         if (state is MedicationAdded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text("Medicamento añadido correctamente"),
-              backgroundColor: AppColors.success, // Mantengo colores semánticos de utilidad
-            ),
+          AppSnack.show(
+            context,
+            "Medicamento añadido correctamente",
+            color: AppColors.success,
           );
 
           final authState = context.read<AuthBloc>().state;
@@ -49,12 +48,12 @@ class _MedicationPageState extends State<MedicationPage> {
         }
 
         if (state is MedicationUpdated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text("Medicamento actualizado"),
-              backgroundColor: cs.primary, // Dinámico
-            ),
+          AppSnack.show(
+            context,
+            "Medicamento actualizado",
+            color: AppColors.primary,
           );
+
           final authState = context.read<AuthBloc>().state;
           if (authState is UserLoggedIn) {
             userId = authState.user.id!;
@@ -68,12 +67,10 @@ class _MedicationPageState extends State<MedicationPage> {
             userId = authState.user.id!;
             context.read<MedicationBloc>().add(LoadMedicationsEvent(userId!));
           }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text("Medicamento eliminado"),
-              backgroundColor: cs.error, // Dinámico
-            ),
+          AppSnack.show(
+            context,
+            "Medicamento eliminado",
+            color: AppColors.error,
           );
         }
 
@@ -92,7 +89,7 @@ class _MedicationPageState extends State<MedicationPage> {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text("Cerrar", style: TextStyle(color: cs.primary)),
-                  )
+                  ),
                 ],
               );
             },
@@ -115,11 +112,14 @@ class _MedicationPageState extends State<MedicationPage> {
               final (medication, shouldSchedule) = result;
               final medWithUser = medication.copyWith(userId: userId!);
               context.read<MedicationBloc>().add(
-                    AddMedicationEvent(medWithUser, shouldSchedule),
-                  );
+                AddMedicationEvent(medWithUser, shouldSchedule),
+              );
             }
           },
-          child: Icon(Icons.add, color: AppColors.white), // Color de contraste dinámico
+          child: Icon(
+            Icons.add,
+            color: AppColors.white,
+          ), // Color de contraste dinámico
         ),
         body: SafeArea(
           child: Column(
@@ -162,7 +162,9 @@ class _MedicationPageState extends State<MedicationPage> {
                       return Center(
                         child: SelectableText(
                           state.message,
-                          style: textStyle.bodyMedium?.copyWith(color: cs.error),
+                          style: textStyle.bodyMedium?.copyWith(
+                            color: cs.error,
+                          ),
                         ),
                       );
                     }

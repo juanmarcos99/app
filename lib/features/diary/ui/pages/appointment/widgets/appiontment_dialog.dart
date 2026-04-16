@@ -1,6 +1,6 @@
+import 'package:app/core/core.dart';
 import 'package:flutter/material.dart';
 import '../../../../diary.dart';
-import 'package:app/core/core.dart';
 
 class AppointmentDialog extends StatefulWidget {
   const AppointmentDialog({super.key});
@@ -55,7 +55,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
 
     return AlertDialog(
       // Se adapta al fondo del tema (oscuro o claro)
-      backgroundColor: theme.dialogBackgroundColor,
+      backgroundColor: theme.dialogTheme.backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         "Nueva cita médica",
@@ -102,7 +102,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: "Ej. Consulta con el Dr. Pérez",
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
+                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha:0.6)),
                   labelText: "Descripción",
                   labelStyle: TextStyle(color: colorScheme.primary),
                   enabledBorder: OutlineInputBorder(
@@ -128,7 +128,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(
             "Cancelar",
-            style: TextStyle(color: colorScheme.primary),
+            style: TextStyle(color: AppColors.white),
           ),
         ),
         ElevatedButton(
@@ -140,7 +140,7 @@ class _AppointmentDialogState extends State<AppointmentDialog> {
             ),
           ),
           onPressed: _onSave,
-          child: const Text("Aceptar", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("Aceptar", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white)),
         ),
       ],
     );
