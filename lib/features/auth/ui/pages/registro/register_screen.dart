@@ -11,7 +11,6 @@ class RegisterUserPage extends StatefulWidget {
 }
 
 class _RegisterUserPageState extends State<RegisterUserPage> {
-  // Controladores
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -23,13 +22,12 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   final caregiverPhoneController = TextEditingController();
   final doctorCodeController = TextEditingController();
 
-  String selectedRole = "patient"; // default
+  String selectedRole = "patient";
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Imagen dinámica según rol
     final heroImage = selectedRole == "doctor"
         ? "assets/images/doctor_register.png"
         : "assets/images/patient_register.png";
@@ -68,11 +66,9 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
             AppSnack.show(context, state.message, color: AppColors.error);
           }
         },
-
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // ---------------- HERO ----------------
               SizedBox(
                 height: 300,
                 child: Stack(
@@ -94,15 +90,12 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         ),
                       ),
                     ),
-                    // Flechita de retroceso arriba a la izquierda
                     Positioned(
                       top: 16,
                       left: 16,
-
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back),
-
-                        color: Colors.white, // flecha blanca sobre la imagen
+                        color: Colors.white,
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -121,7 +114,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "Rellena los siguientes campos para crearse una nueva cuenta.",
+                            "Por favor, completa los datos para crear tu cuenta.",
                             style: theme.textTheme.bodyMedium!.copyWith(
                               color: const Color.fromARGB(255, 255, 255, 255),
                             ),
@@ -132,8 +125,6 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                   ],
                 ),
               ),
-
-              // ---------------- FORM CONTAINER ----------------
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -147,7 +138,6 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                 ),
                 child: Column(
                   children: [
-                    // ---------------- ROLE TILES ----------------
                     Row(
                       children: [
                         Expanded(
@@ -171,55 +161,44 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 30),
-
-                    // ---------------- INPUTS ----------------
                     CustomTextField(
                       label: 'Nombre',
                       icon: Icons.person_outline,
                       controller: nameController,
                     ),
                     const SizedBox(height: 20),
-
                     CustomTextField(
                       label: 'Apellidos',
                       icon: Icons.badge_outlined,
                       controller: lastNameController,
                     ),
                     const SizedBox(height: 20),
-
                     CustomTextField(
                       label: 'Teléfono',
                       icon: Icons.phone_outlined,
                       controller: phoneController,
                     ),
                     const SizedBox(height: 20),
-
                     CustomTextField(
                       label: 'Correo',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 20),
-
                     CustomTextField(
                       label: 'Usuario',
                       icon: Icons.person_2_outlined,
                       controller: usernameController,
                     ),
                     const SizedBox(height: 20),
-
                     CustomTextField(
                       label: 'Contraseña',
                       icon: Icons.lock_outline,
                       obscure: true,
                       controller: passwordController,
                     ),
-
                     const SizedBox(height: 30),
-
-                    // ---------------- CONDITIONAL FIELDS ----------------
                     if (selectedRole == "doctor") ...[
                       CustomTextField(
                         label: 'Código de Doctor',
@@ -227,7 +206,6 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         controller: doctorCodeController,
                       ),
                     ],
-
                     if (selectedRole == "patient") ...[
                       CustomTextField(
                         label: 'Teléfono del cuidador',
@@ -241,18 +219,12 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
                         controller: caregiverEmailController,
                       ),
                     ],
-
                     const SizedBox(height: 30),
-
-                    // ---------------- REGISTER BUTTON ----------------
                     PrimaryButton(
                       text: "Registrarse",
                       onPressed: () => _submit(context),
                     ),
-
                     const SizedBox(height: 30),
-
-                    // ---------------- FOOTER ----------------
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -278,7 +250,6 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
     );
   }
 
-  // ---------------- SUBMIT LOGIC (NO CAMBIADA) ----------------
   void _submit(BuildContext context) {
     if (nameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
@@ -325,7 +296,6 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
   }
 }
 
-// ---------------- ROLE TILE WIDGET ----------------
 class _RoleTile extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -351,8 +321,7 @@ class _RoleTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? theme.colorScheme.primary.withValues(alpha: 0.1)
-              // ignore: deprecated_member_use
-              : theme.colorScheme.surfaceVariant,
+              : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selected

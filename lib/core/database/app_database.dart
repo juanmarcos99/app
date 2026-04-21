@@ -13,7 +13,7 @@ class AppDatabase {
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             lastName TEXT NOT NULL,
             email TEXT NOT NULL,
@@ -26,8 +26,8 @@ class AppDatabase {
 
         await db.execute('''
           CREATE TABLE patients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            userId INTEGER NOT NULL,
+           id TEXT PRIMARY KEY,
+            userId TEXT NOT NULL,
             caregiverNumber TEXT NOT NULL,
             caregiverEmail TEXT NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
@@ -36,32 +36,32 @@ class AppDatabase {
 
         await db.execute('''
           CREATE TABLE crisis (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY,
             registeredDate TEXT NOT NULL,
             crisisDate TEXT NOT NULL,
             timeRange TEXT NOT NULL,
             quantity INTEGER NOT NULL,
             type TEXT NOT NULL,
-            userId INTEGER NOT NULL,
+           userId TEXT NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         ''');
 
         await db.execute('''
           CREATE TABLE adverse_events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+           id TEXT PRIMARY KEY,
             registeredDate TEXT NOT NULL,
             eventDate TEXT NOT NULL,
             description TEXT NOT NULL,
-            userId INTEGER NOT NULL,
+           userId TEXT NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         ''');
 
         await db.execute('''
           CREATE TABLE medications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            userId INTEGER NOT NULL,
+           id TEXT PRIMARY KEY,
+           userId TEXT NOT NULL,
             name TEXT NOT NULL,
             dosage TEXT NOT NULL,
             notes TEXT,
@@ -71,8 +71,8 @@ class AppDatabase {
 
         await db.execute('''
           CREATE TABLE schedules (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            medicationId INTEGER NOT NULL,
+           id TEXT PRIMARY KEY,
+           medicationId TEXT NOT NULL,
             time TEXT NOT NULL,
             notificationId INTEGER NOT NULL,
             FOREIGN KEY (medicationId) REFERENCES medications(id) ON DELETE CASCADE
@@ -81,8 +81,8 @@ class AppDatabase {
 
         await db.execute('''
   CREATE TABLE appointments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userId INTEGER NOT NULL,
+    id TEXT PRIMARY KEY,
+   userId TEXT NOT NULL,
     information TEXT,
     time TEXT NOT NULL,
     notificationId INTEGER,

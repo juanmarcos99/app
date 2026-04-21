@@ -140,7 +140,7 @@ class SettingsPage extends StatelessWidget {
                         // Versión
                         Center(
                           child: Text(
-                            "Versión 2.4.0 • Clinical Intelligence",
+                            "",
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant.withValues(alpha:
                                 0.6,

@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
                         const SizedBox(height: 8),
 
                         Text(
-                          "Acceda a su cuenta ingresando su usuario y contraseña :) .",
+                          "Bienvenido de nuevo. Por favor, ingrese sus credenciales para continuar.",
                           style: theme.textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),

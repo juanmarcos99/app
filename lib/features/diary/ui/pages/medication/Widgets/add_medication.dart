@@ -174,7 +174,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                       );
                     }),
                     ActionChip(
-                      avatar: Icon(Icons.add, size: 18, color: cs.onPrimary),
+                      avatar: Icon(Icons.add, size: 18, color: AppColors.white),
                       label: Text("Añadir", style: TextStyle(color: AppColors.white)),
                       backgroundColor: cs.primary,
                       onPressed: _addSchedule,
