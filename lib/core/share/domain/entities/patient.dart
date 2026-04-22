@@ -1,20 +1,24 @@
 class Patient {
+  final int? id;
   final int userId;
   final String caregiverNumber;
   final String caregiverEmail;
 
-  Patient({
+  Patient( {
+    this.id,
     required this.userId,
     required this.caregiverNumber,
     required this.caregiverEmail,
   });
 
   Patient copyWith({
+    int? id,
     int? userId,
     String? caregiverNumber,
     String? caregiverEmail,
   }) {
     return Patient(
+      id: id ?? this.id,
       userId: userId ?? this.userId,
       caregiverNumber: caregiverNumber ?? this.caregiverNumber,
       caregiverEmail: caregiverEmail ?? this.caregiverEmail,

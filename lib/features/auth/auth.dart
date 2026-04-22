@@ -11,8 +11,8 @@ export 'package:app/features/auth/data/models/user_model.dart';
 export 'package:app/features/auth/data/models/patient_model.dart';
 
 //domain
-export 'package:app/features/auth/domain/entities/user.dart';
-export 'package:app/features/auth/domain/entities/patient.dart';
+export 'package:app/core/share/domain/entities/user.dart';
+export 'package:app/core/share/domain/entities/patient.dart';
 export 'package:app/core/share/domain/repository/user_repository.dart';
 export 'package:app/core/share/domain/repository/patient_repository.dart';
 export 'package:app/core/share/domain/repository/remember_repository.dart';

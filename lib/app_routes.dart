@@ -1,3 +1,4 @@
+import 'package:app/features/diary/ui/pages/add/add_page.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
@@ -14,7 +15,8 @@ class AppRoutes {
   static const pdf = '/pdf';
   static const changePassword = '/changePassword';
   static const profileData = '/profileData';
-  static const medicalAppointment = '/medicalAppointment'; // <-- nueva ruta
+  static const medicalAppointment = '/medicalAppointment';
+  static const qrPage = '/qr';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -40,8 +42,12 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
       case profileData:
         return MaterialPageRoute(builder: (_) => const ProfileDataPage());
-      case medicalAppointment: 
-        return MaterialPageRoute(builder: (_) => const MedicalAppointmentPage());
+      case medicalAppointment:
+        return MaterialPageRoute(
+          builder: (_) => const MedicalAppointmentPage(),
+        );
+      case qrPage:
+        return MaterialPageRoute(builder: (_) => const QrPage());
       default:
         return MaterialPageRoute(
           builder: (_) =>

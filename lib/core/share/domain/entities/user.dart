@@ -5,8 +5,8 @@ class User {
   final String email;
   final String phoneNumber;
   final String userName;
-  final String passwordHash; // en BD guardas hash, no texto plano
-  final String role; // doctor o paciente
+  final String passwordHash; 
+  final String role; 
 
   User({ 
     this.id,

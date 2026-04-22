@@ -1,6 +1,6 @@
+import 'package:app/core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
-import 'package:app/core/utils/password_hasher.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
@@ -31,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         // Hashear contraseña antes de registrar en BD
         final hashedUser = event.user.copyWith(
+          id: IdGenerator.generate(),
           passwordHash: PasswordHasher.hash(event.user.passwordHash),
         );
 
@@ -58,7 +59,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       emit(const AuthLoading());
       try {
-        final patientWithId = event.patient.copyWith(userId: _userId);
+        final patientWithId = event.patient.copyWith(userId: _userId,
+        id: IdGenerator.generate());
         await registerPatient(patientWithId);
         emit(UserFullyRegistrated(user!));
       } catch (e) {

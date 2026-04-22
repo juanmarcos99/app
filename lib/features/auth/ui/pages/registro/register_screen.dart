@@ -55,6 +55,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
 
           if (state is UserRegistrated && state.user.role == 'patient') {
             final patient = Patient(
+              id: 1,
               userId: state.user.id!,
               caregiverNumber: caregiverPhoneController.text,
               caregiverEmail: caregiverEmailController.text,
@@ -321,7 +322,7 @@ class _RoleTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? theme.colorScheme.primary.withValues(alpha: 0.1)
-              : theme.colorScheme.surfaceContainerHighest,
+              : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selected

@@ -1,4 +1,4 @@
-import 'package:app/core/core.dart';
+import 'package:app/core/theme/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../diary.dart';
@@ -16,8 +16,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<Widget> _screens = [
     const HomePage(),
-    const DiaryPage(),
-    const AddPage(), // Este se intercepta en el onTap
+    const DiaryPage(),    
     const MedicationPage(),
     const SettingsPage(),
   ];
@@ -26,27 +25,21 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     "Home",
     "Diario",
     "Agregar",
-    "Medicación",
+    "Medicacíon",
     "Ajustes",
   ];
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: AppColors.primary,
         title: Text(
           _titles[_index],
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            color: cs.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: AppColors.white),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: cs.onSurface),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -66,99 +59,207 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     );
   }
 
-  void _showAddMenu(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  
 
+  void _showAddMenu(BuildContext context) {
+     final theme = Theme.of(context);
     showDialog(
       context: context,
-      barrierColor: Colors.black54,
+      barrierColor: Colors.black38,
       builder: (context) {
         return Stack(
           children: [
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 100,
-                ), // Ajustado para que no tape la barra
+                padding: const EdgeInsets.only(bottom: 85),
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 18,
+                    ),
                     decoration: BoxDecoration(
-                      color: cs.surface,
-                      borderRadius: BorderRadius.circular(24),
-                      // BORDE DINÁMICO SEGÚN EL TEMA
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
-                      ),
-                      boxShadow: [
+                      color:  theme.scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: isDark ? 0.4 : 0.15,
-                          ),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                          color: AppColors.black,
+                          blurRadius: 12,
+                          offset: Offset(0, 6),
                         ),
                       ],
                     ),
+
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildMenuButton(
-                          context,
-                          icon: Icons.warning_amber_rounded,
-                          label: "Agregar crisis",
-                          onTap: () async {
-                            Navigator.pop(
-                              context,
-                            ); // Cerrar menú antes de abrir diálogo
-                            final result = await showDialog<Crisis>(
-                              context: context,
-                              useRootNavigator: false,
-                              builder: (_) => const RegisterCrisisDialog(),
-                            );
-                            if (result != null) {
-                              _handleCrisisAdd(context, result);
-                            }
-                          },
+                        // Tamaño fijo para todos los botones
+                        SizedBox(
+                          width: 220,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.warning_amber_rounded,
+                              color: AppColors.white,
+                            ),
+                            label: const Text(
+                              "crisis",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () async {
+                              final result = await showDialog<Crisis>(
+                                context: context,
+                                useRootNavigator: false,
+                                builder: (_) => const RegisterCrisisDialog(),
+                              );
+
+                              if (result != null) {
+                                final authState = context
+                                    .read<AuthBloc>()
+                                    .state;
+                                if (authState is! UserLoggedIn) return;
+
+                                final userId = authState.user.id!;
+
+                                final crisis = CrisisModel(
+                                  registeredDate: DateTime.now(),
+                                  crisisDate: DateTime.now(),
+                                  timeRange: result.timeRange,
+                                  quantity: result.quantity,
+                                  type: result.type,
+                                  userId: userId,
+                                );
+
+                                context.read<DiaryBloc>().add(
+                                  AddCrisisEvent(crisis),
+                                );
+                                context.read<DiaryBloc>().add(
+                                  LoadCalendarEvent(userId),
+                                );
+                              }
+                            },
+                          ),
                         ),
+
                         const SizedBox(height: 12),
-                        _buildMenuButton(
-                          context,
-                          icon: Icons.health_and_safety_outlined,
-                          label: "Agregar evento adverso",
-                          onTap: () async {
-                            Navigator.pop(context);
-                            final result = await showDialog<AdverseEvent>(
-                              context: context,
-                              useRootNavigator: false,
-                              builder: (_) => const RegistroEfectDialog(),
-                            );
-                            if (result != null) {
-                              _handleAdverseEventAdd(context, result);
-                            }
-                          },
+
+                        SizedBox(
+                          width: 220,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.health_and_safety,
+                              color: AppColors.white,
+                            ),
+                            label: const Text(
+                              "evento adverso",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () async {
+                              final result = await showDialog<AdverseEvent>(
+                                context: context,
+                                useRootNavigator: false,
+                                builder: (_) => const RegistroEfectDialog(),
+                              );
+
+                              if (result != null) {
+                                final authState = context
+                                    .read<AuthBloc>()
+                                    .state;
+                                if (authState is! UserLoggedIn) return;
+
+                                final userId = authState.user.id!;
+
+                                final efecto = AdverseEvent(
+                                  registerDate: DateTime.now(),
+                                  eventDate: DateTime.now(),
+                                  description: result.description,
+                                  userId: userId,
+                                );
+
+                                context.read<DiaryBloc>().add(
+                                  AddAdverseEventEvent(efecto),
+                                );
+                                context.read<DiaryBloc>().add(
+                                  LoadCalendarEvent(userId),
+                                );
+                              }
+                            },
+                          ),
                         ),
+
                         const SizedBox(height: 12),
-                        _buildMenuButton(
-                          context,
-                          icon: Icons.medication_outlined,
-                          label: "Agregar medicamento",
-                          onTap: () async {
-                            Navigator.pop(context);
-                            final result = await showDialog<(Medication, bool)>(
-                              context: context,
-                              useRootNavigator: false,
-                              builder: (_) => const RegisterMedicationDialog(),
-                            );
-                            if (result != null) {
-                              _handleMedicationAdd(context, result);
-                            }
-                          },
+
+                        SizedBox(
+                          width: 220,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.medication,
+                              color: AppColors.white,
+                            ),
+                            label: const Text(
+                              "Agregar medicamento",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () async {
+                              final result =
+                                  await showDialog<(Medication, bool)>(
+                                    context: context,
+                                    useRootNavigator: false,
+                                    builder: (_) =>
+                                        const RegisterMedicationDialog(),
+                                  );
+                              final authState = context.read<AuthBloc>().state;
+                              if (authState is! UserLoggedIn) return;
+
+                              final userId = authState.user.id!;
+
+                              if (result != null) {
+                                final (medication, shouldSchedule) = result;
+
+                                final medWithUser = medication.copyWith(
+                                  userId: userId,
+                                );
+
+                                context.read<MedicationBloc>().add(
+                                  AddMedicationEvent(
+                                    medWithUser,
+                                    shouldSchedule,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -169,88 +270,6 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           ],
         );
       },
-    );
-  }
-
-  // Widget auxiliar para mantener el menú limpio y responsivo al tema
-  Widget _buildMenuButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    final cs = Theme.of(context).colorScheme;
-
-    return SizedBox(
-      width: 240,
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: AppColors.white, size: 20),
-        label: Text(
-          label,
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: cs.primary,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        onPressed: onTap,
-      ),
-    );
-  }
-
-  // --- MÉTODOS DE AYUDA PARA MANTENER EL CÓDIGO LIMPIO ---
-
-  void _handleCrisisAdd(BuildContext context, Crisis result) {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is! UserLoggedIn) return;
-    final userId = authState.user.id!;
-
-    final crisis = CrisisModel(
-      registeredDate: DateTime.now(),
-      crisisDate: DateTime.now(),
-      timeRange: result.timeRange,
-      quantity: result.quantity,
-      type: result.type,
-      userId: userId,
-    );
-
-    context.read<DiaryBloc>().add(AddCrisisEvent(crisis));
-    context.read<DiaryBloc>().add(LoadCalendarEvent(userId));
-  }
-
-  void _handleAdverseEventAdd(BuildContext context, AdverseEvent result) {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is! UserLoggedIn) return;
-    final userId = authState.user.id!;
-
-    final efecto = AdverseEvent(
-      registerDate: DateTime.now(),
-      eventDate: DateTime.now(),
-      description: result.description,
-      userId: userId,
-    );
-
-    context.read<DiaryBloc>().add(AddAdverseEventEvent(efecto));
-    context.read<DiaryBloc>().add(LoadCalendarEvent(userId));
-  }
-
-  void _handleMedicationAdd(BuildContext context, (Medication, bool) result) {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is! UserLoggedIn) return;
-
-    final (medication, shouldSchedule) = result;
-    final medWithUser = medication.copyWith(userId: authState.user.id!);
-
-    context.read<MedicationBloc>().add(
-      AddMedicationEvent(medWithUser, shouldSchedule),
     );
   }
 }

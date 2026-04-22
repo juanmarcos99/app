@@ -70,7 +70,7 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     on<AddCrisisEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
-        await addCrisis(event.crisis);
+        await addCrisis(event.crisis.copyWith(id: IdGenerator.generate()));
         emit(CrisisAdded(event.crisis));
       } catch (e) {
         emit(DiaryError(e.toString()));
@@ -81,8 +81,8 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     on<AddAdverseEventEvent>((event, emit) async {
       emit(DiaryLoading());
       try {
-        Logger.d("entro al add evento adverso");
-        await addAdverseEvent(event.av);
+       
+        await addAdverseEvent(event.av.copyWith(id: IdGenerator.generate()));
         emit(AdverseEventAdded(event.av));
       } catch (e) {
         emit(DiaryError(e.toString()));

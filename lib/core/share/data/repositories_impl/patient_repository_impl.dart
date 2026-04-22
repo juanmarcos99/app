@@ -8,6 +8,7 @@ class PatientRepositoryImpl implements PatientRepository {
   @override
   Future<void> registerPatient(Patient patient) async {
     final patientModel = PatientModel(
+      id: patient.id,
       userId: patient.userId,
       caregiverNumber: patient.caregiverNumber,
       caregiverEmail: patient.caregiverEmail,
@@ -24,6 +25,7 @@ class PatientRepositoryImpl implements PatientRepository {
   @override
   Future<void> updatePatient(Patient patient) async {
     final patientModel = PatientModel(
+      id: patient.id,
       userId: patient.userId,
       caregiverNumber: patient.caregiverNumber,
       caregiverEmail: patient.caregiverEmail,

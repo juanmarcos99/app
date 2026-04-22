@@ -5,6 +5,7 @@ export 'database/app_database.dart';
 export 'core_injection.dart';
 export 'services/notifications_services.dart';
 export 'services/storage_services.dart';
+export 'services/id_generator_services.dart';
 export 'logging/logger.dart';
 export 'share/ui/widgets/confirmation_dialog.dart';
 export 'share/domain/use_cases/user/check_user_existence.dart';

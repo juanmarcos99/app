@@ -1,113 +1,110 @@
-  import 'package:flutter/foundation.dart';
-  import 'package:flutter_bloc/flutter_bloc.dart';
-  import 'package:app/features/diary/diary.dart';
-  import 'package:app/features/auth/auth.dart';
-  import 'package:app/core/core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/features/diary/diary.dart';
+import 'package:app/features/auth/auth.dart';
+import 'package:app/core/core.dart';
 
-  class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-    final UpdateUser updateUser;
-    final DeleteUser deleteUser;
-    final UpdatePatient updatePatient;
-    final GetPatientByUserId getPatientByUserId;
-    final DeleteUserRemembered deleteUserRemembered;
-    final CheckUserExistence checkUserExistence;
-    final UpdateUserRemembered updateUserRemembered;
+class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+  final UpdateUser updateUser;
+  final DeleteUser deleteUser;
+  final UpdatePatient updatePatient;
+  final GetPatientByUserId getPatientByUserId;
+  final DeleteUserRemembered deleteUserRemembered;
+  final CheckUserExistence checkUserExistence;
+  final UpdateUserRemembered updateUserRemembered;
 
-    ProfileBloc({
-      required this.updateUser,
-      required this.deleteUser,
-      required this.updatePatient,
-      required this.getPatientByUserId,
-      required this.deleteUserRemembered,
-      required this.checkUserExistence,
-      required this.updateUserRemembered,
-    }) : super(ProfileInitial()) {
-      on<LoadProfileData>(_onLoadProfileData);
-      on<UpdateProfileData>(_onUpdateProfileData);
-      on<DeleteProfile>(_onDeleteProfile);
-    }
+  ProfileBloc({
+    required this.updateUser,
+    required this.deleteUser,
+    required this.updatePatient,
+    required this.getPatientByUserId,
+    required this.deleteUserRemembered,
+    required this.checkUserExistence,
+    required this.updateUserRemembered,
+  }) : super(ProfileInitial()) {
+    on<LoadProfileData>(_onLoadProfileData);
+    on<UpdateProfileData>(_onUpdateProfileData);
+    on<DeleteProfile>(_onDeleteProfile);
+  }
 
-    Future<void> _onLoadProfileData(
-      LoadProfileData event,
-      Emitter<ProfileState> emit,
-    ) async {
-      emit(ProfileLoading());
-      try {
-        final patient = await getPatientByUserId(event.user.id!);
-        if (patient != null) {
-          emit(ProfileLoaded(user: event.user, patient: patient));
-        } else {
-          emit(ProfileLoaded(user: event.user, patient: null));
-        }
-      } catch (e) {
-        debugPrint("Error cargando perfil: $e");
-        emit(ProfileError("Error cargando perfil: $e"));
+  Future<void> _onLoadProfileData(
+    LoadProfileData event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      final patient = await getPatientByUserId(event.user.id!);
+      if (patient != null) {
+        emit(ProfileLoaded(user: event.user, patient: patient));
+      } else {
+        emit(ProfileLoaded(user: event.user, patient: null));
       }
-    }
-
-    Future<void> _onUpdateProfileData(
-      UpdateProfileData event,
-      Emitter<ProfileState> emit,
-    ) async {
-      emit(ProfileLoading());
-      try {
-        final existence = await checkUserExistence(event.userUpdated.userName);
-        if (event.userBeforeUpdate.userName != event.userUpdated.userName &&
-            existence == -1) {
-          emit(ProfileError("El nombre de usuario ya existe"));
-        }
-        if (event.userBeforeUpdate.userName != event.userUpdated.userName &&
-            existence != -1) {
-          // Actualizamos usuario
-          await updateUser(event.userUpdated);
-          await updateUserRemembered(
-            event.userBeforeUpdate.userName,
-            event.userUpdated.userName,
-          );
-
-          // Si es paciente, actualizamos también
-          if (event.patientUpdated != null) {
-            await updatePatient(event.patientUpdated!);
-          }
-
-          // Emitimos estado actualizado
-          emit(
-            ProfileUpdated(
-              user: event.userUpdated,
-              patient: event.patientUpdated,
-            ),
-          );
-        } else {
-          await updateUser(event.userUpdated);
-          // Si es paciente, actualizamos también
-          if (event.patientUpdated != null) {
-            await updatePatient(event.patientUpdated!);
-          }
-
-          // Emitimos estado actualizado
-          emit(
-            ProfileUpdated(
-              user: event.userUpdated,
-              patient: event.patientUpdated,
-            ),
-          );
-        }
-      } catch (e) {
-        emit(ProfileError("Error actualizando usuario: $e"));
-      }
-    }
-
-    Future<void> _onDeleteProfile(
-      DeleteProfile event,
-      Emitter<ProfileState> emit,
-    ) async {
-      emit(ProfileLoading());
-      try {
-        await deleteUser(event.user.id!);
-        await deleteUserRemembered(event.user.userName);
-        emit(ProfileDeleted());
-      } catch (e) {
-        emit(ProfileError("Error eliminando usuario: $e"));
-      }
+    } catch (e) {
+      debugPrint("Error cargando perfil: $e");
+      emit(ProfileError("Error cargando perfil: $e"));
     }
   }
+
+  Future<void> _onUpdateProfileData(
+    UpdateProfileData event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      // 1. Validar si el nombre de usuario ya existe (solo si se intentó cambiar)
+      if (event.userBeforeUpdate.userName != event.userUpdated.userName) {
+        final existence = await checkUserExistence(event.userUpdated.userName);
+        if (existence == -1) {
+          emit(ProfileError("El nombre de usuario ya existe"));
+          return;
+        }
+      }
+
+      // 2. Actualizar datos básicos del usuario
+      await updateUser(event.userUpdated);
+
+      // 3. Actualizar el nombre de usuario recordado si cambió
+      if (event.userBeforeUpdate.userName != event.userUpdated.userName) {
+        await updateUserRemembered(
+          event.userBeforeUpdate.userName,
+          event.userUpdated.userName,
+        );
+      }
+
+      // 4. Manejo de la actualización del Paciente
+      Patient? finalPatient = event.patientUpdated;
+
+      if (finalPatient != null) {
+        // Si el objeto que viene de la UI no tiene el ID (o es 0), lo rescatamos de la BD
+        if (finalPatient.id == null || finalPatient.id == 0) {
+          final dbPatient = await getPatientByUserId(finalPatient.userId);
+          if (dbPatient != null) {
+            // IMPORTANTE: Reasignamos finalPatient con el nuevo objeto que SÍ tiene el ID
+            finalPatient = finalPatient.copyWith(id: dbPatient.id);
+          }
+        }
+        // Ahora enviamos el objeto que garantizamos que tiene el ID correcto
+        await updatePatient(finalPatient);
+      }
+
+      // 5. Emitir el estado de éxito con los datos actualizados
+      emit(ProfileUpdated(user: event.userUpdated, patient: finalPatient));
+    } catch (e) {
+      emit(ProfileError("Error actualizando usuario: $e"));
+    }
+  }
+
+  Future<void> _onDeleteProfile(
+    DeleteProfile event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      await deleteUser(event.user.id!);
+      await deleteUserRemembered(event.user.userName);
+      emit(ProfileDeleted());
+    } catch (e) {
+      emit(ProfileError("Error eliminando usuario: $e"));
+    }
+  }
+}

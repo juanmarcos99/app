@@ -11,7 +11,6 @@ class SettingsPage extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      // Usamos el color del tema para el fondo
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
@@ -28,7 +27,6 @@ class SettingsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // --- HEADER EDITORIAL ---
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -44,9 +42,7 @@ class SettingsPage extends StatelessWidget {
                             Builder(
                               builder: (context) {
                                 String userName = "Invitado";
-                                final authState = context
-                                    .watch<AuthBloc>()
-                                    .state;
+                                final authState = context.watch<AuthBloc>().state;
                                 if (authState is UserLoggedIn) {
                                   userName = authState.user.name;
                                 }
@@ -65,68 +61,55 @@ class SettingsPage extends StatelessWidget {
                               width: 48,
                               decoration: BoxDecoration(
                                 color: colorScheme.primary,
-                                borderRadius: BorderRadius.circular(
-                                  double.infinity,
-                                ),
+                                borderRadius: BorderRadius.circular(double.infinity),
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 48),
-
-                        // --- LISTA DE OPCIONES (Tonal Layering) ---
                         _SettingsTile(
                           icon: Icons.person,
                           title: 'Datos del perfil',
                           subtitle: 'Gestiona tu información personal',
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.profileData,
-                          ),
+                          onTap: () => Navigator.pushNamed(context, '/profile_data'),
                         ),
                         const SizedBox(height: 16),
                         _SettingsTile(
                           icon: Icons.notifications,
                           title: 'Notificaciones',
                           subtitle: 'Configura tus alertas y avisos',
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.medicalAppointment,
-                          ),
+                          onTap: () => Navigator.pushNamed(context, '/appointments'),
                         ),
                         const SizedBox(height: 16),
                         _SettingsTile(
                           icon: Icons.picture_as_pdf,
                           title: 'Exportar reporte (PDF)',
                           subtitle: 'Descarga tus datos clínicos',
-                          onTap: () =>
-                              Navigator.pushNamed(context, AppRoutes.pdf),
+                          onTap: () => Navigator.pushNamed(context, '/pdf'),
                         ),
-
+                        const SizedBox(height: 16),
+                        _SettingsTile(
+                          icon: Icons.qr_code,
+                          title: 'Compartir QR',
+                          subtitle: 'Compartir datos clínicos',
+                          onTap: () => Navigator.pushNamed(context, '/qr_page'),
+                        ),
                         const SizedBox(height: 48),
-
-                        // --- DANGER ZONE (Log Out) ---
                         SizedBox(
                           width: double.infinity,
                           child: TextButton.icon(
                             style: TextButton.styleFrom(
-                              backgroundColor: colorScheme.error.withValues(
-                                alpha: 0.08,
-                              ),
+                              backgroundColor: colorScheme.error.withValues(alpha: 0.08),
                               foregroundColor: colorScheme.error,
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
-                                  color: colorScheme.error.withValues(alpha:0.1),
+                                  color: colorScheme.error.withValues(alpha: 0.1),
                                 ),
                               ),
                             ),
-                            onPressed: () {
-                              // Aquí podrías agregar la lógica de logout de tu AuthBloc
-                              Navigator.pop(context);
-                            },
+                            onPressed: () => Navigator.pop(context),
                             icon: const Icon(Icons.logout, size: 20),
                             label: const Text(
                               'Cerrar sesión',
@@ -134,17 +117,12 @@ class SettingsPage extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 32),
-
-                        // Versión
                         Center(
                           child: Text(
-                            "",
+                            "v1.0.0",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant.withValues(alpha:
-                                0.6,
-                              ),
+                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -179,51 +157,44 @@ class _SettingsTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        // Usamos surfaceContainerHighest definido en tu AppTheme
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Material(
-        color: colorScheme.surfaceContainerHigh,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                // Icon Container
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: colorScheme.primary, size: 24),
+    return Material(
+      color: colorScheme.surfaceContainerHigh,
+      clipBehavior: Clip.antiAlias,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 16),
-                // Text content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          fontSize: 18,
-                          letterSpacing: -0.5,
-                        ),
+                child: Icon(icon, color: colorScheme.primary, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        fontSize: 18,
+                        letterSpacing: -0.5,
                       ),
-                      const SizedBox(height: 2),
-                      Text(subtitle, style: theme.textTheme.bodyMedium),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: theme.textTheme.bodyMedium),
+                  ],
                 ),
-                Icon(Icons.chevron_right, color: colorScheme.outlineVariant),
-              ],
-            ),
+              ),
+              Icon(Icons.chevron_right, color: colorScheme.outlineVariant),
+            ],
           ),
         ),
       ),

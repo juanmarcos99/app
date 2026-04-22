@@ -1,4 +1,5 @@
 import 'package:app/features/diary/diary.dart';
+import 'package:app/features/diary/ui/pages/add/add_page.dart';
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,6 +62,7 @@ class MainApp extends StatelessWidget {
           AppRoutes.profileData: (context) => const ProfileDataPage(),
           AppRoutes.medicalAppointment: (context) =>
               const MedicalAppointmentPage(),
+          AppRoutes.qrPage: (context) => const QrPage(),
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

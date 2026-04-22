@@ -68,7 +68,8 @@ export 'ui/pages/medication/Widgets/medication_card.dart';
 export 'ui/pages/medication/Widgets/medication_footer_button.dart';
 export 'ui/pages/medication/Widgets/add_medication.dart';
 export 'ui/pages/settings/settings_page.dart';
-export 'ui/pages/add/add_page.dart';
+export 'ui/pages/qr/qr.dart';
+
 export 'ui/pages/pdf/pdf.dart';
 export 'ui/pages/profile_data/profile_data_page.dart';
 export 'ui/pages/pdf/widgets/pdf_card.dart';
