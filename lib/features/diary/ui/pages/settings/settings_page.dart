@@ -92,7 +92,7 @@ class SettingsPage extends StatelessWidget {
                           icon: Icons.qr_code,
                           title: 'Compartir QR',
                           subtitle: 'Compartir datos clínicos',
-                          onTap: () => Navigator.pushNamed(context, '/qr_page'),
+                          onTap: () => Navigator.pushNamed(context, '/qr'),
                         ),
                         const SizedBox(height: 48),
                         SizedBox(

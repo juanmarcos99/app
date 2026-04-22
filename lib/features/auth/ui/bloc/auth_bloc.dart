@@ -1,6 +1,8 @@
 import 'package:app/core/core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
@@ -22,10 +24,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.changePassword,
     this.saveUser,
     this.savePassword,
-    this.getRememberedUsers, 
+    this.getRememberedUsers,
     this.getPassword,
   ) : super(const AuthInitial()) {
-
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
@@ -54,16 +55,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<RegisterPatientEvent>((event, emit) async {
       if (_userId == null) {
-        emit(const AuthFailure('Aún no hay userId para registrar el paciente.'));
+        emit(
+          const AuthFailure('Aún no hay userId para registrar el paciente.'),
+        );
         return;
       }
       emit(const AuthLoading());
       try {
-        final patientWithId = event.patient.copyWith(userId: _userId,
-        id: IdGenerator.generate());
+        final patientWithId = event.patient.copyWith(
+          userId: _userId,
+          id: IdGenerator.generate(),
+        );
         await registerPatient(patientWithId);
+        // 3. REGISTRO EN SUPABASE
+        // Usamos .from('users') porque así llamamos a tu tabla
+        await supabase.Supabase.instance.client.from('users').insert({
+          'id': user!.id, 
+          'name': user!.name,
+          'lastName': user!.lastName,
+          'email': user!.email,
+          'phoneNumber': user!.phoneNumber,
+          'userName': user!.userName,
+          'passwordHash': user!.passwordHash,
+          'role': user!.role,          
+        });
         emit(UserFullyRegistrated(user!));
       } catch (e) {
+        debugPrint('Error al registrar paciente en Supabase: $e');
         emit(AuthFailure('Error al registrar paciente: $e'));
       }
     });
@@ -82,7 +100,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
           emit(UserLoggedIn(loggedUser));
         } else {
-          emit(const AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
+          emit(
+            const AuthFailure(
+              'Credenciales inválidas, por favor rectifiquelas',
+            ),
+          );
         }
       } catch (e) {
         emit(AuthFailure('Error al iniciar sesión: $e'));
@@ -98,7 +120,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         final loggedUser = await loginUser(event.username, currentHashed);
         if (loggedUser == null) {
-          emit(const AuthFailure('Credenciales inválidas, por favor rectifiquelas'));
+          emit(
+            const AuthFailure(
+              'Credenciales inválidas, por favor rectifiquelas',
+            ),
+          );
         } else {
           await changePassword(event.username, newHashed);
           await savePassword(event.username, event.newPassword); // texto plano
