@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:app/features/auth/auth.dart';
+import '../../../../core/core.dart';
 
 //estado abstracto del cual heredan los demas
 abstract class AuthState extends Equatable {
@@ -94,3 +95,28 @@ class PasswordLoaded extends AuthState {
   @override
   List<Object?> get props => [password];
 }
+
+//estado para registrar tareas pendientes de sincronización
+class SyncSuccess extends AuthState {
+  final String mesage;
+  const SyncSuccess(this.mesage);
+}
+class SyncError extends AuthState {
+  final String error;
+  const SyncError(this.error);
+}
+
+class SyncQueueadedd extends AuthState {
+  final List<SyncTaskModel> tasks;
+  const SyncQueueadedd(this.tasks);
+
+  @override
+  List<Object?> get props => [tasks];
+}
+
+//estado para subida a base de datos remota 
+class RemoteError extends AuthState {
+  final String mesage;
+  const RemoteError(this.mesage);
+}
+

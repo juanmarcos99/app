@@ -89,6 +89,17 @@ class AppDatabase {
     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
   )
 ''');
+        await db.execute('''
+          CREATE TABLE sync_queue (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            endpoint TEXT NOT NULL,         -- Tabla destino en Supabase
+            method TEXT NOT NULL,           -- INSERT, UPDATE, DELETE
+            payload TEXT NOT NULL,          -- Datos en formato JSON String
+            status TEXT DEFAULT 'pending',  -- pending, error
+            last_error TEXT,                -- Para debuguear fallos de lógica
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        ''');
       },
     );
 

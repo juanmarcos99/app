@@ -13,6 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SavePassword savePassword;
   final GetRememberedUsers getRememberedUsers;
   final GetPassword getPassword;
+  final AddToSyncQueueUseCase addToSyncQueueUseCase;
 
   int? _userId;
   User? user;
@@ -26,15 +27,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.savePassword,
     this.getRememberedUsers,
     this.getPassword,
+    this.addToSyncQueueUseCase,
   ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
-        // Hashear contraseña antes de registrar en BD
+        final generatedId = IdGenerator.generate();
         final hashedUser = event.user.copyWith(
-          id: IdGenerator.generate(),
+          id: generatedId,
           passwordHash: PasswordHasher.hash(event.user.passwordHash),
         );
+
+        user = hashedUser;
 
         _userId = await registerUser(hashedUser);
 
@@ -48,6 +52,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             emit(UserFullyRegistrated(user!));
           }
         }
+      } on LocalDataBaseException catch (e) {
+        emit(AuthFailure('Error al registrar usuario localmente: $e'));
+      } on ServerException catch (e) {
+        _userId = user!.id;
+        emit(
+          RemoteError(
+            'Falló la subida a la nube, guardando en cola de sincronización... ${e.message}',
+          ),
+        );
+
+        final task = SyncTaskModel(
+          endpoint: 'users',
+          method: 'INSERT',
+          payload: {
+            'id': user!.id,
+            'name': user!.name,
+            'lastName': user!.lastName,
+            'email': user!.email,
+            'phoneNumber': user!.phoneNumber,
+            'userName': user!.userName,
+            'passwordHash': user!.passwordHash,
+            'role': user!.role,
+          },
+        );
+
+        try {
+          await addToSyncQueueUseCase(task);
+          emit(SyncSuccess('Tarea guardada para reintentar luego'));
+        } catch (e) {
+          emit(SyncError('Error al guardar tarea de sincronización: $e'));
+        }
+
+        if (user!.role == 'patient') {
+          emit(UserRegistrated(user!));
+        } else {
+          emit(UserFullyRegistrated(user!));
+        }
       } catch (e) {
         emit(AuthFailure('Error al registrar usuario: $e'));
       }
@@ -60,29 +101,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         return;
       }
-      emit(const AuthLoading());
+      emit(AuthLoading());
       try {
         final patientWithId = event.patient.copyWith(
           userId: _userId,
           id: IdGenerator.generate(),
         );
         await registerPatient(patientWithId);
-        // 3. REGISTRO EN SUPABASE
-        // Usamos .from('users') porque así llamamos a tu tabla
-        await supabase.Supabase.instance.client.from('users').insert({
-          'id': user!.id, 
-          'name': user!.name,
-          'lastName': user!.lastName,
-          'email': user!.email,
-          'phoneNumber': user!.phoneNumber,
-          'userName': user!.userName,
-          'passwordHash': user!.passwordHash,
-          'role': user!.role,          
-        });
         emit(UserFullyRegistrated(user!));
       } catch (e) {
-        debugPrint('Error al registrar paciente en Supabase: $e');
-        emit(AuthFailure('Error al registrar paciente: $e'));
+        emit(
+          AuthFailure(
+            'Error al registrar paciente en la base de datos local : $e',
+          ),
+        );
       }
     });
 

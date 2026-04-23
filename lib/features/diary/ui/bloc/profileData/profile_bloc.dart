@@ -12,8 +12,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DeleteUserRemembered deleteUserRemembered;
   final CheckUserExistence checkUserExistence;
   final UpdateUserRemembered updateUserRemembered;
+   final AddToSyncQueueUseCase addToSyncQueueUseCase;
 
-  ProfileBloc({
+  ProfileBloc( {
     required this.updateUser,
     required this.deleteUser,
     required this.updatePatient,
@@ -21,6 +22,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.deleteUserRemembered,
     required this.checkUserExistence,
     required this.updateUserRemembered,
+    required this.addToSyncQueueUseCase,
   }) : super(ProfileInitial()) {
     on<LoadProfileData>(_onLoadProfileData);
     on<UpdateProfileData>(_onUpdateProfileData);
@@ -103,8 +105,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await deleteUser(event.user.id!);
       await deleteUserRemembered(event.user.userName);
       emit(ProfileDeleted());
+    } on LocalDataBaseException catch (e) {
+      emit(ProfileError("Error local al eliminar: ${e.message}"));
+    } on ServerException catch (e) {
+      final task = SyncTaskModel(
+        endpoint: 'users',
+        method: 'DELETE',
+        payload: {'id': event.user.id},
+      );
+      try {
+        await addToSyncQueueUseCase(task);
+      } catch (e) {
+        emit(ProfileError("Error al guardar tarea de sincronización: $e"));
+        return;
+      }
+      await deleteUserRemembered(event.user.userName);
+      emit(ProfileDeleted());
     } catch (e) {
-      emit(ProfileError("Error eliminando usuario: $e"));
+      emit(ProfileError("Error inesperado al eliminar: $e"));
     }
   }
 }
