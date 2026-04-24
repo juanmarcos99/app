@@ -19,17 +19,22 @@ class UserRepositoryImpl implements UserRepository {
       passwordHash: user.passwordHash,
       role: user.role,
     );
+    return await localDataSource.insertUser(userModel);
+  }
 
-    // --- BLOQUE LOCAL ---
-    try {
-      await localDataSource.insertUser(userModel);
-    } catch (e) {
-      throw LocalDataBaseException(
-        "Error Crítico Local: No se pudo guardar en el teléfono ($e)",
-      );
-    }
+  @override
+  Future<int> registerRemoteUser(User user) async {
+    final userModel = UserModel(
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      userName: user.userName,
+      passwordHash: user.passwordHash,
+      role: user.role,
+    );
 
-    // --- BLOQUE REMOTO ---
     try {
       await remoteDataSource.insertUser(userModel);
     } catch (e) {
@@ -116,7 +121,10 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       throw LocalDataBaseException("Error local al eliminar usuario: ($e)");
     }
+  }
 
+  @override
+  Future<void> deleteRemoteUser(int id) async {
     try {
       await remoteDataSource.deleteUser(id);
     } catch (e) {

@@ -12,9 +12,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DeleteUserRemembered deleteUserRemembered;
   final CheckUserExistence checkUserExistence;
   final UpdateUserRemembered updateUserRemembered;
-   final AddToSyncQueueUseCase addToSyncQueueUseCase;
+  final AddToSyncQueueUseCase addToSyncQueueUseCase;
+  final DeleteRemoteUser deleteRemoteUser;
 
-  ProfileBloc( {
+  ProfileBloc({
     required this.updateUser,
     required this.deleteUser,
     required this.updatePatient,
@@ -23,6 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.checkUserExistence,
     required this.updateUserRemembered,
     required this.addToSyncQueueUseCase,
+    required this.deleteRemoteUser,
   }) : super(ProfileInitial()) {
     on<LoadProfileData>(_onLoadProfileData);
     on<UpdateProfileData>(_onUpdateProfileData);
@@ -103,11 +105,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileLoading());
     try {
       await deleteUser(event.user.id!);
+
       await deleteUserRemembered(event.user.userName);
+
+      await deleteRemoteUser(event.user.id!);
+
       emit(ProfileDeleted());
     } on LocalDataBaseException catch (e) {
       emit(ProfileError("Error local al eliminar: ${e.message}"));
     } on ServerException catch (e) {
+      debugPrint("no ses elimino el user $e");
       final task = SyncTaskModel(
         endpoint: 'users',
         method: 'DELETE',

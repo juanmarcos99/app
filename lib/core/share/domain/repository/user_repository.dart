@@ -3,9 +3,13 @@ abstract class UserRepository {
   //metodos usados en el feature auth
   Future<int> registerUser(User user);   
   Future<User?> loginUser(String username, String password);   
-  Future<void> changePassword(String username, String newPassword);   
+  Future<void> changePassword(String username, String newPassword);  
+  Future<int> registerRemoteUser(User user); 
+
+
 //metodos usados en el feature dairy de profile data
   Future<void> updateUser(User user); 
   Future<void> deleteUser(int id);
+  Future<void> deleteRemoteUser(int id);
   Future<int?> checkUserExistence(String username);
 }

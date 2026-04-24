@@ -161,6 +161,10 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<UpdateUserRemembered>(
     () => UpdateUserRemembered(sldiary<RememberRepository>()),
   );
+ 
+  sldiary.registerLazySingleton<DeleteRemoteUser>(
+    () => DeleteRemoteUser(sldiary<UserRepository>()),
+  );
 
   // -------------------------------------------------------------
   // USE CASES — profile data
@@ -226,6 +230,8 @@ void initDiaryDependencies() {
       deleteUserRemembered: sldiary<DeleteUserRemembered>(),
       checkUserExistence: sldiary<CheckUserExistence>(),
       updateUserRemembered: sldiary<UpdateUserRemembered>(),
+      addToSyncQueueUseCase: sldiary<AddToSyncQueueUseCase>(),
+      deleteRemoteUser: sldiary<DeleteRemoteUser>(),
     ),
   );
   //  apointmentBloc

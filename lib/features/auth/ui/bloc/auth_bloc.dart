@@ -14,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetRememberedUsers getRememberedUsers;
   final GetPassword getPassword;
   final AddToSyncQueueUseCase addToSyncQueueUseCase;
+  final RegisterRemoteUser registerRemoteUser;
 
   int? _userId;
   User? user;
@@ -28,6 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.getRememberedUsers,
     this.getPassword,
     this.addToSyncQueueUseCase,
+    this.registerRemoteUser,
   ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
@@ -38,59 +40,63 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           passwordHash: PasswordHasher.hash(event.user.passwordHash),
         );
 
-        user = hashedUser;
-
+        // Registro Local
         _userId = await registerUser(hashedUser);
-
         if (_userId == -2) {
-          emit(const UserNameExist());
-        } else {
-          user = hashedUser.copyWith(id: _userId);
-          if (user!.role == 'patient') {
-            emit(UserRegistrated(user!));
-          } else {
-            emit(UserFullyRegistrated(user!));
-          }
-        }
-      } on LocalDataBaseException catch (e) {
-        emit(AuthFailure('Error al registrar usuario localmente: $e'));
-      } on ServerException catch (e) {
-        _userId = user!.id;
-        emit(
-          RemoteError(
-            'Falló la subida a la nube, guardando en cola de sincronización... ${e.message}',
-          ),
-        );
-
-        final task = SyncTaskModel(
-          endpoint: 'users',
-          method: 'INSERT',
-          payload: {
-            'id': user!.id,
-            'name': user!.name,
-            'lastName': user!.lastName,
-            'email': user!.email,
-            'phoneNumber': user!.phoneNumber,
-            'userName': user!.userName,
-            'passwordHash': user!.passwordHash,
-            'role': user!.role,
-          },
-        );
-
-        try {
-          await addToSyncQueueUseCase(task);
-          emit(SyncSuccess('Tarea guardada para reintentar luego'));
-        } catch (e) {
-          emit(SyncError('Error al guardar tarea de sincronización: $e'));
+          emit(UserNameExist());
+          return;
         }
 
+        user = hashedUser.copyWith(id: _userId);
+
+        // Éxito local
         if (user!.role == 'patient') {
           emit(UserRegistrated(user!));
         } else {
           emit(UserFullyRegistrated(user!));
         }
+
+        // 2. Intento de Registro Remoto
+        try {
+          await registerRemoteUser(user!);
+        } on ServerException catch (e) {
+          // Notificamos el error remoto
+          emit(
+            RemoteError(
+              'Guardado localmente. Pendiente de sincronizar: ${e.message}',
+            ),
+          );
+
+          // Creamos la tarea con el payload manual
+          final task = SyncTaskModel(
+            endpoint: 'users',
+            method: 'INSERT',
+            payload: {
+              'id': user!.id,
+              'name': user!.name,
+              'lastName': user!.lastName,
+              'email': user!.email,
+              'phoneNumber': user!.phoneNumber,
+              'userName': user!.userName,
+              'passwordHash': user!.passwordHash,
+              'role': user!.role,
+            },
+          );
+
+          try {
+            await addToSyncQueueUseCase(task);
+            debugPrint('Tarea de sincronización agregada exitosamente para el usuario ${user!.userName}');
+          } catch (e) {
+            emit(
+              SyncError('Error al agregar a la cola de sincronización: $e'),
+            );
+            debugPrint("Error al añadir la queue");
+          }
+        }
+      } on LocalDataBaseException catch (e) {
+        emit(AuthFailure('Error local: ${e.message}'));
       } catch (e) {
-        emit(AuthFailure('Error al registrar usuario: $e'));
+        emit(AuthFailure('Error inesperado: $e'));
       }
     });
 

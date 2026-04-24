@@ -16,7 +16,7 @@ export 'package:app/core/share/domain/entities/patient.dart';
 export 'package:app/core/share/domain/repository/user_repository.dart';
 export 'package:app/core/share/domain/repository/patient_repository.dart';
 export 'package:app/core/share/domain/repository/remember_repository.dart';
-export 'package:app/features/auth/domain/use_cases/register_user.dart';
+export 'package:app/core/share/domain/use_cases/user/register_user.dart';
 export 'package:app/features/auth/domain/use_cases/register_patient.dart';
 export 'package:app/features/auth/domain/use_cases/login_user.dart';
 export 'package:app/features/auth/domain/use_cases/change_password.dart';

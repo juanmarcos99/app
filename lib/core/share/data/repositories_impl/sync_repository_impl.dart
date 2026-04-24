@@ -6,7 +6,7 @@ class SyncRepositoryImpl implements SyncRepository {
   final SyncQueueLocalDataSource localDataSource;
   final SupabaseClient supabaseClient;
 
-  SyncRepositoryImpl({
+  SyncRepositoryImpl( {
     required this.localDataSource,
     required this.supabaseClient,
   });

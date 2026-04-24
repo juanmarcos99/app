@@ -102,8 +102,8 @@ class SyncSuccess extends AuthState {
   const SyncSuccess(this.mesage);
 }
 class SyncError extends AuthState {
-  final String error;
-  const SyncError(this.error);
+  final String message;
+  const SyncError(this.message);
 }
 
 class SyncQueueadedd extends AuthState {

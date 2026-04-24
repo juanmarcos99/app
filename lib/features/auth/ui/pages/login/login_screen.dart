@@ -59,6 +59,9 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
           if (state is AuthFailure) {
             AppSnack.show(context, state.message, color: AppColors.error);
           }
+          if (state is SyncError) {
+            AppSnack.show(context, state.message, color: AppColors.error);
+          }
           if (state is UserLoggedIn) {
             usernameController.clear();
             autocompleteController?.clear();

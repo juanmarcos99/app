@@ -71,7 +71,7 @@ class SettingsPage extends StatelessWidget {
                           icon: Icons.person,
                           title: 'Datos del perfil',
                           subtitle: 'Gestiona tu información personal',
-                          onTap: () => Navigator.pushNamed(context, '/profile_data'),
+                          onTap: () => Navigator.pushNamed(context, '/profileData'),
                         ),
                         const SizedBox(height: 16),
                         _SettingsTile(
