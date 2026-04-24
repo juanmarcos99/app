@@ -97,9 +97,7 @@ void initAuthDependencies() {
   sl.registerLazySingleton<MarkSyncTaskAsErrorUseCase>(
     () => MarkSyncTaskAsErrorUseCase(sl<SyncRepository>()),
   );
-  sl.registerLazySingleton<ProcessFullSyncQueueUseCase>(
-    () => ProcessFullSyncQueueUseCase(sl<SyncRepository>()),
-  );
+ 
   sl.registerLazySingleton<SyncFirstTaskUseCase>(
     () => SyncFirstTaskUseCase(sl<SyncRepository>()),
   );

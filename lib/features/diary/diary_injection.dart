@@ -189,14 +189,23 @@ void initDiaryDependencies() {
  // -------------------------------------------------------------
   //use cases — sync
   // -------------------------------------------------------------
-  
-  sldiary.registerLazySingleton<GetPendingSyncTasksByUserIdUseCase>(
-    () => GetPendingSyncTasksByUserIdUseCase(sldiary<SyncRepository>()),
-  );
-  sldiary.registerLazySingleton<GetPendingSyncTasksUseCase>(
-    () => GetPendingSyncTasksUseCase(sldiary<SyncRepository>()),
-  );
+  // use cases — sync
+// -------------------------------------------------------------
 
+// 1. El que usa el HomeBloc (Este ya lo tenías bien)
+sldiary.registerLazySingleton<GetPendingSyncTasksByUserIdUseCase>(
+  () => GetPendingSyncTasksByUserIdUseCase(sldiary<SyncRepository>()),
+);
+
+// 2. El que usa el ProfileBloc (TE FALTABA ESTE NOMBRE EXACTO)
+
+
+// 3. El que usa el ProfileBloc para encolar tareas (TE FALTABA REGISTRARLO)
+
+// 4. Corrección del Process (usando sldiary en lugar de sl)
+sldiary.registerLazySingleton<ProcessFullSyncQueueUseCase>(
+  () => ProcessFullSyncQueueUseCase(sldiary<SyncRepository>()),
+);
 
 
   // -------------------------------------------------------------
