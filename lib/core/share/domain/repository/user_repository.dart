@@ -13,4 +13,5 @@ abstract class UserRepository {
   Future<void> deleteUser(int id);
   Future<void> deleteRemoteUser(int id);
   Future<int?> checkUserExistence(String username);
+  Future<void> updateRemoteUser(User user); 
 }

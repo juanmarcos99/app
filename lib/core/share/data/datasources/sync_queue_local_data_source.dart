@@ -7,6 +7,7 @@ abstract class SyncQueueLocalDataSource {
   Future<List<SyncTaskModel>> getPendingTasks();
   Future<void> markAsError(int id, String error);
   Future<void> deleteTask(int id);
+  Future<List<SyncTaskModel>> getPendingTasksByUserId(int userId);
 }
 
 class SyncQueueLocalDataSourceImpl extends SyncQueueLocalDataSource {
@@ -35,10 +36,7 @@ class SyncQueueLocalDataSourceImpl extends SyncQueueLocalDataSource {
   Future<void> markAsError(int id, String error) async {
     final rowsAffected = await db.update(
       'sync_queue',
-      {
-        'status': 'error',
-        'last_error': error,
-      },
+      {'status': 'error', 'last_error': error},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -55,9 +53,21 @@ class SyncQueueLocalDataSourceImpl extends SyncQueueLocalDataSource {
       where: 'id = ?',
       whereArgs: [id],
     );
-
+    debugPrint("ddfffffffffffffffffffff"+ rowsDeleted.toString());
     if (rowsDeleted == 0) {
-      debugPrint("SyncQueueError: ID $id not found");
+      debugPrint("SyncQueueErrorrrrrrrrrrrrr: ID $id not found");
     }
+  }
+
+  @override
+  Future<List<SyncTaskModel>> getPendingTasksByUserId(int userId) async {
+    final List<Map<String, dynamic>> result = await db.query(
+      'sync_queue',
+      where: 'status = ? AND user_id = ?',
+      whereArgs: ['pending', userId],
+      orderBy: 'created_at ASC',
+    );
+
+    return result.map((map) => SyncTaskModel.fromMap(map)).toList();
   }
 }

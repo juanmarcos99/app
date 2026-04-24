@@ -1,8 +1,8 @@
 import 'package:app/core/core.dart';
+import 'package:app/core/share/domain/use_cases/sync/get_pending_sync_tasks_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
@@ -16,6 +16,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AddToSyncQueueUseCase addToSyncQueueUseCase;
   final RegisterRemoteUser registerRemoteUser;
   final ChangeRemotePasswordUseCase changeRemotePassword;
+  final GetPendingSyncTasksUseCase getPendingSyncTasksUseCase;
+  final ProcessFullSyncQueueUseCase processFullSyncQueueUseCase;
 
   int? _userId;
   User? user;
@@ -32,6 +34,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.addToSyncQueueUseCase,
     this.registerRemoteUser,
     this.changeRemotePassword,
+    this.getPendingSyncTasksUseCase,
+    this.processFullSyncQueueUseCase,
   ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
@@ -60,7 +64,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         // 2. Intento de Registro Remoto
         try {
-          await registerRemoteUser(user!);
+          final pendingTasks = await getPendingSyncTasksUseCase();
+          if (pendingTasks.isEmpty) {
+            await registerRemoteUser(user!);
+          } else {
+            throw ServerException(
+              "no se puede subir a la nube, la cola tiene elementos pendientes",
+            );
+          }
         } on ServerException catch (e) {
           // Notificamos el error remoto
           emit(
@@ -72,6 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           // Creamos la tarea con el payload manual
           final task = SyncTaskModel(
             endpoint: 'users',
+            userId: _userId!,
             method: 'INSERT',
             payload: {
               'id': user!.id,
@@ -87,11 +99,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           try {
             await addToSyncQueueUseCase(task);
-            debugPrint('Tarea de sincronización agregada exitosamente para el usuario ${user!.userName}');
-          } catch (e) {
-            emit(
-              SyncError('Error al agregar a la cola de sincronización: $e'),
+            debugPrint(
+              'Tarea de sincronización agregada exitosamente para el usuario ${user!.userName}',
             );
+          } catch (e) {
+            emit(SyncError('Error al agregar a la cola de sincronización: $e'));
             debugPrint("Error al añadir la queue");
           }
         }
@@ -154,35 +166,79 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ChangePasswordEvent>((event, emit) async {
       emit(const AuthLoading());
       try {
-        // Hashear contraseña actual y nueva para BD
+        // 1. Lógica Local (Hasheo y Verificación)
         final currentHashed = PasswordHasher.hash(event.currentPassword);
         final newHashed = PasswordHasher.hash(event.newPassword);
-
         final loggedUser = await loginUser(event.username, currentHashed);
+
         if (loggedUser == null) {
           emit(
             const AuthFailure(
               'Credenciales inválidas, por favor rectifiquelas',
             ),
           );
-        } else {
-          await changePassword(event.username, newHashed);
-          await savePassword(event.username, event.newPassword); // texto plano
+          return;
+        }
+
+        // 2. Aplicar cambio localmente de inmediato
+        await changePassword(event.username, newHashed);
+        await savePassword(event.username, event.newPassword);
+
+        // Notificamos éxito local (La UI ya puede reaccionar)
+        emit(UserPasswordChanged());
+
+        // 3. Intento de Sincronización Remota (Aislado)
+        try {
+          final pendingTasks = await getPendingSyncTasksUseCase();
+
+          if (pendingTasks.isNotEmpty) {
+            throw ServerException("Cola de sincronización activa");
+          }
+
+          // Intento subir a Supabase
           await changeRemotePassword(event.username, newHashed);
-          emit(const UserPasswordChanged());
+        } catch (e) {
+          // Si llega aquí, es porque hay tareas pendientes O falló la conexión
+          // No emitimos AuthFailure porque localmente YA se cambió.
+
+          emit(
+            RemoteError(
+              'Cambio guardado localmente. Pendiente de sincronizar.',
+            ),
+          );
+
+          final task = SyncTaskModel(
+            userId: loggedUser.id!,
+            endpoint: 'users',
+            method: 'UPDATE',
+            payload: {'id': loggedUser.id, 'passwordHash': newHashed},
+          );
+
+          try {
+            await addToSyncQueueUseCase(task);
+            debugPrint(
+              'Tarea de cambio de pass encolada para ${loggedUser.userName}',
+            );
+          } catch (queueError) {
+            emit(SyncError('Error al guardar en cola: $queueError'));
+          }
         }
       } catch (e) {
-        emit(AuthFailure('Error al cambiar contraseña: $e'));
+        debugPrint('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr crítico: $e');
+        emit(AuthFailure('Error crítico: $e'));
       }
     });
 
     on<LoadRememberedUsersEvent>((event, emit) async {
       emit(const AuthLoading());
+    
+      
       try {
+        await processFullSyncQueueUseCase();
         final users = await getRememberedUsers();
         emit(RememberUsersLoaded(users));
       } catch (e) {
-        emit(AuthFailure('Error al cargar usuarios recordados: $e'));
+        emit(AuthFailure('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr $e'));
       }
     });
 

@@ -1,3 +1,4 @@
+import 'package:app/features/diary/domain/use_cases/user/update_remote_user_use_case.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/diary/diary.dart';
@@ -14,6 +15,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UpdateUserRemembered updateUserRemembered;
   final AddToSyncQueueUseCase addToSyncQueueUseCase;
   final DeleteRemoteUser deleteRemoteUser;
+  final GetPendingSyncTasksUseCase getPendingSyncTasksUseCase;
+  final UpdateRemoteUser updateRemoteUser;
 
   ProfileBloc({
     required this.updateUser,
@@ -25,6 +28,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.updateUserRemembered,
     required this.addToSyncQueueUseCase,
     required this.deleteRemoteUser,
+    required this.getPendingSyncTasksUseCase,
+    required this.updateRemoteUser,
   }) : super(ProfileInitial()) {
     on<LoadProfileData>(_onLoadProfileData);
     on<UpdateProfileData>(_onUpdateProfileData);
@@ -55,7 +60,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileLoading());
     try {
-      // 1. Validar si el nombre de usuario ya existe (solo si se intentó cambiar)
+      // 1. Lógica de validación de usuario (Igual que la tenías)
       if (event.userBeforeUpdate.userName != event.userUpdated.userName) {
         final existence = await checkUserExistence(event.userUpdated.userName);
         if (existence == -1) {
@@ -64,10 +69,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
       }
 
-      // 2. Actualizar datos básicos del usuario
+      // 2. ACTUALIZACIÓN LOCAL (Prioridad máxima)
       await updateUser(event.userUpdated);
 
-      // 3. Actualizar el nombre de usuario recordado si cambió
       if (event.userBeforeUpdate.userName != event.userUpdated.userName) {
         await updateUserRemembered(
           event.userBeforeUpdate.userName,
@@ -75,26 +79,61 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         );
       }
 
-      // 4. Manejo de la actualización del Paciente
       Patient? finalPatient = event.patientUpdated;
-
       if (finalPatient != null) {
-        // Si el objeto que viene de la UI no tiene el ID (o es 0), lo rescatamos de la BD
         if (finalPatient.id == null || finalPatient.id == 0) {
           final dbPatient = await getPatientByUserId(finalPatient.userId);
           if (dbPatient != null) {
-            // IMPORTANTE: Reasignamos finalPatient con el nuevo objeto que SÍ tiene el ID
             finalPatient = finalPatient.copyWith(id: dbPatient.id);
           }
         }
-        // Ahora enviamos el objeto que garantizamos que tiene el ID correcto
         await updatePatient(finalPatient);
       }
 
-      // 5. Emitir el estado de éxito con los datos actualizados
+      // Éxito local: Informamos a la UI de inmediato
       emit(ProfileUpdated(user: event.userUpdated, patient: finalPatient));
+
+      // 3. INTENTO DE ACTUALIZACIÓN REMOTA (Aislado para evitar AuthFailure por red)
+      try {
+        final pendingTasks = await getPendingSyncTasksUseCase();
+
+        // Si hay cola o falla el internet, saltamos al catch
+        if (pendingTasks.isNotEmpty) {
+          throw ServerException("Cola activa");
+        }
+
+        // Llamamos al nuevo método que creamos en el repositorio
+        await updateRemoteUser(event.userUpdated);
+      } catch (e) {
+        // Fallo de red o servidor: Encolamos la tarea
+        debugPrint("Fallo actualización remota, encolando: $e");
+
+        final task = SyncTaskModel(
+          endpoint: 'users',
+          userId: event.userUpdated.id!,
+          method: 'UPDATE',
+          payload: {
+            'id': event.userUpdated.id,
+            'name': event.userUpdated.name,
+            'lastName': event.userUpdated.lastName,
+            'email': event.userUpdated.email,
+            'phoneNumber': event.userUpdated.phoneNumber,
+            'userName': event.userUpdated.userName,
+            'role': event.userUpdated.role,
+            // 'passwordHash': event.userUpdated.passwordHash, // Solo si es necesario aquí
+          },
+        );
+
+        try {
+          await addToSyncQueueUseCase(task);
+        } catch (queueError) {
+          debugPrint("Error crítico guardando en cola: $queueError");
+          // No emitimos ProfileError aquí porque el cambio local ya fue exitoso
+        }
+      }
     } catch (e) {
-      emit(ProfileError("Error actualizando usuario: $e"));
+      // Errores reales de la base de datos local
+      emit(ProfileError("Error local actualizando perfil: $e"));
     }
   }
 
@@ -107,16 +146,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await deleteUser(event.user.id!);
 
       await deleteUserRemembered(event.user.userName);
-
-      await deleteRemoteUser(event.user.id!);
-
       emit(ProfileDeleted());
+
+      final pendingTasks = await getPendingSyncTasksUseCase();
+      if (pendingTasks.isEmpty) {
+        await deleteRemoteUser(event.user.id!);
+      } else {
+        throw ServerException(
+          "no se puede subir a la nube, la cola tiene elementos pendientes",
+        );
+      }
     } on LocalDataBaseException catch (e) {
       emit(ProfileError("Error local al eliminar: ${e.message}"));
     } on ServerException catch (e) {
       debugPrint("no ses elimino el user $e");
       final task = SyncTaskModel(
         endpoint: 'users',
+        userId: event.user.id!,
         method: 'DELETE',
         payload: {'id': event.user.id},
       );

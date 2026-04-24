@@ -1,6 +1,7 @@
 import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/features/diary/domain/use_cases/user/update_remote_user_use_case.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -165,6 +166,10 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<DeleteRemoteUser>(
     () => DeleteRemoteUser(sldiary<UserRepository>()),
   );
+    sldiary.registerLazySingleton<UpdateRemoteUser>(
+      () => UpdateRemoteUser(sldiary<UserRepository>()),
+    );
+  
 
   // -------------------------------------------------------------
   // USE CASES — profile data
@@ -181,6 +186,18 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<GetAppointmentsByUser>(
     () => GetAppointmentsByUser(sldiary<AppointmentRepository>()),
   );
+ // -------------------------------------------------------------
+  //use cases — sync
+  // -------------------------------------------------------------
+  
+  sldiary.registerLazySingleton<GetPendingSyncTasksByUserIdUseCase>(
+    () => GetPendingSyncTasksByUserIdUseCase(sldiary<SyncRepository>()),
+  );
+  sldiary.registerLazySingleton<GetPendingSyncTasksUseCase>(
+    () => GetPendingSyncTasksUseCase(sldiary<SyncRepository>()),
+  );
+
+
 
   // -------------------------------------------------------------
   // BLOCS
@@ -232,6 +249,8 @@ void initDiaryDependencies() {
       updateUserRemembered: sldiary<UpdateUserRemembered>(),
       addToSyncQueueUseCase: sldiary<AddToSyncQueueUseCase>(),
       deleteRemoteUser: sldiary<DeleteRemoteUser>(),
+      getPendingSyncTasksUseCase: sldiary<GetPendingSyncTasksUseCase>(),
+      updateRemoteUser: sldiary<UpdateRemoteUser>(),
     ),
   );
   //  apointmentBloc
@@ -243,15 +262,14 @@ void initDiaryDependencies() {
       getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
     ),
   );
-
+ 
   // -------------------------------------------------------------
   // BLOCS — HOME
   // -------------------------------------------------------------
   sldiary.registerFactory<HomeBloc>(
     () => HomeBloc(
-      getLastCrisisDayByUser: sldiary<GetLastCrisisDayByUser>(),
-      getMedicationsByUser: sldiary<GetMedicationsByUser>(),
-      getAppointmentsByUser: sldiary<GetAppointmentsByUser>(),
+      getPendingSyncTasksUserIdUseCase: sldiary<GetPendingSyncTasksByUserIdUseCase>(),
     ),
   );
+ 
 }

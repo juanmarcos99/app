@@ -4,6 +4,7 @@ import 'package:app/core/core.dart';
 class SyncTaskModel extends SyncTask {
   SyncTaskModel({
     super.id,
+    required super.userId,    
     required super.endpoint,
     required super.method,
     required super.payload,
@@ -15,6 +16,7 @@ class SyncTaskModel extends SyncTask {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'user_id': userId,   
       'endpoint': endpoint,
       'method': method,
       'payload': jsonEncode(payload),
@@ -27,6 +29,7 @@ class SyncTaskModel extends SyncTask {
   factory SyncTaskModel.fromMap(Map<String, dynamic> map) {
     return SyncTaskModel(
       id: map['id'],
+      userId: map['user_id'],
       endpoint: map['endpoint'],
       method: map['method'],
       payload: jsonDecode(map['payload']),

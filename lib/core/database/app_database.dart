@@ -92,6 +92,7 @@ class AppDatabase {
         await db.execute('''
           CREATE TABLE sync_queue (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
             endpoint TEXT NOT NULL,         -- Tabla destino en Supabase
             method TEXT NOT NULL,           -- INSERT, UPDATE, DELETE
             payload TEXT NOT NULL,          -- Datos en formato JSON String

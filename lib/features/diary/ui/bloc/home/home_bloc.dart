@@ -1,16 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GetLastCrisisDayByUser getLastCrisisDayByUser;
-  final GetMedicationsByUser getMedicationsByUser;
-  final GetAppointmentsByUser getAppointmentsByUser;
-
-  HomeBloc({
-    required this.getLastCrisisDayByUser,
-    required this.getMedicationsByUser,
-    required this.getAppointmentsByUser,
-  }) : super(HomeInitial()) {
+  final GetPendingSyncTasksByUserIdUseCase getPendingSyncTasksUserIdUseCase;
+  HomeBloc({required this.getPendingSyncTasksUserIdUseCase}) : super(HomeInitial()) {
     on<LoadNotificationsEvent>(_onLoadNotifications);
   }
 
@@ -19,43 +13,57 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     emit(HomeLoading());
-
     try {
-      final List<String> notifications = [];
+      // 1. Llamada al repositorio usando tu nueva entidad filtrada por userId
+      final List<SyncTask> tasks = await getPendingSyncTasksUserIdUseCase(
+        event.userId,
+      );
 
-      // Última crisis registrada
-      final lastCrisisDay = await getLastCrisisDayByUser(event.userId);
-      if (lastCrisisDay != null) {
-        notifications.add(
-          "El último registro de crisis fue el día ${lastCrisisDay.toLocal().toString().split(' ')[0]}",
-        );
-      } else {
-        notifications.add("Aún no has registrado ninguna crisis.");
+      if (tasks.isEmpty) {
+        emit(const HomeLoaded([]));
+        return;
       }
 
-      // Medicamentos pendientes
-      final medications = await getMedicationsByUser(event.userId);
-      if (medications.isNotEmpty) {
-        notifications.add(
-          "Tienes ${medications.length} medicamentos pendientes por tomar.",
-        );
-      } else {
-        notifications.add("No tienes medicamentos pendientes.");
-      }
+      // 2. Transformación a mensajes para la UI
+      final List<String> notifications = tasks.map((task) {
+        final String action = _getFriendlyAction(task.method);
+        final String entity = _getFriendlyEndpoint(task.endpoint);
 
-      // Citas médicas
-      final appointments = await getAppointmentsByUser(event.userId);
-      if (appointments.isNotEmpty) {
-        notifications.add(
-          "Tienes ${appointments.length} citas médicas programadas.",
-        );
-      } else {
-        notifications.add("No tienes citas médicas registradas.");
-      }
+        return "$action de $entity";
+      }).toList();
 
       emit(HomeLoaded(notifications));
     } catch (e) {
-      emit(HomeError("Error al cargar notificaciones: $e"));
+      emit(HomeError("Error al sincronizar notificaciones: $e"));
+    }
+  }
+
+  // Helpers para que los mensajes no sean técnicos (INSERT, users, etc)
+  String _getFriendlyAction(String method) {
+    switch (method.toUpperCase()) {
+      case 'INSERT':
+        return 'Creación';
+      case 'UPDATE':
+        return 'Actualización';
+      case 'DELETE':
+        return 'Eliminación';
+      default:
+        return 'Cambio';
+    }
+  }
+
+  String _getFriendlyEndpoint(String endpoint) {
+    switch (endpoint.toLowerCase()) {
+      case 'users':
+        return 'perfil';
+      case 'crisis':
+        return 'registro de crisis';
+      case 'medications':
+        return 'medicamento';
+      case 'appointments':
+        return 'cita médica';
+      default:
+        return endpoint;
     }
   }
 }

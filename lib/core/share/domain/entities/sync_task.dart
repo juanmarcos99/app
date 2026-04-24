@@ -1,5 +1,6 @@
 class SyncTask {
   final int? id;
+  final int userId;
   final String endpoint;
   final String method;
   final Map<String, dynamic> payload;
@@ -8,6 +9,7 @@ class SyncTask {
 
   SyncTask({
     this.id,
+    required this.userId,
     required this.endpoint,
     required this.method,
     required this.payload,

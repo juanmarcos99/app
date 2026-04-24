@@ -46,8 +46,6 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<UserModel?> loginUser(String username, String password) async {
-    // Intentamos local primero
-
     final localUser = await localDataSource.autentcateUser(username, password);
 
     if (localUser == null) {
@@ -56,21 +54,7 @@ class UserRepositoryImpl implements UserRepository {
       );
     }
 
-    try {
-      final remoteUser = await remoteDataSource.authenticateUser(
-        username,
-        password,
-      );
-
-      if (remoteUser == null) {
-        throw ServerException("Las credenciales no existen en el servidor.");
-      }
-
-      return localUser;
-    } catch (e) {
-      if (e is ServerException) rethrow;
-      throw ServerException("Error de comunicación con el servidor: $e");
-    }
+    return localUser;
   }
 
   @override
@@ -142,6 +126,27 @@ class UserRepositoryImpl implements UserRepository {
       // En consultas tipo "check", si falla el remoto devolvemos null
       // para no interrumpir el flujo del usuario
       return null;
+    }
+  }
+
+  @override
+  Future<void> updateRemoteUser(User user) async {
+    final userModel = UserModel(
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      userName: user.userName,
+      passwordHash: user.passwordHash,
+      role: user.role,
+    );
+    try {
+      // Intentamos la actualización en la fuente de datos remota (Supabase)
+      await remoteDataSource.updateUser(userModel);
+    } catch (e) {
+      // Si falla lanzamos ServerException
+      throw ServerException("Error remoto al actualizar usuario: ($e)");
     }
   }
 }

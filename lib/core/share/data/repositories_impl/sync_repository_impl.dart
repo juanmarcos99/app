@@ -20,6 +20,7 @@ class SyncRepositoryImpl implements SyncRepository {
       // Opcional: convertir una entidad genérica a modelo si es necesario
       final model = SyncTaskModel(
         id: task.id,
+        userId: task.userId,
         endpoint: task.endpoint,
         method: task.method,
         payload: task.payload,
@@ -126,4 +127,9 @@ Future<String> syncFirstTask() async {
     return "UNKNOWN_ERROR: $e";
   }
 }
+
+@override
+  Future<List<SyncTaskModel>> getPendingTasksByUserId(int userId) async {
+    return await localDataSource.getPendingTasksByUserId(userId);
+  }
 }

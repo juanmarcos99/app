@@ -109,6 +109,8 @@ void initAuthDependencies() {
    sl.registerLazySingleton<ChangeRemotePasswordUseCase>(
     () => ChangeRemotePasswordUseCase(sl<UserRepository>()),
   );
+ 
+  
 
 
   // Bloc
@@ -125,6 +127,8 @@ void initAuthDependencies() {
       sl<AddToSyncQueueUseCase>(),
       sl<RegisterRemoteUser>(),
       sl<ChangeRemotePasswordUseCase>(),
+      sl<GetPendingSyncTasksUseCase>(),
+      sl<ProcessFullSyncQueueUseCase>(),
     ),
   );
 }
