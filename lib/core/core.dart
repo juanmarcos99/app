@@ -32,6 +32,7 @@ export 'share/domain/use_cases/sync/process_full_sync_queue_use_case.dart';
 export 'share/domain/use_cases/sync/sync_first_task_use_case.dart';
 export 'share/domain/use_cases/user/register_remote_user_use_case.dart';
 export 'share/domain/use_cases/user/delete_remote_user_use_case.dart';
+export 'share/domain/use_cases/user/change_remote_password_use_case.dart';
 
 //erros
 export 'errors/exceptions.dart';

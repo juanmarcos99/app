@@ -15,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetPassword getPassword;
   final AddToSyncQueueUseCase addToSyncQueueUseCase;
   final RegisterRemoteUser registerRemoteUser;
+  final ChangeRemotePasswordUseCase changeRemotePassword;
 
   int? _userId;
   User? user;
@@ -30,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.getPassword,
     this.addToSyncQueueUseCase,
     this.registerRemoteUser,
+    this.changeRemotePassword,
   ) : super(const AuthInitial()) {
     on<RegisterUserEvent>((event, emit) async {
       emit(const AuthLoading());
@@ -166,6 +168,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           await changePassword(event.username, newHashed);
           await savePassword(event.username, event.newPassword); // texto plano
+          await changeRemotePassword(event.username, newHashed);
           emit(const UserPasswordChanged());
         }
       } catch (e) {

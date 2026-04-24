@@ -80,7 +80,10 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       throw LocalDataBaseException("Error local al cambiar contraseña: ($e)");
     }
+  }
 
+  @override
+  Future<void> changeRemotePassword(String username, String newPassword) async {
     try {
       await remoteDataSource.updatePassword(username, newPassword);
     } catch (e) {
@@ -105,12 +108,6 @@ class UserRepositoryImpl implements UserRepository {
       await localDataSource.updateUser(userModel);
     } catch (e) {
       throw LocalDataBaseException("Error local al actualizar usuario: ($e)");
-    }
-
-    try {
-      await remoteDataSource.updateUser(userModel);
-    } catch (e) {
-      throw ServerException("Error remoto al actualizar usuario: ($e)");
     }
   }
 
