@@ -163,6 +163,7 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
                       label: "Teléfono",
                       icon: Icons.phone_outlined,
                       controller: phoneController,
+                      keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 35),
                     CustomTextField(

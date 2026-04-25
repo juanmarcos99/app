@@ -12,47 +12,47 @@ class NotificationCard extends StatelessWidget {
     final textStyle = Theme.of(context).textTheme;
 
     return Container(
-      // Alineamos los márgenes a los de CrisisCard (12 horizontal, 8 vertical)
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: cs.surface, // Mismo fondo que CrisisCard
-        borderRadius: BorderRadius.circular(16), // Mismo radio
+        color: cs.surface, 
+        borderRadius: BorderRadius.circular(16), 
         border: Border.all(
-          color: cs.surfaceContainerHighest, // Mismo color de borde
-          width: 1.0, 
+          color: cs.surfaceContainerHighest,
+          width: 1.0,
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Contenedor de icono estilo "Premium" (igual al de CrisisCard)
           Container(
-            width: 48,
-            height: 48,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: cs.primary.withValues(alpha:0.10),
-              borderRadius: BorderRadius.circular(12),
+              color: cs.tertiary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.notifications_active_outlined,
-              color: cs.primary,
-              size: 26, // Ajustado para equilibrio visual
+            child: Center(
+              child: Icon(Icons.cloud, color: cs.tertiary, size: 20),
             ),
           ),
-          
           const SizedBox(width: 16),
-          
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  "Sincronizaciono Pendiente",
+                  style: textStyle.bodyMedium?.copyWith(
+                    color: cs.onSurface,                    
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
                   text,
-                  style: textStyle.bodyLarge?.copyWith(
-                    color: cs.onSurface,
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
+                  style: textStyle.bodySmall?.copyWith(
+                    color: cs.onSurfaceVariant,
+                    height: 1.5,
                   ),
                 ),
               ],

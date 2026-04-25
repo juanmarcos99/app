@@ -78,7 +78,7 @@ class SettingsPage extends StatelessWidget {
                           icon: Icons.notifications,
                           title: 'Notificaciones',
                           subtitle: 'Configura tus alertas y avisos',
-                          onTap: () => Navigator.pushNamed(context, '/appointments'),
+                          onTap: () => Navigator.pushNamed(context, '/medicalAppointment'),
                         ),
                         const SizedBox(height: 16),
                         _SettingsTile(

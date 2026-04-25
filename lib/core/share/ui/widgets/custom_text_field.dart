@@ -8,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final VoidCallback? onFieldSubmitted;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -18,6 +19,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.onFieldSubmitted,
+    this.keyboardType,
   });
 
   @override
@@ -40,6 +42,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
+      keyboardType: widget.keyboardType,
       obscureText: _obscureText,
       onFieldSubmitted: (_) => widget.onFieldSubmitted?.call(),
       style: theme.textTheme.bodyLarge,

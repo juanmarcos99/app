@@ -3,12 +3,13 @@ import '../../../../diary.dart';
 import '../../../../../../core/core.dart';
 
 class RegisterMedicationDialog extends StatefulWidget {
-  final Medication? initialMedication; 
+  final Medication? initialMedication;
 
   const RegisterMedicationDialog({super.key, this.initialMedication});
 
   @override
-  State<RegisterMedicationDialog> createState() => _RegisterMedicationDialogState();
+  State<RegisterMedicationDialog> createState() =>
+      _RegisterMedicationDialogState();
 }
 
 class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
@@ -44,7 +45,9 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       return;
     }
     final service = NotificationService();
-    final isScheduled = await service.isNotificationScheduled(firstSchedule.notificationId!);
+    final isScheduled = await service.isNotificationScheduled(
+      firstSchedule.notificationId!,
+    );
     setState(() {
       shouldScheduleNotifications = isScheduled;
     });
@@ -120,16 +123,19 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                   controller: nameController,
                   decoration: _inputDecoration("Ej: Paracetamol", cs),
                   style: TextStyle(color: cs.onSurface),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? "Requerido" : null,
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty) ? "Requerido" : null,
                 ),
                 const SizedBox(height: 16),
 
                 _buildLabel("Dosis", cs),
                 TextFormField(
                   controller: dosageController,
+                  keyboardType: TextInputType.number,
                   decoration: _inputDecoration("Ej: 500 mg", cs),
                   style: TextStyle(color: cs.onSurface),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? "Requerido" : null,
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty) ? "Requerido" : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -146,14 +152,18 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: cs.primary.withValues(alpha:0.05),
+                    color: cs.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: SwitchListTile(
-                    title: Text("Programar notificaciones", style: textTheme.bodyMedium),
+                    title: Text(
+                      "Programar notificaciones",
+                      style: textTheme.bodyMedium,
+                    ),
                     value: shouldScheduleNotifications,
                     activeThumbColor: cs.primary,
-                    onChanged: (v) => setState(() => shouldScheduleNotifications = v),
+                    onChanged: (v) =>
+                        setState(() => shouldScheduleNotifications = v),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -166,19 +176,34 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
                     ...selectedSchedules.map((schedule) {
                       final formatted = schedule.time?.format(context);
                       return Chip(
-                        label: Text(formatted!, style: TextStyle(color: cs.onSecondaryContainer)),
+                        label: Text(
+                          formatted!,
+                          style: TextStyle(color: cs.onSecondaryContainer),
+                        ),
                         backgroundColor: cs.secondaryContainer,
-                        deleteIcon: Icon(Icons.close, size: 16, color: cs.onSecondaryContainer),
-                        onDeleted: () => setState(() => selectedSchedules.remove(schedule)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        deleteIcon: Icon(
+                          Icons.close,
+                          size: 16,
+                          color: cs.onSecondaryContainer,
+                        ),
+                        onDeleted: () =>
+                            setState(() => selectedSchedules.remove(schedule)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       );
                     }),
                     ActionChip(
                       avatar: Icon(Icons.add, size: 18, color: AppColors.white),
-                      label: Text("Añadir", style: TextStyle(color: AppColors.white)),
+                      label: Text(
+                        "Añadir",
+                        style: TextStyle(color: AppColors.white),
+                      ),
                       backgroundColor: cs.primary,
                       onPressed: _addSchedule,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ],
                 ),
@@ -198,7 +223,9 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
             backgroundColor: cs.primary,
             foregroundColor: AppColors.white,
             elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: Text(isEditing ? "Guardar cambios" : "Guardar"),
         ),
@@ -211,7 +238,11 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       padding: const EdgeInsets.only(bottom: 6, left: 4),
       child: Text(
         text,
-        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant),
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: cs.onSurfaceVariant,
+        ),
       ),
     );
   }
@@ -219,9 +250,9 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
   InputDecoration _inputDecoration(String hint, ColorScheme cs) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha:0.5)),
+      hintStyle: TextStyle(color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
       filled: true,
-      fillColor: cs.surfaceContainerHighest.withValues(alpha:0.3),
+      fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.3),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -229,7 +260,7 @@ class _RegisterMedicationDialogState extends State<RegisterMedicationDialog> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: cs.outlineVariant.withValues(alpha:0.5)),
+        borderSide: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.5)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

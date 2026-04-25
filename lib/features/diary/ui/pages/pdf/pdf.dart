@@ -47,7 +47,8 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   }
 
   Future<void> loadGeneratedPdfs() async {
-    final dir = Directory('/storage/emulated/0/Download');
+    try {
+        final dir = Directory('/storage/emulated/0/Download');
     if (await dir.exists()) {
       final files = dir
           .listSync()
@@ -55,6 +56,10 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
           .toList();
       setState(() => generatedPdfs = files);
     }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  
   }
 
   Future<String> savePdfToDownloads(List<int> bytes, String fileName) async {

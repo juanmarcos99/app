@@ -166,6 +166,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                       final n = int.tryParse(value);
                       return (n == null || n <= 0) ? 'Número inválido' : null;
                     },
+                   
                   ),
                 ],
               ],
