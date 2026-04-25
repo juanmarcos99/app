@@ -1,5 +1,4 @@
 import 'package:app/core/core.dart';
-import 'package:app/core/share/domain/use_cases/sync/get_pending_sync_tasks_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';

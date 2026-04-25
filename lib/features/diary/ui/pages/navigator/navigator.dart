@@ -104,9 +104,9 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _MenuActionTile(
-                          icon: Icons.warning_amber_rounded,
+                          icon: Icons.bolt,
                           text: "Crisis",
-                          color: Colors.orange,
+                          color: cs.primary,
                           onPressed: () async {
                             Navigator.pop(context);
                             final result = await showDialog<Crisis>(
@@ -136,7 +136,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                         _MenuActionTile(
                           icon: Icons.sick,
                           text: "Evento Adverso",
-                          color: cs.error,
+                          color: cs.primary,
                           onPressed: () async {
                             Navigator.pop(context);
                             final result = await showDialog<AdverseEvent>(

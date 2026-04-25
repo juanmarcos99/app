@@ -115,6 +115,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
               children: [
                 _buildLabel("Horario del episodio", text, cs),
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: horario,
                   dropdownColor: cs.surface,
                   style: text.bodyLarge,
@@ -129,6 +130,7 @@ class _RegisterCrisisDialogState extends State<RegisterCrisisDialog> {
                 
                 _buildLabel("Tipo de crisis", text, cs),
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: tipoSeleccionado,
                   dropdownColor: cs.surface,
                   style: text.bodyLarge,

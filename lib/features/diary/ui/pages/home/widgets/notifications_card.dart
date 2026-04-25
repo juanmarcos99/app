@@ -42,7 +42,7 @@ class NotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Sincronizaciono Pendiente",
+                  "Sincronización Pendiente",
                   style: textStyle.bodyMedium?.copyWith(
                     color: cs.onSurface,                    
                   ),
