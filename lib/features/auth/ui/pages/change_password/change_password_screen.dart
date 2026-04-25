@@ -24,9 +24,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (previous, current) =>
-          current is AuthFailure || current is UserPasswordChanged,
+          current is AuthFailure ||
+          current is UserPasswordChanged ||
+          current is RemoteError ||
+          current is SyncError,
       listener: (context, state) {
         if (state is AuthFailure) {
+          AppSnack.show(context, state.message, color: AppColors.error);
+        }
+        if (state is RemoteError) {
+          AppSnack.show(context, state.message, color: AppColors.warning);
+        }
+        if (state is SyncError) {
           AppSnack.show(context, state.message, color: AppColors.error);
         }
 

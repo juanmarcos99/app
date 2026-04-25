@@ -54,9 +54,14 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
             current is AuthFailure ||
             current is UserLoggedIn ||
             current is RememberUsersLoaded ||
-            current is PasswordLoaded,
+            current is PasswordLoaded ||
+            current is SyncError ||
+            current is RemoteError,
         listener: (context, state) {
           if (state is AuthFailure) {
+            AppSnack.show(context, state.message, color: AppColors.error);
+          }
+          if (state is RemoteError) {
             AppSnack.show(context, state.message, color: AppColors.error);
           }
           if (state is SyncError) {

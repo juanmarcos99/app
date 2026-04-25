@@ -11,7 +11,8 @@ class RegisterUserEvent extends AuthEvent {
 
 class RegisterPatientEvent extends AuthEvent {
   final Patient patient;
-  RegisterPatientEvent(this.patient);
+  final User user;
+  RegisterPatientEvent(this.patient, this.user);
 }
 
 //eventos para el login

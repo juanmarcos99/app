@@ -60,7 +60,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
               caregiverNumber: caregiverPhoneController.text,
               caregiverEmail: caregiverEmailController.text,
             );
-            context.read<AuthBloc>().add(RegisterPatientEvent(patient));
+            context.read<AuthBloc>().add(RegisterPatientEvent(patient, state.user));
           }
 
           if (state is AuthFailure) {

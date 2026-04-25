@@ -18,8 +18,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetPendingSyncTasksUseCase getPendingSyncTasksUseCase;
   final ProcessFullSyncQueueUseCase processFullSyncQueueUseCase;
 
-  int? _userId;
-  User? user;
 
   AuthBloc(
     this.registerUser,
@@ -46,26 +44,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
         // Registro Local
-        _userId = await registerUser(hashedUser);
-        if (_userId == -2) {
+        final userId = await registerUser(hashedUser);
+        if (userId == -2) {
           emit(UserNameExist());
           return;
         }
 
-        user = hashedUser.copyWith(id: _userId);
+        final fullUser = hashedUser.copyWith(id: userId);
 
         // Éxito local
-        if (user!.role == 'patient') {
-          emit(UserRegistrated(user!));
+        if (fullUser.role == 'patient') {
+          emit(UserRegistrated(fullUser));
         } else {
-          emit(UserFullyRegistrated(user!));
+          emit(UserFullyRegistrated(fullUser));
         }
 
         // 2. Intento de Registro Remoto
         try {
           final pendingTasks = await getPendingSyncTasksUseCase();
           if (pendingTasks.isEmpty) {
-            await registerRemoteUser(user!);
+            await registerRemoteUser(fullUser);
           } else {
             throw ServerException(
               "no se puede subir a la nube, la cola tiene elementos pendientes",
@@ -82,24 +80,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           // Creamos la tarea con el payload manual
           final task = SyncTaskModel(
             endpoint: 'users',
-            userId: _userId!,
+            userId: userId,
             method: 'INSERT',
             payload: {
-              'id': user!.id,
-              'name': user!.name,
-              'lastName': user!.lastName,
-              'email': user!.email,
-              'phoneNumber': user!.phoneNumber,
-              'userName': user!.userName,
-              'passwordHash': user!.passwordHash,
-              'role': user!.role,
+              'id': fullUser.id,
+              'name': fullUser.name,
+              'lastName': fullUser.lastName,
+              'email': fullUser.email,
+              'phoneNumber': fullUser.phoneNumber,
+              'userName': fullUser.userName,
+              'passwordHash': fullUser.passwordHash,
+              'role': fullUser.role,
             },
           );
 
           try {
             await addToSyncQueueUseCase(task);
             debugPrint(
-              'Tarea de sincronización agregada exitosamente para el usuario ${user!.userName}',
+              'Tarea de sincronización agregada exitosamente para el usuario ${fullUser.userName}',
             );
           } catch (e) {
             emit(SyncError('Error al agregar a la cola de sincronización: $e'));
@@ -114,20 +112,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<RegisterPatientEvent>((event, emit) async {
-      if (_userId == null) {
+      if (event.patient.userId == 0) {
         emit(
           const AuthFailure('Aún no hay userId para registrar el paciente.'),
         );
         return;
       }
-      emit(AuthLoading());
+      emit(const AuthLoading());
       try {
         final patientWithId = event.patient.copyWith(
-          userId: _userId,
           id: IdGenerator.generate(),
         );
         await registerPatient(patientWithId);
-        emit(UserFullyRegistrated(user!));
+        emit(UserFullyRegistrated(event.user));
       } catch (e) {
         emit(
           AuthFailure(
@@ -234,10 +231,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       
       try {
         await processFullSyncQueueUseCase();
+      } catch (e) {
+        debugPrint('Error procesando sync queue en login: $e');
+      }
+
+      try {
         final users = await getRememberedUsers();
         emit(RememberUsersLoaded(users));
       } catch (e) {
-        emit(AuthFailure('Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr $e'));
+        emit(AuthFailure('Error cargando recordados $e'));
       }
     });
 

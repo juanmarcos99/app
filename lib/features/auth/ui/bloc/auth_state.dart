@@ -98,8 +98,8 @@ class PasswordLoaded extends AuthState {
 
 //estado para registrar tareas pendientes de sincronización
 class SyncSuccess extends AuthState {
-  final String mesage;
-  const SyncSuccess(this.mesage);
+  final String message;
+  const SyncSuccess(this.message);
 }
 class SyncError extends AuthState {
   final String message;
@@ -116,7 +116,7 @@ class SyncQueueadedd extends AuthState {
 
 //estado para subida a base de datos remota 
 class RemoteError extends AuthState {
-  final String mesage;
-  const RemoteError(this.mesage);
+  final String message;
+  const RemoteError(this.message);
 }
 

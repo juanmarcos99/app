@@ -1,6 +1,5 @@
 import 'package:app/features/auth/auth.dart';
 
-import '../../../../../core/core.dart';
 
 abstract class ProfileState {}
 
@@ -29,27 +28,4 @@ class ProfileError extends ProfileState {
 }
 
 class ProfileDeleted extends ProfileState {}
-
-//estado para registrar tareas pendientes de sincronización
-class SyncSuccess extends AuthState {
-  final String mesage;
-  const SyncSuccess(this.mesage);
-}
-class SyncError extends AuthState {
-  final String error;
-  const SyncError(this.error);
-}
-
-class SyncQueueadedd extends AuthState {
-  final List<SyncTaskModel> tasks;
-  const SyncQueueadedd(this.tasks);
-
-  @override
-  List<Object?> get props => [tasks];
-}
-
-//estado para subida a base de datos remota 
-class RemoteError extends AuthState {
-  final String mesage;
-  const RemoteError(this.mesage);
-}
+
