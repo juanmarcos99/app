@@ -67,3 +67,16 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+# Networking and Supabase
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn com.supabase.**
+-dontwarn io.supabase.**
+
+# Keep models and responses
+-keep class io.supabase.postgrest.** { *; }
+-keep class io.supabase.gotrue.** { *; }

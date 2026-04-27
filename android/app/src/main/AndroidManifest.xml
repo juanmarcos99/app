@@ -9,10 +9,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/> 
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
 
-    <!-- ⭐ Permisos necesarios para notificaciones exactas -->
+    <!-- Permisos necesarios para notificaciones exactas -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:label="app"
