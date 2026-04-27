@@ -2,8 +2,13 @@ import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/features/diary/domain/use_cases/user/update_remote_user_use_case.dart';
+import 'package:app/core/share/data/datasources/remote_data_sourse/adverse_event_remote_data_source.dart';
+import 'package:app/core/share/data/datasources/remote_data_sourse/crisis_remote_data_source.dart';
+import 'package:app/features/diary/domain/use_cases/add_remote_adverse_event.dart';
+import 'package:app/features/diary/domain/use_cases/crisis/add_remote_crisis.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final sldiary = GetIt.instance;
 
@@ -17,6 +22,14 @@ void initDiaryDependencies() {
 
   sldiary.registerLazySingleton<AdverseEventLocalDataSource>(
     () => AdverseEventLocalDataSourceImpl(sldiary<Database>()),
+  );
+
+  sldiary.registerLazySingleton<CrisisRemoteDataSource>(
+    () => CrisisRemoteDataSourceImpl(sldiary<SupabaseClient>()),
+  );
+
+  sldiary.registerLazySingleton<AdverseEventRemoteDataSource>(
+    () => AdverseEventRemoteDataSourceImpl(sldiary<SupabaseClient>()),
   );
 
   // Medication datasource
@@ -39,11 +52,17 @@ void initDiaryDependencies() {
   // REPOSITORIES
   // -------------------------------------------------------------
   sldiary.registerLazySingleton<CrisisRepository>(
-    () => CrisisRepositoryImpl(sldiary<CrisisLocalDataSource>()),
+    () => CrisisRepositoryImpl(
+      sldiary<CrisisLocalDataSource>(),
+      sldiary<CrisisRemoteDataSource>(),
+    ),
   );
 
   sldiary.registerLazySingleton<AdverseEventRepository>(
-    () => AdverseEventRepositoryImpl(sldiary<AdverseEventLocalDataSource>()),
+    () => AdverseEventRepositoryImpl(
+      sldiary<AdverseEventLocalDataSource>(),
+      sldiary<AdverseEventRemoteDataSource>(),
+    ),
   );
 
   sldiary.registerLazySingleton<PdfRepository>(
@@ -80,6 +99,10 @@ void initDiaryDependencies() {
     () => GetLastCrisisDayByUser(sldiary<CrisisRepository>()),
   );
 
+  sldiary.registerLazySingleton<AddRemoteCrisis>(
+    () => AddRemoteCrisis(sldiary<CrisisRepository>()),
+  );
+
   // -------------------------------------------------------------
   // USE CASES — ADVERSE EVENTS
   // -------------------------------------------------------------
@@ -97,6 +120,10 @@ void initDiaryDependencies() {
   );
   sldiary.registerLazySingleton<UpdateAdverseEvent>(
     () => UpdateAdverseEvent(sldiary<AdverseEventRepository>()),
+  );
+
+  sldiary.registerLazySingleton<AddRemoteAdverseEvent>(
+    () => AddRemoteAdverseEvent(sldiary<AdverseEventRepository>()),
   );
 
   // -------------------------------------------------------------
@@ -223,6 +250,10 @@ sldiary.registerLazySingleton<ProcessFullSyncQueueUseCase>(
       sldiary<DeleteAdverseEvent>(),
       sldiary<UpdateCrisis>(),
       sldiary<UpdateAdverseEvent>(),
+      sldiary<AddRemoteCrisis>(),
+      sldiary<AddRemoteAdverseEvent>(),
+      sldiary<AddToSyncQueueUseCase>(),
+      sldiary<GetPendingSyncTasksUseCase>(),
     ),
   );
 

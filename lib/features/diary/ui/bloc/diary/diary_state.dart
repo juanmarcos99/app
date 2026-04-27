@@ -79,3 +79,8 @@ class AdverseEventUpdated extends DiaryState {
   final AdverseEvent adverseEvent;
   AdverseEventUpdated(this.adverseEvent);
 }
+
+class RemoteError extends DiaryState {
+  final String message;
+  RemoteError(this.message);
+}

@@ -30,12 +30,14 @@ class AddAdverseEventEvent extends DiaryEvent {
 
 class DeleteCrisisEvent extends DiaryEvent {
   final int crisisId;
-  DeleteCrisisEvent(this.crisisId);
+  final int userId;
+  DeleteCrisisEvent(this.crisisId, this.userId);
 }
 
 class DeleteAdverseEventEvent extends DiaryEvent {
   final int adverseEventId;
-  DeleteAdverseEventEvent(this.adverseEventId);
+  final int userId;
+  DeleteAdverseEventEvent(this.adverseEventId, this.userId);
 }
 
 class UpdateCrisisEvent extends DiaryEvent {

@@ -34,4 +34,25 @@ class CrisisModel extends Crisis {
       userId: map['userId'],
     );
   }
+
+  @override
+  CrisisModel copyWith({
+    int? id,
+    DateTime? registeredDate,
+    DateTime? crisisDate,
+    String? timeRange,
+    int? quantity,
+    String? type,
+    int? userId,
+  }) {
+    return CrisisModel(
+      id: id ?? this.id,
+      registeredDate: registeredDate ?? this.registeredDate,
+      crisisDate: crisisDate ?? this.crisisDate,
+      timeRange: timeRange ?? this.timeRange,
+      quantity: quantity ?? this.quantity,
+      type: type ?? this.type,
+      userId: userId ?? this.userId,
+    );
+  }
 }

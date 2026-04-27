@@ -28,4 +28,21 @@ class AdverseEventModel extends AdverseEvent {
       'userId': userId,
     };
   }
+
+  @override
+  AdverseEventModel copyWith({
+    int? id,
+    DateTime? registerDate,
+    DateTime? eventDate,
+    String? description,
+    int? userId,
+  }) {
+    return AdverseEventModel(
+      id: id ?? this.id,
+      registerDate: registerDate ?? this.registerDate,
+      eventDate: eventDate ?? this.eventDate,
+      description: description ?? this.description,
+      userId: userId ?? this.userId,
+    );
+  }
 }

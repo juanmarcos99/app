@@ -93,7 +93,7 @@ class AdverseEventCard extends StatelessWidget {
                   );
                   if (confirm == true && adverseEvent.id != null) {
                     context.read<DiaryBloc>().add(
-                      DeleteAdverseEventEvent(adverseEvent.id!),
+                      DeleteAdverseEventEvent(adverseEvent.id!, adverseEvent.userId!),
                     );
                   }
                 },

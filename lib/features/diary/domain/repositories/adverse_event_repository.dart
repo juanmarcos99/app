@@ -20,4 +20,8 @@ abstract class AdverseEventRepository {
     int year,
     int userId,
   );
+  // Métodos Remotos (Supabase)
+  Future<void> addRemoteEvent(AdverseEvent event);
+  Future<void> updateRemoteEvent(AdverseEvent event);
+  Future<void> deleteRemoteEvent(int eventId);
 }

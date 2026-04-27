@@ -125,6 +125,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                     cs: cs,
                     day: day,
                     isSelected: false,
+                    isToday: false,
                     hasCrisis: crisisDays.contains(normalized),
                     hasAE: aeDays.contains(normalized),
                   );
@@ -135,6 +136,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                     cs: cs,
                     day: day,
                     isSelected: false,
+                    isToday: true,
                     hasCrisis: crisisDays.contains(normalized),
                     hasAE: aeDays.contains(normalized),
                   );
@@ -145,6 +147,7 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
                     cs: cs,
                     day: day,
                     isSelected: true,
+                    isToday: isSameDay(day, DateTime.now()),
                     hasCrisis: crisisDays.contains(normalized),
                     hasAE: aeDays.contains(normalized),
                   );
@@ -161,19 +164,23 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
     required ColorScheme cs,
     required DateTime day,
     required bool isSelected,
+    required bool isToday,
     required bool hasCrisis,
     required bool hasAE,
   }) {
     final bool isDisabled = day.isAfter(DateTime.now());
 
     final Color textColor = isDisabled
-        ? cs.onSurface.withValues(alpha:0.20)
+        ? cs.onSurface.withValues(alpha: 0.20)
         : isSelected
             ? cs.primary
             : cs.onSurface;
 
-    final Color bgColor =
-        isSelected ? cs.primary.withValues(alpha:0.20) : Colors.transparent;
+    final Color bgColor = isSelected
+        ? cs.primary.withValues(alpha: 0.20)
+        : isToday
+            ? cs.onSurface.withValues(alpha: 0.08)
+            : Colors.transparent;
 
     return Center(
       child: Container(

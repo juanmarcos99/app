@@ -14,4 +14,8 @@ abstract class CrisisRepository {
   Future<List<Crisis>> getCrisesByMonthAndYear(int month, int year, int userId);
   //obtener el último día con crisis
   Future<DateTime?> getLastCrisisDayByUser(int userId);
+  // Métodos Remotos (Supabase)
+  Future<void> addRemoteCrisis(Crisis crisis);
+  Future<void> updateRemoteCrisis(Crisis crisis);
+  Future<void> deleteRemoteCrisis(int crisisId);
 }
