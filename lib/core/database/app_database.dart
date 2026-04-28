@@ -9,7 +9,17 @@ class AppDatabase {
 
     _db = await openDatabase(
       join(await getDatabasesPath(), 'app.db'),
-      version: 1,
+      version: 2,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS doctor_linked_patients (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              patient_id INTEGER NOT NULL UNIQUE
+            )
+          ''');
+        }
+      },
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE users (
@@ -99,6 +109,13 @@ class AppDatabase {
             status TEXT DEFAULT 'pending',  -- pending, error
             last_error TEXT,                -- Para debuguear fallos de lógica
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE doctor_linked_patients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_id INTEGER NOT NULL UNIQUE
           )
         ''');
       },

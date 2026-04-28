@@ -94,6 +94,17 @@ class SettingsPage extends StatelessWidget {
                           subtitle: 'Compartir datos clínicos',
                           onTap: () => Navigator.pushNamed(context, '/qr'),
                         ),
+                        if (context.watch<AuthBloc>().state is UserLoggedIn && (context.watch<AuthBloc>().state as UserLoggedIn).user.role == 'doctor') ...[
+                          const SizedBox(height: 16),
+                          _SettingsTile(
+                            icon: Icons.qr_code_scanner,
+                            title: 'Escanear código de paciente',
+                            subtitle: 'Vincular un nuevo paciente a tu lista',
+                            onTap: () async {
+                              final result = await Navigator.pushNamed(context, AppRoutes.scannerPage);
+                            },
+                          ),
+                        ],
                         const SizedBox(height: 48),
                         SizedBox(
                           width: double.infinity,

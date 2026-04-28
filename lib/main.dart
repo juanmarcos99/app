@@ -9,6 +9,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart';
 import 'package:app/core/core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:app/features/doctor/doctor.dart';
+import 'package:app/features/doctor/doctor_injection.dart';
 
 // RouteObserver global para detectar navegación
 final RouteObserver<ModalRoute<void>> routeObserver =
@@ -38,6 +40,7 @@ try {
   await initCoreDependencies();
   initAuthDependencies();
   initDiaryDependencies();
+  initDoctorDependencies();
 
   runApp(const MainApp());
 }
@@ -56,6 +59,8 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (_) => GetIt.instance.get<ProfileBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<AppointmentBloc>()),
         BlocProvider(create: (_) => GetIt.instance.get<HomeBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<DoctorBloc>()),
+        BlocProvider(create: (_) => GetIt.instance.get<ScanPatientBloc>()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme, // Tema claro
@@ -78,6 +83,8 @@ class MainApp extends StatelessWidget {
           AppRoutes.medicalAppointment: (context) =>
               const MedicalAppointmentPage(),
           AppRoutes.qrPage: (context) => const QrPage(),
+          AppRoutes.doctorHomeScreen: (context) => const DoctorHomeScreen(),
+          AppRoutes.scannerPage: (context) => const ScannerPage(),
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

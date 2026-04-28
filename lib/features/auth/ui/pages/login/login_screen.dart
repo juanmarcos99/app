@@ -76,7 +76,11 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
               "Bienvenido ${state.user.userName}",
               color: AppColors.success,
             );
-            Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
+            if (state.user.role == 'doctor') {
+              Navigator.pushNamed(context, AppRoutes.doctorHomeScreen);
+            } else {
+              Navigator.pushNamed(context, AppRoutes.mainNavigationPage);
+            }
           }
           if (state is RememberUsersLoaded) {
             setState(() => rememberedUsers = state.users);

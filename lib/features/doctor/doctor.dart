@@ -1,0 +1,11 @@
+export 'data/models/doctor_linked_patient_model.dart';
+export 'data/datasources/doctor_local_data_source.dart';
+export 'data/datasources/doctor_remote_data_source.dart';
+export 'data/repositories_impl/doctor_repository_impl.dart';
+export 'domain/entities/patient_entity.dart';
+export 'domain/repositories/doctor_repository.dart';
+export 'domain/use_cases/get_linked_patients_usecase.dart';
+export 'ui/bloc/doctor_bloc.dart';
+export 'ui/pages/doctor_home_screen.dart';
+export 'ui/pages/scanner_page.dart';
+export 'ui/bloc/scan_patient_bloc.dart';
