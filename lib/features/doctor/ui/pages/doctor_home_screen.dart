@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/core/core.dart';
 import '../bloc/doctor_bloc.dart';
 import '../widgets/doctor_bottom_nav_bar.dart';
 import 'scanner_page.dart';
@@ -29,26 +30,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: _buildAppBar(context, theme, cs),
+      appBar: _currentIndex == 1 ? null : _buildAppBar(context, theme, cs),
       body: _buildBody(),
-      
-      // Botón Flotante para Escaneo de QR
-      // Solo se muestra en la pestaña principal (Pacientes)
-      floatingActionButton: _currentIndex == 0 
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ScannerPage()),
-                );
-              },
-              backgroundColor: cs.primaryContainer,
-              child: Icon(
-                Icons.qr_code_scanner, 
-                color: cs.onPrimaryContainer,
-              ),
-            )
-          : null,
 
       bottomNavigationBar: DoctorBottomNavBar(
         currentIndex: _currentIndex,
@@ -61,17 +44,23 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, ThemeData theme, ColorScheme cs) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme cs,
+  ) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return AppBar(
       elevation: 0,
       backgroundColor: theme.scaffoldBackgroundColor,
       centerTitle: false,
-      title: const Text(
-        "DOCTOR",
-        style: TextStyle(
-          fontFamily: 'Manrope',
+      title: Text(
+        "Pacientes",
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: cs.onSurface,
           fontWeight: FontWeight.bold,
-          letterSpacing: 2.0,
         ),
       ),
       leading: IconButton(
@@ -83,19 +72,19 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           builder: (context, state) {
             String initial = 'D';
             if (state is UserLoggedIn) {
-              initial = state.user.name.isNotEmpty 
-                  ? state.user.name[0].toUpperCase() 
+              initial = state.user.name.isNotEmpty
+                  ? state.user.name[0].toUpperCase()
                   : 'D';
             }
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: CircleAvatar(
                 radius: 18,
-                backgroundColor: cs.surfaceContainerHighest,
+                backgroundColor: AppColors.success,
                 child: Text(
                   initial,
                   style: TextStyle(
-                    color: cs.onSurface,
+                    color: cs.copyWith(onPrimary: AppColors.white).onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -109,11 +98,21 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   }
 
   Widget _buildBody() {
-    // Si no estamos en la pestaña de "Pacientes", mostramos construcción
-    if (_currentIndex != 0) {
+    if (_currentIndex == 1) {
+      return ScannerPage(
+        onScanSuccess: () {
+          setState(() {
+            _currentIndex = 0;
+            context.read<DoctorBloc>().add(LoadLinkedPatients());
+          });
+        },
+      );
+    }
+
+    if (_currentIndex == 2) {
       return const Center(
         child: Text(
-          'Sección en construcción',
+          'Sección Perfil en construcción',
           style: TextStyle(color: Colors.grey),
         ),
       );
@@ -124,15 +123,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       child: Column(
         children: [
           const SizedBox(height: 16),
-          _buildSearchBar(),
-          const SizedBox(height: 24),
           Expanded(
             child: BlocBuilder<DoctorBloc, DoctorState>(
               builder: (context, state) {
                 if (state is DoctorLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } 
-                
+                }
+
                 if (state is DoctorError) {
                   return Center(
                     child: Text(
@@ -140,8 +137,8 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                       style: const TextStyle(color: Colors.redAccent),
                     ),
                   );
-                } 
-                
+                }
+
                 if (state is DoctorLoaded) {
                   if (state.patients.isEmpty) {
                     return const Center(
@@ -163,7 +160,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                     },
                   );
                 }
-                
+
                 return const SizedBox.shrink();
               },
             ),
@@ -175,15 +172,13 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
 
   Widget _buildPatientCard(BuildContext context, dynamic patient) {
     final cs = Theme.of(context).colorScheme;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: cs.onSurfaceVariant.withOpacity(0.1),
-        ),
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cs.surfaceContainerHighest, width: 1.0),
       ),
       child: Row(
         children: [
@@ -197,10 +192,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           Expanded(
             child: Text(
               '${patient.name} ${patient.lastName}',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -217,32 +209,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Ver'),
+            child: const Text('Ver', style: TextStyle(color: AppColors.white)),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    final cs = Theme.of(context).colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: cs.onSurfaceVariant.withOpacity(0.1),
-        ),
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: "Buscar paciente por nombre o ID",
-          hintStyle: TextStyle(color: cs.onSurfaceVariant.withOpacity(0.6)),
-          prefixIcon: Icon(Icons.search, color: cs.primary),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        ),
       ),
     );
   }

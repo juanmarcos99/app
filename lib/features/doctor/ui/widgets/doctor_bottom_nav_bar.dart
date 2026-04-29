@@ -25,12 +25,8 @@ class DoctorBottomNavBar extends StatelessWidget {
           label: "Pacientes",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard),
-          label: "Dashboard",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.description),
-          label: "Registros",
+          icon: Icon(Icons.qr_code_scanner),
+          label: "QR",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
