@@ -5,7 +5,9 @@ import 'package:app/core/core.dart';
 import 'package:app/app_routes.dart';
 import '../bloc/doctor_bloc.dart';
 import '../widgets/doctor_bottom_nav_bar.dart';
-import 'scanner_page.dart';
+import '../pages/scanner_page.dart';
+import '../pages/opcions_doctor.dart';
+import 'package:app/features/diary/ui/pages/home/home.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   const DoctorHomeScreen({super.key});
@@ -31,7 +33,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: _currentIndex == 1 ? null : _buildAppBar(context, theme, cs),
+      appBar: _currentIndex == 2 ? null : _buildAppBar(context, theme, cs),
       body: _buildBody(),
 
       bottomNavigationBar: DoctorBottomNavBar(
@@ -58,7 +60,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       centerTitle: false,
       title: Text(
-        "Pacientes",
+        _getAppBarTitle(),
         style: theme.textTheme.titleMedium?.copyWith(
           color: cs.onSurface,
           fontWeight: FontWeight.bold,
@@ -98,25 +100,37 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     );
   }
 
+  String _getAppBarTitle() {
+    switch (_currentIndex) {
+      case 0:
+        return "Inicio";
+      case 1:
+        return "Pacientes";
+      case 3:
+        return "Opciones";
+      default:
+        return "";
+    }
+  }
+
   Widget _buildBody() {
-    if (_currentIndex == 1) {
+    if (_currentIndex == 0) {
+      return const HomePage();
+    }
+
+    if (_currentIndex == 2) {
       return ScannerPage(
         onScanSuccess: () {
           setState(() {
-            _currentIndex = 0;
+            _currentIndex = 1;
             context.read<DoctorBloc>().add(LoadLinkedPatients());
           });
         },
       );
     }
 
-    if (_currentIndex == 2) {
-      return const Center(
-        child: Text(
-          'Sección Perfil en construcción',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
+    if (_currentIndex == 3) {
+      return const OpcionsDoctor();
     }
 
     return Padding(

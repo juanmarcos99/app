@@ -8,6 +8,7 @@ import 'domain/repositories/doctor_repository.dart';
 import 'domain/use_cases/get_linked_patients_usecase.dart';
 import 'ui/bloc/doctor_bloc.dart';
 import 'ui/bloc/scan_patient_bloc.dart';
+import 'ui/bloc/profile_doctor_bloc/profile_doctor_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -34,4 +35,15 @@ void initDoctorDependencies() {
   // Bloc
   sl.registerFactory(() => DoctorBloc(getLinkedPatientsUseCase: sl()));
   sl.registerFactory(() => ScanPatientBloc(doctorRepository: sl()));
+  sl.registerFactory(() => ProfileDoctorBloc(
+    updateUser: sl(),
+    updateRemoteUser: sl(),
+    deleteUser: sl(),
+    deleteRemoteUser: sl(),
+    deleteUserRemembered: sl(),
+    checkUserExistence: sl(),
+    updateUserRemembered: sl(),
+    addToSyncQueueUseCase: sl(),
+    getPendingSyncTasksUseCase: sl(),
+  ));
 }

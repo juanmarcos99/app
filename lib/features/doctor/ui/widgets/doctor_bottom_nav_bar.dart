@@ -21,6 +21,10 @@ class DoctorBottomNavBar extends StatelessWidget {
       unselectedItemColor: AppColors.gray300,
       items: const [
         BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Inicio",
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.group),
           label: "Pacientes",
         ),
@@ -29,8 +33,8 @@ class DoctorBottomNavBar extends StatelessWidget {
           label: "QR",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: "Perfil",
+          icon: Icon(Icons.settings),
+          label: "Opciones",
         ),
       ],
     );

@@ -1,10 +1,13 @@
 import 'package:app/features/diary/ui/pages/add/add_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/features/doctor/doctor.dart';
 import 'package:app/features/doctor/ui/pages/PacienteInformation.dart';
 import 'package:app/features/doctor/ui/pages/PatientDiary.dart';
+import 'package:app/features/doctor/ui/pages/profile_doctor.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -24,6 +27,7 @@ class AppRoutes {
   static const scannerPage = '/scanner';
   static const pacienteInformation = '/pacienteInformation';
   static const patientDiary = '/patientDiary';
+  static const profileDoctor = '/profileDoctor';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -65,6 +69,13 @@ class AppRoutes {
       case patientDiary:
         final patient = settings.arguments;
         return MaterialPageRoute(builder: (_) => PatientDiaryScreen(patient: patient));
+      case profileDoctor:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => GetIt.instance<ProfileDoctorBloc>(),
+            child: const ProfileDoctor(),
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) =>

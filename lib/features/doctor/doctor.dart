@@ -10,3 +10,7 @@ export 'ui/pages/doctor_home_screen.dart';
 export 'ui/pages/scanner_page.dart';
 export 'ui/pages/PacienteInformation.dart';
 export 'ui/bloc/scan_patient_bloc.dart';
+export 'ui/pages/opcions_doctor.dart';
+export 'ui/pages/profile_doctor.dart';
+export 'ui/bloc/profile_doctor_bloc/profile_doctor_bloc.dart';
+export 'ui/bloc/profile_doctor_bloc/profile_doctor_event_state.dart';
