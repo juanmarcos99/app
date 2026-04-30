@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/core/core.dart';
+import 'package:app/app_routes.dart';
 import '../bloc/doctor_bloc.dart';
 import '../widgets/doctor_bottom_nav_bar.dart';
 import 'scanner_page.dart';
@@ -201,14 +202,14 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           // Botón Ver
           FilledButton.tonal(
             onPressed: () {
-              // Lógica para ver seguimiento
+              if (patient != null) {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.pacienteInformation,
+                  arguments: patient, // Aquí enviamos el objeto
+                );
+              }
             },
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
             child: const Text('Ver', style: TextStyle(color: AppColors.white)),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/features/auth/auth.dart';
+import 'package:app/core/share/ui/widgets/settings_tile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -67,28 +68,28 @@ class SettingsPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 48),
-                        _SettingsTile(
+                        SettingsTile(
                           icon: Icons.person,
                           title: 'Datos del perfil',
                           subtitle: 'Gestiona tu información personal',
                           onTap: () => Navigator.pushNamed(context, '/profileData'),
                         ),
                         const SizedBox(height: 16),
-                        _SettingsTile(
+                        SettingsTile(
                           icon: Icons.notifications,
                           title: 'Notificaciones',
                           subtitle: 'Configura tus alertas y avisos',
                           onTap: () => Navigator.pushNamed(context, '/medicalAppointment'),
                         ),
                         const SizedBox(height: 16),
-                        _SettingsTile(
+                        SettingsTile(
                           icon: Icons.picture_as_pdf,
                           title: 'Exportar reporte (PDF)',
                           subtitle: 'Descarga tus datos clínicos',
                           onTap: () => Navigator.pushNamed(context, '/pdf'),
                         ),
                         const SizedBox(height: 16),
-                        _SettingsTile(
+                        SettingsTile(
                           icon: Icons.qr_code,
                           title: 'Compartir QR',
                           subtitle: 'Compartir datos clínicos',
@@ -96,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                         if (context.watch<AuthBloc>().state is UserLoggedIn && (context.watch<AuthBloc>().state as UserLoggedIn).user.role == 'doctor') ...[
                           const SizedBox(height: 16),
-                          _SettingsTile(
+                          SettingsTile(
                             icon: Icons.qr_code_scanner,
                             title: 'Escanear código de paciente',
                             subtitle: 'Vincular un nuevo paciente a tu lista',
@@ -143,69 +144,6 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Material(
-      color: colorScheme.surfaceContainerHigh,
-      clipBehavior: Clip.antiAlias,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: colorScheme.primary, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontSize: 18,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(subtitle, style: theme.textTheme.bodyMedium),
-                  ],
-                ),
-              ),
-              Icon(Icons.chevron_right, color: colorScheme.outlineVariant),
-            ],
           ),
         ),
       ),

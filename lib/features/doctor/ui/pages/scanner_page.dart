@@ -68,10 +68,7 @@ class _ScannerPageState extends State<ScannerPage> {
         appBar: AppBar(
           title: Text(
             "ESCANEAR PACIENTE",
-            style: TextStyle(
-              color: cs.onSurface,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -88,11 +85,9 @@ class _ScannerPageState extends State<ScannerPage> {
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  "Escanea el qr de un paciente para agregarlo a tu listado de pacientes",
+                  "Escanea el código QR de un paciente para agregarlo a tu listado de pacientes",
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: cs.onSurface,
-                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(),
                 ),
                 const SizedBox(height: 32),
                 Center(
@@ -132,9 +127,7 @@ class _ScannerPageState extends State<ScannerPage> {
                 Text(
                   "o añade su identificador manualmente",
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: cs.onSurfaceVariant,
-                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -150,8 +143,8 @@ class _ScannerPageState extends State<ScannerPage> {
                             color: cs.onSurfaceVariant.withOpacity(0.5),
                           ),
                           filled: true,
-                          fillColor: isDark 
-                              ? AppColors.darkSurfaceSoft.withOpacity(0.3) 
+                          fillColor: isDark
+                              ? AppColors.darkSurfaceSoft.withOpacity(0.3)
                               : AppColors.surfaceSoft.withOpacity(0.2),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -176,7 +169,9 @@ class _ScannerPageState extends State<ScannerPage> {
                     FilledButton(
                       style: FilledButton.styleFrom(
                         backgroundColor: cs.primary,
-                        foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.white,
+                        foregroundColor: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 14,

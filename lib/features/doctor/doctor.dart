@@ -8,4 +8,5 @@ export 'domain/use_cases/get_linked_patients_usecase.dart';
 export 'ui/bloc/doctor_bloc.dart';
 export 'ui/pages/doctor_home_screen.dart';
 export 'ui/pages/scanner_page.dart';
+export 'ui/pages/PacienteInformation.dart';
 export 'ui/bloc/scan_patient_bloc.dart';
