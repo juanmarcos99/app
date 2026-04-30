@@ -5,7 +5,9 @@ import 'package:app/features/diary/domain/use_cases/user/update_remote_user_use_
 import 'package:app/core/share/data/datasources/remote_data_sourse/adverse_event_remote_data_source.dart';
 import 'package:app/core/share/data/datasources/remote_data_sourse/crisis_remote_data_source.dart';
 import 'package:app/features/diary/domain/use_cases/add_remote_adverse_event.dart';
-import 'package:app/features/diary/domain/use_cases/crisis/add_remote_crisis.dart';
+import 'package:app/features/diary/domain/use_cases/get_remote_adverse_events_usecase.dart';
+import 'package:app/features/diary/domain/use_cases/get_remote_crises_usecase.dart';
+import 'package:app/features/diary/ui/bloc/patient_diary_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -102,6 +104,13 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<AddRemoteCrisis>(
     () => AddRemoteCrisis(sldiary<CrisisRepository>()),
   );
+  sldiary.registerLazySingleton<GetRemoteCrisesByDayAndUserUseCase>(
+    () => GetRemoteCrisesByDayAndUserUseCase(sldiary<CrisisRepository>()),
+  );
+  sldiary.registerLazySingleton<GetRemoteCrisesDaysByUserUseCase>(
+    () => GetRemoteCrisesDaysByUserUseCase(sldiary<CrisisRepository>()),
+  );
+
 
   // -------------------------------------------------------------
   // USE CASES — ADVERSE EVENTS
@@ -125,6 +134,13 @@ void initDiaryDependencies() {
   sldiary.registerLazySingleton<AddRemoteAdverseEvent>(
     () => AddRemoteAdverseEvent(sldiary<AdverseEventRepository>()),
   );
+  sldiary.registerLazySingleton<GetRemoteAdverseEventsByDayAndUserUseCase>(
+    () => GetRemoteAdverseEventsByDayAndUserUseCase(sldiary<AdverseEventRepository>()),
+  );
+  sldiary.registerLazySingleton<GetRemoteAdverseEventsDaysByUserUseCase>(
+    () => GetRemoteAdverseEventsDaysByUserUseCase(sldiary<AdverseEventRepository>()),
+  );
+
 
   // -------------------------------------------------------------
   // USE CASES — PDF
@@ -254,6 +270,15 @@ sldiary.registerLazySingleton<ProcessFullSyncQueueUseCase>(
       sldiary<AddRemoteAdverseEvent>(),
       sldiary<AddToSyncQueueUseCase>(),
       sldiary<GetPendingSyncTasksUseCase>(),
+    ),
+  );
+
+  sldiary.registerFactory<PatientDiaryBloc>(
+    () => PatientDiaryBloc(
+      getCrisesByDayAndUser: sldiary<GetRemoteCrisesByDayAndUserUseCase>(),
+      getCrisesDaysByUser: sldiary<GetRemoteCrisesDaysByUserUseCase>(),
+      getAdverseEventByDayAndUser: sldiary<GetRemoteAdverseEventsByDayAndUserUseCase>(),
+      getAdverseEventDaysByUser: sldiary<GetRemoteAdverseEventsDaysByUserUseCase>(),
     ),
   );
 

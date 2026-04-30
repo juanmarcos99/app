@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:app/core/share/ui/widgets/settings_tile.dart';
+import 'package:app/app_routes.dart';
 
 class PacienteInformation extends StatelessWidget {
- 
+  final dynamic patient;
 
-  const PacienteInformation({super.key});
+  const PacienteInformation({super.key, required this.patient});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class PacienteInformation extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Informacion del paciente',
+          '${patient.name} ${patient.lastName}',
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.bold,
@@ -55,7 +56,7 @@ class PacienteInformation extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Juan Perez',
+                        '${patient.name} ${patient.lastName}',
                         style: theme.textTheme.displayLarge?.copyWith(
                           fontSize: 36,
                           height: 1.1,
@@ -83,7 +84,11 @@ class PacienteInformation extends StatelessWidget {
                     subtitle:
                         'Dar seguimiento al paciente',
                     onTap: () {
-                      // TODO: Navegar al diario del paciente
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.patientDiary,
+                        arguments: patient,
+                      );
                     },
                   ),
                   // Aquí se añadirán más botones en futuras iteraciones

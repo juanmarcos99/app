@@ -108,4 +108,31 @@ class AdverseEventRepositoryImpl implements AdverseEventRepository {
       throw ServerException("Error remoto al eliminar evento: ($e)");
     }
   }
+
+  @override
+  Future<List<AdverseEvent>> getAdverseEventremotesByDayAndUser(DateTime day, int userId) async {
+    try {
+      return await remoteDataSource.getAdverseEventremotesByDayAndUser(day, userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener eventos por día: ($e)");
+    }
+  }
+
+  @override
+  Future<List<DateTime>> getAdverseEventremotesDaysByUser(int userId) async {
+    try {
+      return await remoteDataSource.getAdverseEventremotesDaysByUser(userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener días de eventos: ($e)");
+    }
+  }
+
+  @override
+  Future<List<AdverseEvent>> getAdverseEventremotesByMonthAndYear(int month, int year, int userId) async {
+    try {
+      return await remoteDataSource.getAdverseEventremotesByMonthAndYear(month, year, userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener eventos por mes: ($e)");
+    }
+  }
 }

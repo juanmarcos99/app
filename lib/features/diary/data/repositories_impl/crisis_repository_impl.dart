@@ -119,4 +119,31 @@ class CrisisRepositoryImpl implements CrisisRepository {
       throw ServerException("Error remoto al eliminar crisis: ($e)");
     }
   }
+
+  @override
+  Future<List<Crisis>> getCrisesRemoteByDayAndUser(DateTime day, int userId) async {
+    try {
+      return await remoteDataSource.getCrisesByDayAndUser(day, userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener crisis por día: ($e)");
+    }
+  }
+
+  @override
+  Future<List<DateTime>> getCrisesRemoteDaysByUser(int userId) async {
+    try {
+      return await remoteDataSource.getCrisesDaysByUser(userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener días de crisis: ($e)");
+    }
+  }
+
+  @override
+  Future<List<Crisis>> getCrisesRemoteByMonthAndYear(int month, int year, int userId) async {
+    try {
+      return await remoteDataSource.getCrisesByMonthAndYear(month, year, userId);
+    } catch (e) {
+      throw ServerException("Error remoto al obtener crisis por mes: ($e)");
+    }
+  }
 }

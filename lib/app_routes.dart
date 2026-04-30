@@ -4,6 +4,7 @@ import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/features/doctor/doctor.dart';
 import 'package:app/features/doctor/ui/pages/PacienteInformation.dart';
+import 'package:app/features/doctor/ui/pages/PatientDiary.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -22,6 +23,7 @@ class AppRoutes {
   static const doctorHomeScreen = '/doctorHome';
   static const scannerPage = '/scanner';
   static const pacienteInformation = '/pacienteInformation';
+  static const patientDiary = '/patientDiary';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -58,7 +60,11 @@ class AppRoutes {
       case scannerPage:
         return MaterialPageRoute(builder: (_) => const ScannerPage());
       case pacienteInformation:
-        return MaterialPageRoute(builder: (_) => const PacienteInformation());
+        final patient = settings.arguments;
+        return MaterialPageRoute(builder: (_) => PacienteInformation(patient: patient));
+      case patientDiary:
+        final patient = settings.arguments;
+        return MaterialPageRoute(builder: (_) => PatientDiaryScreen(patient: patient));
       default:
         return MaterialPageRoute(
           builder: (_) =>

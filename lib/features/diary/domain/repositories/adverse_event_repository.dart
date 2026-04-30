@@ -24,4 +24,7 @@ abstract class AdverseEventRepository {
   Future<void> addRemoteEvent(AdverseEvent event);
   Future<void> updateRemoteEvent(AdverseEvent event);
   Future<void> deleteRemoteEvent(int eventId);
+  Future<List<AdverseEvent>> getAdverseEventremotesByDayAndUser(DateTime day, int userId);
+  Future<List<DateTime>> getAdverseEventremotesDaysByUser(int userId);
+  Future<List<AdverseEvent>> getAdverseEventremotesByMonthAndYear(int month, int year, int userId);
 }

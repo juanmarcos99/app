@@ -85,8 +85,8 @@ class MainApp extends StatelessWidget {
           AppRoutes.qrPage: (context) => const QrPage(),
           AppRoutes.doctorHomeScreen: (context) => const DoctorHomeScreen(),
           AppRoutes.scannerPage: (context) => const ScannerPage(),
-          AppRoutes.pacienteInformation: (context) => const PacienteInformation(),
         },
+        onGenerateRoute: AppRoutes.generateRoute,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

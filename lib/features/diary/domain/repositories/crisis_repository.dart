@@ -18,4 +18,7 @@ abstract class CrisisRepository {
   Future<void> addRemoteCrisis(Crisis crisis);
   Future<void> updateRemoteCrisis(Crisis crisis);
   Future<void> deleteRemoteCrisis(int crisisId);
+  Future<List<Crisis>> getCrisesRemoteByDayAndUser(DateTime day, int userId);
+  Future<List<DateTime>> getCrisesRemoteDaysByUser(int userId);
+  Future<List<Crisis>> getCrisesRemoteByMonthAndYear(int month, int year, int userId);
 }

@@ -5,12 +5,20 @@ import '../../../../diary.dart';
 
 class AdverseEventCard extends StatelessWidget {
   final AdverseEvent adverseEvent;
+  final bool isReadOnly;
 
-  const AdverseEventCard({super.key, required this.adverseEvent});
+  const AdverseEventCard({super.key, required this.adverseEvent, this.isReadOnly = false});
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    
+    int? delayDays;
+    if (adverseEvent.registerDate != null && adverseEvent.eventDate != null) {
+      final r = DateUtils.dateOnly(adverseEvent.registerDate!);
+      final c = DateUtils.dateOnly(adverseEvent.eventDate!);
+      delayDays = r.difference(c).inDays;
+    }
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -45,61 +53,83 @@ class AdverseEventCard extends StatelessWidget {
                 Text(
                   _formatDate(adverseEvent.eventDate),
                 ),
+                if (delayDays != null && delayDays > 0) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.warning_amber_rounded, size: 14, color: cs.error),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          "Retraso en registro: $delayDays d",
+                          style: TextStyle(
+                            color: cs.error,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, color: AppColors.primary),
-                onPressed: () async {
-                  final result = await showDialog<AdverseEvent>(
-                    context: context,
-                    useRootNavigator: false,
-                    builder: (_) =>
-                        RegistroEfectDialog(initialEvent: adverseEvent),
-                  );
-                  if (result != null) {
-                    context.read<DiaryBloc>().add(
-                      UpdateAdverseEventEvent(result),
+          if (!isReadOnly)
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: AppColors.primary),
+                  onPressed: () async {
+                    final result = await showDialog<AdverseEvent>(
+                      context: context,
+                      useRootNavigator: false,
+                      builder: (_) =>
+                          RegistroEfectDialog(initialEvent: adverseEvent),
                     );
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: AppColors.error),
-                onPressed: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text("Eliminar evento adverso"),
-                      content: const Text(
-                        "¿Estás seguro de que deseas eliminar este evento adverso?",
-                      ),
-                      actions: [
-                        TextButton(
-                          child: const Text("Cancelar"),
-                          onPressed: () => Navigator.pop(context, false),
+                    if (result != null) {
+                      context.read<DiaryBloc>().add(
+                        UpdateAdverseEventEvent(result),
+                      );
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: AppColors.error),
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Eliminar evento adverso"),
+                        content: const Text(
+                          "¿Estás seguro de que deseas eliminar este evento adverso?",
                         ),
-                        TextButton(
-                          child: const Text(
-                            "Eliminar",
-                            style: TextStyle(color: AppColors.error),
+                        actions: [
+                          TextButton(
+                            child: const Text("Cancelar"),
+                            onPressed: () => Navigator.pop(context, false),
                           ),
-                          onPressed: () => Navigator.pop(context, true),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true && adverseEvent.id != null) {
-                    context.read<DiaryBloc>().add(
-                      DeleteAdverseEventEvent(adverseEvent.id!, adverseEvent.userId!),
+                          TextButton(
+                            child: const Text(
+                              "Eliminar",
+                              style: TextStyle(color: AppColors.error),
+                            ),
+                            onPressed: () => Navigator.pop(context, true),
+                          ),
+                        ],
+                      ),
                     );
-                  }
-                },
-              ),
-            ],
-          ),
+                    if (confirm == true && adverseEvent.id != null) {
+                      context.read<DiaryBloc>().add(
+                        DeleteAdverseEventEvent(adverseEvent.id!, adverseEvent.userId!),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
         ],
       ),
     );
