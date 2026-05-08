@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/core.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/diary/ui/bloc/patient_diary_bloc.dart';
+import 'package:app/features/diary/diary_injection.dart';
+import 'package:app/features/diary/ui/pages/dairy/widgets/crisis_cards_by_day.dart';
 import 'package:app/features/diary/ui/pages/dairy/widgets/adverse_event_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -18,9 +20,7 @@ class PatientDiaryScreen extends StatelessWidget {
         final bloc = sldiary<PatientDiaryBloc>();
         final patientId = patient.id as int;
         bloc.add(LoadPatientCalendarEvent(patientId));
-        bloc.add(
-          LoadPatientTarjetasEvent(userId: patientId, date: bloc.daySelected),
-        );
+        bloc.add(LoadPatientTarjetasEvent(userId: patientId, date: bloc.daySelected));
         return bloc;
       },
       child: _PatientDiaryView(userId: patient.id as int),
@@ -113,7 +113,10 @@ class _PatientDiaryViewState extends State<_PatientDiaryView> {
             items.add(
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Text("Crisis", style: text.titleMedium!),
+                child: Text(
+                  "Crisis",
+                  style: text.titleMedium!,
+                ),
               ),
             );
 
@@ -127,14 +130,15 @@ class _PatientDiaryViewState extends State<_PatientDiaryView> {
             items.add(
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Text("Eventos Adversos", style: text.titleMedium!),
+                child: Text(
+                  "Eventos Adversos",
+                  style: text.titleMedium!,
+                ),
               ),
             );
 
             items.addAll(
-              eventos.map(
-                (e) => AdverseEventCard(adverseEvent: e, isReadOnly: true),
-              ),
+              eventos.map((e) => AdverseEventCard(adverseEvent: e, isReadOnly: true)),
             );
           }
 
@@ -217,12 +221,7 @@ class _PatientDiaryCalendarState extends State<PatientDiaryCalendar> {
 
                 final bloc = context.read<PatientDiaryBloc>();
                 bloc.add(SelectPatientDayEvent(normalized));
-                bloc.add(
-                  LoadPatientTarjetasEvent(
-                    userId: widget.userId,
-                    date: normalized,
-                  ),
-                );
+                bloc.add(LoadPatientTarjetasEvent(userId: widget.userId, date: normalized));
               },
 
               calendarFormat: CalendarFormat.month,
@@ -237,10 +236,7 @@ class _PatientDiaryCalendarState extends State<PatientDiaryCalendar> {
                   fontWeight: FontWeight.w600,
                 ),
                 leftChevronIcon: Icon(Icons.chevron_left, color: cs.onSurface),
-                rightChevronIcon: Icon(
-                  Icons.chevron_right,
-                  color: cs.onSurface,
-                ),
+                rightChevronIcon: Icon(Icons.chevron_right, color: cs.onSurface),
                 headerMargin: const EdgeInsets.only(bottom: 12),
               ),
 
@@ -258,9 +254,7 @@ class _PatientDiaryCalendarState extends State<PatientDiaryCalendar> {
               calendarStyle: CalendarStyle(
                 cellMargin: const EdgeInsets.all(4),
                 cellPadding: EdgeInsets.zero,
-                outsideTextStyle: TextStyle(
-                  color: cs.onSurface.withValues(alpha: 0.40),
-                ),
+                outsideTextStyle: TextStyle(color: cs.onSurface.withValues(alpha:0.40)),
                 defaultTextStyle: TextStyle(color: cs.onSurface, fontSize: 14),
                 weekendTextStyle: TextStyle(color: cs.onSurface, fontSize: 14),
                 todayDecoration: const BoxDecoration(),
@@ -322,20 +316,23 @@ class _PatientDiaryCalendarState extends State<PatientDiaryCalendar> {
     final Color textColor = isDisabled
         ? cs.onSurface.withValues(alpha: 0.20)
         : isSelected
-        ? cs.primary
-        : cs.onSurface;
+            ? cs.primary
+            : cs.onSurface;
 
     final Color bgColor = isSelected
         ? cs.primary.withValues(alpha: 0.20)
         : isToday
-        ? cs.onSurface.withValues(alpha: 0.08)
-        : Colors.transparent;
+            ? cs.onSurface.withValues(alpha: 0.08)
+            : Colors.transparent;
 
     return Center(
       child: Container(
         width: 46,
         height: 46,
-        decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: bgColor,
+          shape: BoxShape.circle,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

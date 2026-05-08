@@ -53,6 +53,7 @@ class SyncQueueLocalDataSourceImpl extends SyncQueueLocalDataSource {
       where: 'id = ?',
       whereArgs: [id],
     );
+    debugPrint("ddfffffffffffffffffffff"+ rowsDeleted.toString());
     if (rowsDeleted == 0) {
       debugPrint("SyncQueueErrorrrrrrrrrrrrr: ID $id not found");
     }

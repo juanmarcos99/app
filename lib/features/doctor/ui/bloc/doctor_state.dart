@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/patient_lincked.dart';
+import '../../domain/entities/patient_entity.dart';
 
 abstract class DoctorState extends Equatable {
   const DoctorState();
@@ -13,7 +13,7 @@ class DoctorInitial extends DoctorState {}
 class DoctorLoading extends DoctorState {}
 
 class DoctorLoaded extends DoctorState {
-  final List<PatientLincked> patients;
+  final List<PatientEntity> patients;
 
   const DoctorLoaded(this.patients);
 

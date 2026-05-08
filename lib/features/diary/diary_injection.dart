@@ -4,6 +4,7 @@ import 'package:app/features/auth/auth.dart';
 import 'package:app/features/diary/domain/use_cases/user/update_remote_user_use_case.dart';
 import 'package:app/core/share/data/datasources/remote_data_sourse/adverse_event_remote_data_source.dart';
 import 'package:app/core/share/data/datasources/remote_data_sourse/crisis_remote_data_source.dart';
+import 'package:app/features/diary/domain/use_cases/add_remote_adverse_event.dart';
 import 'package:app/features/diary/domain/use_cases/get_remote_adverse_events_usecase.dart';
 import 'package:app/features/diary/domain/use_cases/get_remote_crises_usecase.dart';
 import 'package:app/features/diary/ui/bloc/patient_diary_bloc.dart';

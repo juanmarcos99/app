@@ -43,9 +43,7 @@ class SettingsPage extends StatelessWidget {
                             Builder(
                               builder: (context) {
                                 String userName = "Invitado";
-                                final authState = context
-                                    .watch<AuthBloc>()
-                                    .state;
+                                final authState = context.watch<AuthBloc>().state;
                                 if (authState is UserLoggedIn) {
                                   userName = authState.user.name;
                                 }
@@ -64,9 +62,7 @@ class SettingsPage extends StatelessWidget {
                               width: 48,
                               decoration: BoxDecoration(
                                 color: colorScheme.primary,
-                                borderRadius: BorderRadius.circular(
-                                  double.infinity,
-                                ),
+                                borderRadius: BorderRadius.circular(double.infinity),
                               ),
                             ),
                           ],
@@ -76,18 +72,14 @@ class SettingsPage extends StatelessWidget {
                           icon: Icons.person,
                           title: 'Datos del perfil',
                           subtitle: 'Gestiona tu información personal',
-                          onTap: () =>
-                              Navigator.pushNamed(context, '/profileData'),
+                          onTap: () => Navigator.pushNamed(context, '/profileData'),
                         ),
                         const SizedBox(height: 16),
                         SettingsTile(
                           icon: Icons.notifications,
                           title: 'Notificaciones',
                           subtitle: 'Configura tus alertas y avisos',
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            '/medicalAppointment',
-                          ),
+                          onTap: () => Navigator.pushNamed(context, '/medicalAppointment'),
                         ),
                         const SizedBox(height: 16),
                         SettingsTile(
@@ -103,21 +95,14 @@ class SettingsPage extends StatelessWidget {
                           subtitle: 'Compartir datos clínicos',
                           onTap: () => Navigator.pushNamed(context, '/qr'),
                         ),
-                        if (context.watch<AuthBloc>().state is UserLoggedIn &&
-                            (context.watch<AuthBloc>().state as UserLoggedIn)
-                                    .user
-                                    .role ==
-                                'doctor') ...[
+                        if (context.watch<AuthBloc>().state is UserLoggedIn && (context.watch<AuthBloc>().state as UserLoggedIn).user.role == 'doctor') ...[
                           const SizedBox(height: 16),
                           SettingsTile(
                             icon: Icons.qr_code_scanner,
                             title: 'Escanear código de paciente',
                             subtitle: 'Vincular un nuevo paciente a tu lista',
                             onTap: () async {
-                              await Navigator.pushNamed(
-                                context,
-                                AppRoutes.scannerPage,
-                              );
+                              final result = await Navigator.pushNamed(context, AppRoutes.scannerPage);
                             },
                           ),
                         ],
@@ -126,17 +111,13 @@ class SettingsPage extends StatelessWidget {
                           width: double.infinity,
                           child: TextButton.icon(
                             style: TextButton.styleFrom(
-                              backgroundColor: colorScheme.error.withValues(
-                                alpha: 0.08,
-                              ),
+                              backgroundColor: colorScheme.error.withValues(alpha: 0.08),
                               foregroundColor: colorScheme.error,
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
-                                  color: colorScheme.error.withValues(
-                                    alpha: 0.1,
-                                  ),
+                                  color: colorScheme.error.withValues(alpha: 0.1),
                                 ),
                               ),
                             ),
@@ -153,9 +134,7 @@ class SettingsPage extends StatelessWidget {
                           child: Text(
                             "v1.0.0",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant.withValues(
-                                alpha: 0.6,
-                              ),
+                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                             ),
                           ),
                         ),

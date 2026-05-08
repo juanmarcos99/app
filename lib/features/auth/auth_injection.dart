@@ -1,11 +1,12 @@
 import 'package:app/core/core.dart';
+import 'package:app/core/share/data/datasources/remote_data_sourse/user_remote_data_source.dart';
+import 'package:app/core/share/domain/use_cases/sync/get_pending_sync_tasks_use_case.dart';
 import 'package:app/core/share/domain/use_cases/sync/mark_sync_task_as_error_use_case.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/share/data/repositories_impl/patient_repository_impl.dart';
 import 'package:app/features/auth/auth.dart';
-// ignore: duplicate_import
 import 'package:app/core/core.dart';
 
 final sl = GetIt.instance;

@@ -1,6 +1,6 @@
-import '../entities/patient_lincked.dart';
+import '../entities/patient_entity.dart';
 
 abstract class DoctorRepository {
-  Future<List<PatientLincked>> getLinkedPatients();
+  Future<List<PatientEntity>> getLinkedPatients();
   Future<void> linkPatient(int patientId);
 }

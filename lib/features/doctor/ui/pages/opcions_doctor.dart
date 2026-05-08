@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/core/share/ui/widgets/settings_tile.dart';
+import 'package:app/app_routes.dart';
 
 class OpcionsDoctor extends StatelessWidget {
   const OpcionsDoctor({super.key});

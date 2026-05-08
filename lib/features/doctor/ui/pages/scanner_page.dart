@@ -2,7 +2,7 @@ import 'package:app/core/share/ui/widgets/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../bloc/scan_patient_BLoc/scan_patient_bloc.dart';
+import '../bloc/scan_patient_bloc.dart';
 import 'package:app/core/core.dart';
 import 'package:app/core/theme/style/colors.dart';
 
@@ -140,12 +140,12 @@ class _ScannerPageState extends State<ScannerPage> {
                         decoration: InputDecoration(
                           hintText: "ID del paciente",
                           hintStyle: TextStyle(
-                            color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                            color: cs.onSurfaceVariant.withOpacity(0.5),
                           ),
                           filled: true,
                           fillColor: isDark
-                              ? AppColors.darkSurfaceSoft.withValues(alpha: 0.3)
-                              : AppColors.surfaceSoft.withValues(alpha: 0.2),
+                              ? AppColors.darkSurfaceSoft.withOpacity(0.3)
+                              : AppColors.surfaceSoft.withOpacity(0.2),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 14,
@@ -153,13 +153,13 @@ class _ScannerPageState extends State<ScannerPage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: cs.outline.withValues(alpha: 0.3),
+                              color: cs.outline.withOpacity(0.3),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: cs.outline.withValues(alpha: 0.3),
+                              color: cs.outline.withOpacity(0.3),
                             ),
                           ),
                         ),
