@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class PatientEntity extends Equatable {
+class PatientLincked extends Equatable {
   final int id;
   final String name;
   final String lastName;
 
-  const PatientEntity({
+  const PatientLincked({
     required this.id,
     required this.name,
     required this.lastName,

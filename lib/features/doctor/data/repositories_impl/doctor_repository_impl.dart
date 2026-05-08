@@ -1,5 +1,5 @@
 import '../../domain/repositories/doctor_repository.dart';
-import '../../domain/entities/patient_entity.dart';
+import '../../domain/entities/patient_lincked.dart';
 import '../datasources/doctor_local_data_source.dart';
 import '../datasources/doctor_remote_data_source.dart';
 
@@ -13,7 +13,7 @@ class DoctorRepositoryImpl implements DoctorRepository {
   });
 
   @override
-  Future<List<PatientEntity>> getLinkedPatients() async {
+  Future<List<PatientLincked>> getLinkedPatients() async {
     final ids = await localDataSource.getLinkedPatientIds();
     if (ids.isEmpty) {
       return [];

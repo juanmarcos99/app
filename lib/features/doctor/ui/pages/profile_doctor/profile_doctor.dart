@@ -5,7 +5,6 @@ import 'package:app/features/auth/auth.dart';
 import 'package:app/features/diary/ui/pages/profile_data/widgets/custom_option_button.dart';
 import 'package:app/features/doctor/ui/bloc/profile_doctor_bloc/profile_doctor_bloc.dart';
 import 'package:app/features/doctor/ui/bloc/profile_doctor_bloc/profile_doctor_event_state.dart';
-import 'package:app/app_routes.dart';
 
 class ProfileDoctor extends StatefulWidget {
   const ProfileDoctor({super.key});

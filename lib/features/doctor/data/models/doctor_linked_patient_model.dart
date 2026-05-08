@@ -1,6 +1,6 @@
-import '../../domain/entities/patient_entity.dart';
+import '../../domain/entities/patient_lincked.dart';
 
-class DoctorLinkedPatientModel extends PatientEntity {
+class DoctorLinkedPatientModel extends PatientLincked {
   const DoctorLinkedPatientModel({
     required super.id,
     required super.name,

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/use_cases/get_linked_patients_usecase.dart';
+import '../../../domain/use_cases/get_linked_patients_usecase.dart';
 import 'doctor_event.dart';
 import 'doctor_state.dart';
 

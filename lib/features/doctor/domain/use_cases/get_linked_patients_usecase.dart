@@ -1,4 +1,4 @@
-import '../entities/patient_entity.dart';
+import '../entities/patient_lincked.dart';
 import '../repositories/doctor_repository.dart';
 
 class GetLinkedPatientsUseCase {
@@ -6,7 +6,7 @@ class GetLinkedPatientsUseCase {
 
   GetLinkedPatientsUseCase(this.repository);
 
-  Future<List<PatientEntity>> call() async {
+  Future<List<PatientLincked>> call() async {
     return await repository.getLinkedPatients();
   }
 }

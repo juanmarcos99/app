@@ -5,9 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:app/features/diary/diary.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/features/doctor/doctor.dart';
-import 'package:app/features/doctor/ui/pages/PacienteInformation.dart';
-import 'package:app/features/doctor/ui/pages/PatientDiary.dart';
-import 'package:app/features/doctor/ui/pages/profile_doctor.dart';
+import 'package:app/features/doctor/ui/pages/patient_diary/patient_diary.dart';
 
 class AppRoutes {
   static const login = '/login';

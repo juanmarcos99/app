@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/features/auth/auth.dart';
 import 'package:app/core/core.dart';
-import 'package:app/app_routes.dart';
-import '../bloc/doctor_bloc.dart';
-import '../widgets/doctor_bottom_nav_bar.dart';
-import '../pages/scanner_page.dart';
-import '../pages/opcions_doctor.dart';
+import '../../bloc/doctor_BLoc/doctor_bloc.dart';
+import '../../widgets/doctor_bottom_nav_bar.dart';
+import '../scanner_page/scanner_page.dart';
+import '../options_doctor/opcions_doctor.dart';
 import 'package:app/features/diary/ui/pages/home/home.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
@@ -199,7 +198,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         children: [
           // Avatar o Icono del Paciente
           CircleAvatar(
-            backgroundColor: cs.primary.withOpacity(0.1),
+            backgroundColor: cs.primary.withValues(alpha: 0.1),
             child: Icon(Icons.person, color: cs.primary, size: 20),
           ),
           const SizedBox(width: 16),

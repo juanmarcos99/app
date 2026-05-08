@@ -6,8 +6,8 @@ import 'data/datasources/doctor_remote_data_source.dart';
 import 'data/repositories_impl/doctor_repository_impl.dart';
 import 'domain/repositories/doctor_repository.dart';
 import 'domain/use_cases/get_linked_patients_usecase.dart';
-import 'ui/bloc/doctor_bloc.dart';
-import 'ui/bloc/scan_patient_bloc.dart';
+import 'ui/bloc/doctor_BLoc/doctor_bloc.dart';
+import 'ui/bloc/scan_patient_BLoc/scan_patient_bloc.dart';
 import 'ui/bloc/profile_doctor_bloc/profile_doctor_bloc.dart';
 
 final sl = GetIt.instance;

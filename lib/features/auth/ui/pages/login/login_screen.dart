@@ -258,7 +258,7 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
                               style: theme.textTheme.bodySmall,
                             ),
                             LetterNavButton(
-                              letter: "Registrarse",
+                              letter: "Regístrate",
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, AppRoutes.register);
